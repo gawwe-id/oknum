@@ -223,7 +223,7 @@ const ServicesSection: React.FC = () => {
   // Service data
   const services: ServiceType[] = [
     {
-      title: "Pengembangan Web App",
+      title: "Web Development",
       subtitle: "Website Modern & Responsif",
       description:
         "Kami membuat website dengan performa tinggi dan pengalaman pengguna yang intuitif untuk meningkatkan engagement dan konversi bisnis Anda.",
@@ -243,7 +243,7 @@ const ServicesSection: React.FC = () => {
       ctaText: "Lihat Layanan Web",
     },
     {
-      title: "Pengembangan Aplikasi Mobile",
+      title: "Mobile Development",
       subtitle: "Aplikasi iOS & Android",
       description:
         "Kami membangun aplikasi mobile native dan cross-platform yang memberikan pengalaman pengguna luar biasa di semua perangkat.",

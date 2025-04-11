@@ -47,7 +47,7 @@ const Navbar = () => {
         <NavigationMenu className="hidden md:flex">
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+              <NavigationMenuTrigger>Services</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
                   <li className="row-span-3">
@@ -57,10 +57,11 @@ const Navbar = () => {
                         href="/"
                       >
                         <div className="mb-2 mt-4 text-lg font-medium">
-                          Main Product
+                          Our Services
                         </div>
                         <p className="text-sm leading-tight text-muted-foreground">
-                          Our flagship product for developers and teams.
+                          Professional digital solutions tailored for your
+                          business needs.
                         </p>
                       </a>
                     </NavigationMenuLink>
@@ -69,13 +70,13 @@ const Navbar = () => {
                     <NavigationMenuLink asChild>
                       <a
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        href="/"
+                        href="/web-app"
                       >
                         <div className="text-sm font-medium leading-none">
-                          Enterprise
+                          Web App Development
                         </div>
                         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          For larger teams and organizations
+                          Modern & responsive websites
                         </p>
                       </a>
                     </NavigationMenuLink>
@@ -84,13 +85,13 @@ const Navbar = () => {
                     <NavigationMenuLink asChild>
                       <a
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        href="/"
+                        href="/mobile-app"
                       >
                         <div className="text-sm font-medium leading-none">
-                          Add-ons
+                          Mobile App Development
                         </div>
                         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Extend the core functionality
+                          iOS & Android applications
                         </p>
                       </a>
                     </NavigationMenuLink>
@@ -109,17 +110,39 @@ const Navbar = () => {
               <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                  {/* Disabled for now */}
+                  <li>
+                    <span className="block select-none space-y-1 rounded-md p-3 leading-none outline-none text-gray-400 cursor-not-allowed">
+                      <div className="text-sm font-medium leading-none">
+                        Documentation
+                      </div>
+                      <p className="line-clamp-2 text-sm leading-snug text-gray-400">
+                        Coming soon
+                      </p>
+                    </span>
+                  </li>
+                  {/* Disabled for now */}
+                  <li>
+                    <span className="block select-none space-y-1 rounded-md p-3 leading-none outline-none text-gray-400 cursor-not-allowed">
+                      <div className="text-sm font-medium leading-none">
+                        Blog
+                      </div>
+                      <p className="line-clamp-2 text-sm leading-snug text-gray-400">
+                        Coming soon
+                      </p>
+                    </span>
+                  </li>
                   <li>
                     <NavigationMenuLink asChild>
                       <a
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        href="/"
+                        href="/about"
                       >
                         <div className="text-sm font-medium leading-none">
-                          Documentation
+                          About Us
                         </div>
                         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Learn how to integrate and use our products
+                          Learn about our team and company
                         </p>
                       </a>
                     </NavigationMenuLink>
@@ -128,13 +151,13 @@ const Navbar = () => {
                     <NavigationMenuLink asChild>
                       <a
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        href="/"
+                        href="/contact"
                       >
                         <div className="text-sm font-medium leading-none">
-                          Blog
+                          Contact
                         </div>
                         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Read our latest news and articles
+                          Get in touch with our team
                         </p>
                       </a>
                     </NavigationMenuLink>
@@ -142,31 +165,12 @@ const Navbar = () => {
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/docs" legacyBehavior passHref>
-                <NavigationMenuLink className="font-medium">
-                  Docs
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link href="/blog" legacyBehavior passHref>
-                <NavigationMenuLink className="font-medium">
-                  Blog
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
 
-        <div className="flex items-center space-x-4">
-          <Link href="/login">
-            <Button variant="ghost" className="text-sm font-medium">
-              Log in
-            </Button>
-          </Link>
-          <Link href="/signup">
-            <Button className="text-sm font-medium">Sign up</Button>
+        <div className="flex items-center">
+          <Link href="/contact">
+            <Button className="text-sm font-medium">Contact Us</Button>
           </Link>
         </div>
       </div>
