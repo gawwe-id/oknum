@@ -1,18 +1,20 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { ExternalLink } from "lucide-react";
+import React from "react";
 import { motion } from "framer-motion";
-
-interface ServiceCardProps {
-  title: string;
-  subtitle: string;
-  icon: React.ReactNode;
-  bgColor: string;
-  textColor: string;
-  accentColor: string;
-  borderColor: string;
-}
+import {
+  Code,
+  Share2,
+  Smartphone,
+  Globe,
+  Sparkles,
+  Rocket,
+  ArrowRight,
+  LayoutDashboard,
+  MessagesSquare,
+  LucideIcon,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Animation variants
 const sectionVariants = {
@@ -39,7 +41,7 @@ const cardVariants = {
     },
   },
   hover: {
-    y: -8,
+    y: -10,
     transition: {
       type: "spring",
       stiffness: 400,
@@ -48,189 +50,279 @@ const cardVariants = {
   },
 };
 
-const iconVariants = {
-  hidden: { scale: 0.8, opacity: 0 },
+const featureItemVariants = {
+  hidden: { opacity: 0, x: -20 },
   visible: {
-    scale: 1,
-    opacity: 1,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      delay: 0.2,
-    },
-  },
-  hover: {
-    scale: 1.05,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 10,
-    },
-  },
-};
-
-const linkIconVariants = {
-  hidden: { opacity: 0, x: 10 },
-  visible: { opacity: 0 },
-  hover: {
     opacity: 1,
     x: 0,
     transition: {
       type: "spring",
-      stiffness: 300,
-      damping: 20,
+      stiffness: 100,
+      damping: 15,
     },
   },
 };
 
+// TypeScript interfaces
+interface FeatureItemProps {
+  icon: React.ReactNode;
+  text: string;
+}
+
+interface FeatureType {
+  icon: LucideIcon;
+  text: string;
+}
+
+type ColorType = "teal" | "blue";
+
+interface ColorStyles {
+  [key: string]: {
+    bgGradient: string;
+    iconBg: string;
+    borderColor: string;
+    textColor: string;
+    lightTextColor: string;
+    buttonBg: string;
+    tagBg: string;
+  };
+}
+
+interface ServiceCardProps {
+  title: string;
+  subtitle: string;
+  description: string;
+  icon: React.ReactNode;
+  color: ColorType;
+  features: FeatureType[];
+  ctaText?: string;
+  technologies: string[];
+}
+
+interface ServiceType extends ServiceCardProps {}
+
+// Feature list component
+const FeatureItem: React.FC<FeatureItemProps> = ({ icon, text }) => (
+  <motion.div
+    className="flex items-center gap-2 text-sm mb-2.5"
+    variants={featureItemVariants}
+  >
+    {icon}
+    <span>{text}</span>
+  </motion.div>
+);
+
+// Service Card component with enhanced design
 const ServiceCard: React.FC<ServiceCardProps> = ({
   title,
   subtitle,
+  description,
   icon,
-  bgColor,
-  textColor,
-  borderColor,
+  color,
+  features,
+  ctaText = "Pelajari Lebih Lanjut",
+  technologies,
 }) => {
+  const colorStyles: ColorStyles = {
+    teal: {
+      bgGradient: "bg-gradient-to-br from-fuchsia-50 to-fuchsia-100",
+      iconBg: "bg-fuchsia-600",
+      borderColor: "border-fuchsia-200",
+      textColor: "text-fuchsia-900",
+      lightTextColor: "text-fuchsia-700",
+      buttonBg: "bg-fuchsia-600 hover:bg-fuchsia-700",
+      tagBg: "bg-fuchsia-600/10 text-fuchsia-700",
+    },
+    blue: {
+      bgGradient: "bg-gradient-to-br from-sky-50 to-sky-100",
+      iconBg: "bg-sky-600",
+      borderColor: "border-sky-200",
+      textColor: "text-sky-900",
+      lightTextColor: "text-sky-700",
+      buttonBg: "bg-sky-600 hover:bg-sky-700",
+      tagBg: "bg-sky-600/10 text-sky-700",
+    },
+  };
+
+  const styles = colorStyles[color];
+
   return (
     <motion.div
+      className={`rounded-xl border ${styles.borderColor} overflow-hidden h-full shadow-sm`}
       variants={cardVariants}
-      initial="hidden"
-      animate="visible"
       whileHover="hover"
     >
-      <Card
-        className={`group relative overflow-hidden transition-all duration-300 h-full rounded-xl ${bgColor} shadow-none ${borderColor}`}
-      >
-        <motion.div
-          className="absolute inset-0 bg-white/5"
-          initial={{ opacity: 0 }}
-          whileHover={{ opacity: 0.2 }}
-          transition={{ duration: 0.3 }}
-        ></motion.div>
-        <CardContent className="p-6 md:p-8">
-          <div className="flex flex-col h-full">
-            <motion.div className="mb-4 relative z-10" variants={iconVariants}>
-              {icon}
-            </motion.div>
-            <div className="mb-2 flex justify-between items-start">
-              <h3 className={`text-xl md:text-2xl font-bold ${textColor}`}>
-                {title}
-              </h3>
-              <motion.div variants={linkIconVariants}>
-                <ExternalLink className={`${textColor} h-5 w-5`} />
-              </motion.div>
-            </div>
-            <motion.p
-              className={`text-sm opacity-80 ${textColor}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.8 }}
-              transition={{ delay: 0.3 }}
+      <div className={`h-full flex flex-col ${styles.bgGradient}`}>
+        {/* Card Header with Icon and Title */}
+        <div className="p-6 pb-4">
+          <div className="flex items-start justify-between mb-4">
+            <div
+              className={`flex items-center justify-center w-12 h-12 rounded-lg ${styles.iconBg} text-white`}
             >
-              {subtitle}
-            </motion.p>
+              {icon}
+            </div>
+            <div className="flex space-x-1">
+              {technologies.map((tech, i) => (
+                <span
+                  key={i}
+                  className={`text-xs px-2 py-1 rounded-full ${styles.tagBg}`}
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
           </div>
-        </CardContent>
-      </Card>
+
+          <h3 className={`text-2xl font-bold mb-1 ${styles.textColor}`}>
+            {title}
+          </h3>
+          <p className={`text-sm font-medium mb-3 ${styles.lightTextColor}`}>
+            {subtitle}
+          </p>
+          <p className="text-gray-600 text-sm mb-4">{description}</p>
+        </div>
+
+        {/* Features List */}
+        <div className="px-6 py-3 border-t border-b border-gray-100 bg-white/50">
+          <h4 className={`text-sm font-semibold mb-3 ${styles.textColor}`}>
+            Fitur Utama
+          </h4>
+          <div className="space-y-0.5">
+            {features.map((feature, index) => (
+              <FeatureItem
+                key={index}
+                icon={
+                  <feature.icon
+                    className={`w-4 h-4 ${styles.lightTextColor}`}
+                  />
+                }
+                text={feature.text}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Card Footer with CTA */}
+        <div className="p-6 pt-4 mt-auto">
+          <motion.div
+            whileHover={{ x: 5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <Button className={`w-full ${styles.buttonBg} text-white`}>
+              <span>{ctaText}</span>
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </motion.div>
+        </div>
+      </div>
     </motion.div>
   );
 };
 
-const WebsiteIcon: React.FC = () => (
-  <motion.svg
-    width="80"
-    height="80"
-    viewBox="0 0 80 80"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    initial={{ rotate: -5 }}
-    animate={{ rotate: 0 }}
-    transition={{ type: "spring", stiffness: 100 }}
-  >
-    <circle cx="40" cy="40" r="36" fill="#FF6B6B" />
-    <path
-      d="M28 30c0-5.5 4.5-10 10-10s10 4.5 10 10c0 3.5-2.5 7.5-5.5 12-1.5 2.25-3 4.25-4.5 6-1.5-1.75-3-3.75-4.5-6-3-4.5-5.5-8.5-5.5-12z"
-      fill="#FFE0DD"
-      stroke="#FF3333"
-      strokeWidth="2"
-    />
-    <circle cx="38" cy="30" r="4" fill="#FF3333" />
-    <path
-      d="M48 50c0 5.5-4.5 10-10 10s-10-4.5-10-10"
-      stroke="#FF3333"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </motion.svg>
-);
-
-const MobileIcon: React.FC = () => (
-  <motion.svg
-    width="80"
-    height="80"
-    viewBox="0 0 80 80"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    initial={{ rotate: 5 }}
-    animate={{ rotate: 0 }}
-    transition={{ type: "spring", stiffness: 100 }}
-  >
-    <circle cx="40" cy="40" r="36" fill="#4E9EFD" />
-    <path
-      d="M40 20c-8 0-16 8-16 16s8 16 16 16 16-8 16-16-8-16-16-16z"
-      fill="#D1EBFF"
-      stroke="#2B78E4"
-      strokeWidth="2"
-    />
-    <path
-      d="M52 44c-8 8-16 8-24 0"
-      stroke="#2B78E4"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-    <circle cx="35" cy="36" r="3" fill="#2B78E4" />
-    <circle cx="45" cy="36" r="3" fill="#2B78E4" />
-    <path
-      d="M28 52l4-4M52 52l-4-4"
-      stroke="#2B78E4"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </motion.svg>
-);
-
 const ServicesSection: React.FC = () => {
+  // Service data
+  const services: ServiceType[] = [
+    {
+      title: "Pengembangan Web App",
+      subtitle: "Website Modern & Responsif",
+      description:
+        "Kami membuat website dengan performa tinggi dan pengalaman pengguna yang intuitif untuk meningkatkan engagement dan konversi bisnis Anda.",
+      icon: <Globe size={24} />,
+      color: "teal",
+      technologies: ["React", "Next.js", "Tailwind"],
+      features: [
+        {
+          icon: LayoutDashboard,
+          text: "Desain responsif untuk semua perangkat",
+        },
+        { icon: Rocket, text: "Dioptimalkan untuk performa & SEO" },
+        { icon: Sparkles, text: "Antarmuka pengguna yang intuitif" },
+        { icon: Code, text: "Kode bersih dan mudah dipelihara" },
+        { icon: Share2, text: "Integrasi media sosial" },
+      ],
+      ctaText: "Lihat Layanan Web",
+    },
+    {
+      title: "Pengembangan Aplikasi Mobile",
+      subtitle: "Aplikasi iOS & Android",
+      description:
+        "Kami membangun aplikasi mobile native dan cross-platform yang memberikan pengalaman pengguna luar biasa di semua perangkat.",
+      icon: <Smartphone size={24} />,
+      color: "blue",
+      technologies: ["React Native", "Flutter", "Swift"],
+      features: [
+        { icon: Code, text: "Solusi native & cross-platform" },
+        { icon: Sparkles, text: "Desain UI/UX yang menarik" },
+        { icon: Rocket, text: "Aplikasi dengan performa tinggi" },
+        { icon: MessagesSquare, text: "Fungsionalitas offline" },
+        { icon: Share2, text: "Integrasi API pihak ketiga" },
+      ],
+      ctaText: "Lihat Layanan Mobile",
+    },
+  ];
+
   return (
     <motion.section
-      className="py-12 md:py-20"
+      className="py-16 md:py-24 bg-gradient-to-b from-white to-gray-50"
       variants={sectionVariants}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
     >
-      <div className="container mx-auto max-w-3xl px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Website Service Card */}
-          <ServiceCard
-            title="Website"
-            subtitle="Website profesional dengan desain dan fungsionalitas modern."
-            icon={<WebsiteIcon />}
-            bgColor="bg-rose-50"
-            textColor="text-rose-600"
-            accentColor="text-rose-500"
-            borderColor="border-rose-300"
-          />
+      <div className="container mx-auto max-w-5xl px-4">
+        {/* Section Header */}
+        {/* <div className="text-center mb-16">
+          <motion.span
+            className="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium mb-2"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+          >
+            Layanan Kami
+          </motion.span>
+          <motion.h2
+            className="text-3xl md:text-4xl font-bold mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            Solusi Digital Profesional
+          </motion.h2>
+          <motion.p
+            className="text-gray-600 max-w-2xl mx-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            Kami menghadirkan aplikasi web dan mobile canggih yang disesuaikan
+            dengan kebutuhan bisnis Anda dengan fokus pada performa, keamanan,
+            dan pengalaman pengguna.
+          </motion.p>
+        </div> */}
 
-          {/* Mobile Apps Service Card */}
-          <ServiceCard
-            title="Mobile Apps"
-            subtitle="Aplikasi mobile native dan cross-platform untuk iOS dan Android."
-            icon={<MobileIcon />}
-            bgColor="bg-green-50"
-            textColor="text-sky-600"
-            accentColor="text-sky-500"
-            borderColor="border-sky-300"
-          />
+        {/* Service Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {services.map((service, index) => (
+            <ServiceCard key={index} {...service} />
+          ))}
         </div>
+
+        {/* Additional CTA */}
+        <motion.div
+          className="mt-16 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          viewport={{ once: true }}
+        >
+          <p className="text-gray-600 mb-4">
+            Butuh solusi khusus? Kami siap membantu.
+          </p>
+          <Button variant="outline" className="border-gray-300 text-gray-700">
+            Lihat Semua Layanan
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </motion.div>
       </div>
     </motion.section>
   );
