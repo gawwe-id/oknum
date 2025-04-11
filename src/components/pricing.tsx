@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Crown, Star, Shield, Cpu } from "lucide-react";
 
@@ -67,75 +67,17 @@ const checkmarkVariants = {
   }),
 };
 
-// Billing period toggle component
-interface BillingToggleProps {
-  isYearly: boolean;
-  setIsYearly: (value: boolean) => void;
-}
-
-const BillingToggle: React.FC<BillingToggleProps> = ({
-  isYearly,
-  setIsYearly,
-}) => {
-  return (
-    <motion.div
-      className="flex items-center justify-center mb-10 space-x-4"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3 }}
-    >
-      <span
-        className={`text-lg ${
-          !isYearly ? "font-semibold text-blue-600" : "text-gray-500"
-        }`}
-      >
-        Bulanan
-      </span>
-      <div
-        className="relative w-16 h-8 bg-blue-100 rounded-full cursor-pointer"
-        onClick={() => setIsYearly(!isYearly)}
-      >
-        <motion.div
-          className="absolute w-6 h-6 bg-blue-600 rounded-full top-1"
-          animate={{ x: isYearly ? 34 : 6 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        />
-      </div>
-      <span
-        className={`text-lg ${
-          isYearly ? "font-semibold text-blue-600" : "text-gray-500"
-        }`}
-      >
-        Tahunan
-      </span>
-      <motion.div
-        className="ml-2 px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full"
-        animate={{
-          scale: isYearly ? [1, 1.1, 1] : 1,
-        }}
-        transition={{
-          duration: 0.5,
-          times: [0, 0.5, 1],
-          repeat: isYearly ? 1 : 0,
-        }}
-      >
-        Hemat 20%
-      </motion.div>
-    </motion.div>
-  );
-};
-
 // Interface for pricing plan
 interface PricingPlan {
   id: number;
   name: string;
-  monthlyPrice: string;
-  yearlyPrice: string;
+  price: string;
   description: string;
   features: string[];
   icon: React.ReactNode;
   highlight?: boolean;
   popular?: boolean;
+  duration?: string;
 }
 
 // Pricing plans data
@@ -143,8 +85,7 @@ const pricingPlans: PricingPlan[] = [
   {
     id: 1,
     name: "Oknum Jelata",
-    monthlyPrice: "< 1jt",
-    yearlyPrice: "< 10jt",
+    price: "< 1jt",
     description: "Cocok untuk personal website atau portofolio sederhana",
     features: [
       "Landing Page 1 Halaman",
@@ -154,12 +95,12 @@ const pricingPlans: PricingPlan[] = [
       "2 minggu Maintenance",
     ],
     icon: <Star className="h-8 w-8 text-yellow-400" />,
+    duration: "1-2 minggu",
   },
   {
     id: 2,
     name: "Oknum Sipil",
-    monthlyPrice: "1jt - 3jt",
-    yearlyPrice: "10jt - 30jt",
+    price: "1jt - 3jt",
     description: "Ideal untuk small business dan company profile",
     features: [
       "Company Profile",
@@ -172,12 +113,12 @@ const pricingPlans: PricingPlan[] = [
     icon: <Shield className="h-8 w-8 text-emerald-700" />,
     highlight: true,
     popular: true,
+    duration: "2-4 minggu",
   },
   {
     id: 3,
     name: "Oknum Aparat",
-    monthlyPrice: "5jt++",
-    yearlyPrice: "50jt++",
+    price: "5jt++",
     description:
       "Solusi lengkap untuk bisnis menengah dengan kebutuhan e-commerce",
     features: [
@@ -189,12 +130,12 @@ const pricingPlans: PricingPlan[] = [
       "3 bulan Maintenance",
     ],
     icon: <Crown className="h-8 w-8 text-purple-500" />,
+    duration: "1-2 bulan",
   },
   {
     id: 4,
     name: "Oknum Mentri",
-    monthlyPrice: "10jt - unlimited",
-    yearlyPrice: "100jt - unlimited",
+    price: "10jt - ??",
     description: "Paket komprehensif untuk enterprise dan aplikasi kompleks",
     features: [
       "Mobile Apps (Android & iOS)",
@@ -207,17 +148,17 @@ const pricingPlans: PricingPlan[] = [
       "6 bulan Maintenance",
     ],
     icon: <Cpu className="h-8 w-8 text-red-500" />,
+    duration: "3+ bulan",
   },
 ];
 
 // Pricing card component
 interface PricingCardProps {
   plan: PricingPlan;
-  isYearly: boolean;
   index: number;
 }
 
-const PricingCard: React.FC<PricingCardProps> = ({ plan, isYearly }) => {
+const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
   return (
     <motion.div
       className={`relative h-full ${
@@ -273,23 +214,21 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, isYearly }) => {
 
           <div className="mb-4">
             <p className="text-gray-600 mb-4">{plan.description}</p>
-            <div className="flex items-baseline mb-2">
-              <motion.span
+            <div className="flex items-baseline mb-1">
+              <span
                 className={`text-3xl font-bold ${
                   plan.highlight ? "text-emerald-700" : "text-gray-900"
                 }`}
-                key={isYearly ? `${plan.id}-yearly` : `${plan.id}-monthly`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ type: "spring", stiffness: 300 }}
               >
-                {isYearly ? plan.yearlyPrice : plan.monthlyPrice}
-              </motion.span>
-              <span className="ml-1 text-gray-500">
-                {isYearly ? "/tahun" : "/bulan"}
+                {plan.price}
               </span>
+              <span className="ml-1 text-gray-500">/project</span>
             </div>
+            {plan.duration && (
+              <div className="text-sm text-gray-500">
+                Estimasi waktu: {plan.duration}
+              </div>
+            )}
           </div>
 
           <hr className="my-6 border-gray-200" />
@@ -337,8 +276,6 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, isYearly }) => {
 
 // Main pricing section component
 const Pricing: React.FC = () => {
-  const [isYearly, setIsYearly] = useState<boolean>(false);
-
   return (
     <motion.section
       className="py-20 from-gray-50 to-white overflow-hidden"
@@ -366,17 +303,10 @@ const Pricing: React.FC = () => {
           </p>
         </motion.div>
 
-        <BillingToggle isYearly={isYearly} setIsYearly={setIsYearly} />
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-24">
           <AnimatePresence mode="wait">
             {pricingPlans.map((plan, index) => (
-              <PricingCard
-                key={plan.id}
-                plan={plan}
-                isYearly={isYearly}
-                index={index}
-              />
+              <PricingCard key={plan.id} plan={plan} index={index} />
             ))}
           </AnimatePresence>
         </div>
