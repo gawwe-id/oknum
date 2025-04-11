@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
+import Link from "next/link";
 
 interface ClientsProps {
   title?: string;
@@ -119,13 +120,15 @@ const Clients: React.FC<ClientsProps> = ({
               berikutnya
             </p>
           </div>
-          <motion.button
-            className="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Hubungi Kami
-          </motion.button>
+          <Link href="/contact" passHref>
+            <motion.button
+              className="px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Hubungi Kami
+            </motion.button>
+          </Link>
         </motion.div>
       </div>
     </motion.section>
