@@ -15,6 +15,7 @@ import {
   LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 // Animation variants
 const sectionVariants = {
@@ -208,10 +209,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             whileHover={{ x: 5 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            <Button className={`w-full ${styles.buttonBg} text-white`}>
-              <span>{ctaText}</span>
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+            <Link href="/services">
+              <Button className={`w-full ${styles.buttonBg} text-white`}>
+                <span>{ctaText}</span>
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </div>
@@ -229,7 +232,7 @@ const ServicesSection: React.FC = () => {
         "Kami membuat website dengan performa tinggi dan pengalaman pengguna yang intuitif untuk meningkatkan engagement dan konversi bisnis Anda.",
       icon: <Globe size={24} />,
       color: "teal",
-      technologies: ["React", "Next.js", "Tailwind"],
+      technologies: ["Typescript", "HTML", "CSS"],
       features: [
         {
           icon: LayoutDashboard,
@@ -249,7 +252,7 @@ const ServicesSection: React.FC = () => {
         "Kami membangun aplikasi mobile native dan cross-platform yang memberikan pengalaman pengguna luar biasa di semua perangkat.",
       icon: <Smartphone size={24} />,
       color: "blue",
-      technologies: ["React Native", "Flutter", "Swift"],
+      technologies: ["React Native", "Flutter", "Lynx"],
       features: [
         { icon: Code, text: "Solusi native & cross-platform" },
         { icon: Sparkles, text: "Desain UI/UX yang menarik" },
@@ -270,36 +273,6 @@ const ServicesSection: React.FC = () => {
       viewport={{ once: true, amount: 0.2 }}
     >
       <div className="container mx-auto max-w-5xl px-4">
-        {/* Section Header */}
-        {/* <div className="text-center mb-16">
-          <motion.span
-            className="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium mb-2"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
-          >
-            Layanan Kami
-          </motion.span>
-          <motion.h2
-            className="text-3xl md:text-4xl font-bold mb-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            Solusi Digital Profesional
-          </motion.h2>
-          <motion.p
-            className="text-gray-600 max-w-2xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            Kami menghadirkan aplikasi web dan mobile canggih yang disesuaikan
-            dengan kebutuhan bisnis Anda dengan fokus pada performa, keamanan,
-            dan pengalaman pengguna.
-          </motion.p>
-        </div> */}
-
         {/* Service Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {services.map((service, index) => (
@@ -318,10 +291,12 @@ const ServicesSection: React.FC = () => {
           <p className="text-gray-600 mb-4">
             Butuh solusi khusus? Kami siap membantu.
           </p>
-          <Button variant="outline" className="border-gray-300 text-gray-700">
-            Lihat Semua Layanan
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+          <Link href="/services">
+            <Button variant="outline" className="border-gray-300 text-gray-700">
+              Lihat Semua Layanan
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
         </motion.div>
       </div>
     </motion.section>
