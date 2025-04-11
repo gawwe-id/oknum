@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Zap, Shield, Users, Clock, Lightbulb, Globe } from "lucide-react";
+import Link from "next/link";
 
 // Animation variants
 const sectionVariants = {
@@ -142,13 +143,15 @@ const Features: React.FC = () => {
 
         {/* Call to Action */}
         <motion.div className="text-center mt-16" variants={itemVariants}>
-          <motion.button
-            className="px-6 py-3 bg-emerald-700 text-white rounded-lg font-medium hover:bg-[#307061] transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Mulai Kerjasama Sekarang →
-          </motion.button>
+          <Link href="/contact">
+            <motion.button
+              className="px-6 py-3 bg-emerald-700 text-white rounded-lg font-medium hover:bg-[#307061] transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Mulai Kerjasama Sekarang →
+            </motion.button>
+          </Link>
         </motion.div>
       </motion.div>
     </div>
