@@ -1,5 +1,6 @@
 // src/lib/seo.ts
 import type { Metadata } from "next";
+import { getOgImageUrl } from "./og-image";
 
 type SeoProps = {
   title: string;
@@ -17,13 +18,20 @@ export function constructMetadata({
   title,
   description,
   keywords = [],
-  ogImage = "/og-image.jpg",
+  ogImage,
   noIndex = false,
   pathname = "",
 }: SeoProps): Metadata {
   const metaTitle = `${title} | Oknum - Digital Agency`;
   const metaDescription = description;
   const url = `${baseUrl}${pathname}`;
+
+  const ogImageUrl =
+    ogImage ||
+    getOgImageUrl({
+      title,
+      description,
+    });
 
   return {
     title: metaTitle,
@@ -53,7 +61,7 @@ export function constructMetadata({
       siteName: "Oknum - Digital Agency",
       images: [
         {
-          url: ogImage.startsWith("http") ? ogImage : `${baseUrl}${ogImage}`,
+          url: ogImageUrl,
           width: 1200,
           height: 630,
           alt: metaTitle,
@@ -64,8 +72,8 @@ export function constructMetadata({
       card: "summary_large_image",
       title: metaTitle,
       description: metaDescription,
-      images: [ogImage.startsWith("http") ? ogImage : `${baseUrl}${ogImage}`],
-      creator: "@oknumid",
+      images: [ogImageUrl],
+      creator: "@oknum.studio",
     },
     robots: {
       index: !noIndex,

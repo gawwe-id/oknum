@@ -1,4 +1,6 @@
 // app/page.tsx
+import { Metadata } from "next";
+
 import { lexend } from "./fonts";
 
 import Hero from "@/components/vuehero";
@@ -10,9 +12,28 @@ import Features from "@/components/features";
 import Pricing from "@/components/pricing";
 import Footer from "@/components/footer";
 
+import { constructMetadata } from "@/lib/seo";
+import JsonLd, { organizationJsonLd, websiteJsonLd } from "@/components/JsonLd";
+
+export const metadata: Metadata = constructMetadata({
+  title: "Oknum Studio | Tersangka Utama Kejayaan Brand Kamu",
+  description:
+    "Kami adalah creator produk digital berkualitas dengan design yang intuitive dan performa optimal. Solusi digital terbaik untuk kebutuhan bisnis Anda.",
+  keywords: [
+    "web development",
+    "mobile app",
+    "UI/UX design",
+    "digital agency Indonesia",
+    "Tangerang Selatan",
+  ],
+  pathname: "/",
+});
+
 export default function Home() {
   return (
     <main className={`min-h-screen ${lexend.className}`}>
+      <JsonLd data={organizationJsonLd} />
+      <JsonLd data={websiteJsonLd} />
       <Navbar />
       <Hero />
       <Services />
