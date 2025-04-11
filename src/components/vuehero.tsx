@@ -2,8 +2,18 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Hero() {
+  const redirectToWhatsApp = () => {
+    // Replace with your actual WhatsApp number (international format without +)
+    const phoneNumber = "6281218227597";
+    const message = encodeURIComponent(
+      "Halo, saya ingin bertanya tentang layanan Oknum."
+    );
+    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
+  };
+
   return (
     <section className="pt-16 pb-8 md:pt-20 md:pb-12]">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6">
@@ -56,7 +66,10 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <Button className="bg-teal-600 hover:bg-teal-500 text-white px-6 gap-2">
+            <Button
+              className="bg-teal-600 hover:bg-teal-500 text-white px-6 gap-2"
+              onClick={redirectToWhatsApp}
+            >
               <svg
                 fill="#fff"
                 width="800px"
@@ -72,28 +85,30 @@ export default function Hero() {
               WhatsApp
             </Button>
 
-            <Button
-              variant="outline"
-              className="border-gray-300 text-teal-600 hover:text-teal-500 px-6 flex items-center gap-1"
-            >
-              Lihat hasil kerja kami
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="ml-1"
+            <Link href="/portofolio" passHref>
+              <Button
+                variant="outline"
+                className="border-gray-300 text-teal-600 hover:text-teal-500 px-6 flex items-center gap-1"
               >
-                <path
-                  d="M6 12L10 8L6 4"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </Button>
+                Lihat hasil kerja kami
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="ml-1"
+                >
+                  <path
+                    d="M6 12L10 8L6 4"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </Button>
+            </Link>
           </motion.div>
         </motion.div>
       </div>
