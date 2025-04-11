@@ -3,6 +3,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, Crown, Star, Shield, Cpu } from "lucide-react";
+import Link from "next/link";
 
 // Animation variants
 const sectionVariants = {
@@ -110,7 +111,7 @@ const pricingPlans: PricingPlan[] = [
       "Google Maps Integration",
       "1 bulan Maintenance",
     ],
-    icon: <Shield className="h-8 w-8 text-emerald-700" />,
+    icon: <Shield className="h-8 w-8 text-sky-700" />,
     highlight: true,
     popular: true,
     duration: "2-4 minggu",
@@ -177,7 +178,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <span className="px-4 py-1 bg-gradient-to-r from-emerald-700 to-[#307061] text-white text-sm font-semibold rounded-tr-2xl rounded-tl-2xl shadow-md">
+          <span className="px-4 py-1 bg-gradient-to-r from-sky-700 to-sky-500 text-white text-sm font-semibold rounded-tr-2xl rounded-tl-2xl shadow-md">
             Paling Populer
           </span>
         </motion.div>
@@ -186,26 +187,26 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
       <div
         className={`relative h-full rounded-2xl overflow-hidden ${
           plan.highlight
-            ? "border-2 border-emerald-700 shadow-xl bg-white"
+            ? "border-2 border-sky-700 shadow-xl bg-white"
             : "border border-gray-200 shadow-md bg-white"
         }`}
       >
         {plan.highlight && (
-          <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-emerald-700 to-[#307061]" />
+          <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-sky-700 to-sky-500" />
         )}
 
         <div className="p-6 md:p-8 h-full">
           <div className="flex items-center space-x-3 mb-4">
             <div
               className={`p-2 rounded-lg ${
-                plan.highlight ? "bg-[#d8e8e4]" : "bg-gray-100"
+                plan.highlight ? "bg-sky-100" : "bg-gray-100"
               }`}
             >
               {plan.icon}
             </div>
             <h3
               className={`text-xl font-bold ${
-                plan.highlight ? "text-emerald-700" : "text-gray-800"
+                plan.highlight ? "text-sky-700" : "text-gray-800"
               }`}
             >
               {plan.name}
@@ -217,7 +218,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
             <div className="flex items-baseline mb-1">
               <span
                 className={`text-3xl font-bold ${
-                  plan.highlight ? "text-emerald-700" : "text-gray-900"
+                  plan.highlight ? "text-sky-700" : "text-gray-900"
                 }`}
               >
                 {plan.price}
@@ -244,7 +245,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
                 <div
                   className={`flex-shrink-0 p-1 rounded-full mt-0.5 ${
                     plan.highlight
-                      ? "bg-[#c4dcd7] text-emerald-700"
+                      ? "bg-sky-100 text-sky-700"
                       : "bg-gray-100 text-gray-700"
                   }`}
                 >
@@ -260,7 +261,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
           <motion.button
             className={`w-full py-3 mt-8 rounded-lg font-medium transition-colors ${
               plan.highlight
-                ? "bg-gradient-to-r from-emerald-700 to-[#307061] hover:from-[#509887] hover:to-[#77afa1] text-white shadow-md"
+                ? "bg-gradient-to-r from-sky-700 to-sky-500 hover:from-sky-600 hover:to-sky-400 text-white shadow-md"
                 : "bg-gray-100 hover:bg-gray-200 text-gray-800"
             }`}
             whileHover={{ scale: 1.02 }}
@@ -287,7 +288,7 @@ const Pricing: React.FC = () => {
       <div className="container mx-auto max-w-8xl px-4">
         <motion.div className="text-center mb-12" variants={headingVariants}>
           <motion.span
-            className="inline-block px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm font-medium mb-2"
+            className="inline-block px-3 py-1 bg-sky-100 text-sky-600 rounded-full text-sm font-medium mb-2"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
@@ -312,41 +313,43 @@ const Pricing: React.FC = () => {
         </div>
 
         <motion.div
-          className="mt-16 text-center max-w-6xl mx-auto bg-blue-50 p-8 rounded-2xl border border-blue-100"
+          className="mt-16 text-center max-w-6xl mx-auto bg-sky-50 p-8 rounded-2xl border border-sky-100"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
           viewport={{ once: true }}
         >
-          <h3 className="text-xl md:text-2xl font-bold text-blue-800 mb-4">
+          <h3 className="text-xl md:text-2xl font-bold text-sky-800 mb-4">
             Butuh Solusi Custom?
           </h3>
-          <p className="text-blue-700 opacity-80 mb-6 max-w-3xl mx-auto">
+          <p className="text-sky-700 opacity-80 mb-6 max-w-3xl mx-auto">
             Jika kebutuhan Kamu tidak tercakup dalam paket di atas, kami siap
             menyediakan solusi khusus yang dirancang spesifik untuk bisnis Kamu.
           </p>
-          <motion.button
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors inline-flex items-center space-x-2"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <span>Hubungi Kami</span>
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+          <Link href={"/contact"}>
+            <motion.button
+              className="px-6 py-3 bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition-colors inline-flex items-center space-x-2"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <path
-                d="M5 10H15M15 10L10 5M15 10L10 15"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </motion.button>
+              <span>Hubungi Kami</span>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5 10H15M15 10L10 5M15 10L10 15"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </motion.button>
+          </Link>
         </motion.div>
       </div>
     </motion.section>
