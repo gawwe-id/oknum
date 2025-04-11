@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useForm, ValidationError } from "@formspree/react";
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -28,11 +29,6 @@ const itemVariants = {
 };
 
 const ContactForms = () => {
-  const [formStatus, setFormStatus] = useState({
-    submitted: false,
-    submitting: false,
-    error: false,
-  });
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -40,6 +36,7 @@ const ContactForms = () => {
     subject: "",
     message: "",
   });
+  const [state, handleSubmit] = useForm("mkgjklkj");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -50,41 +47,10 @@ const ContactForms = () => {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setFormStatus({ submitted: false, submitting: true, error: false });
-
-    try {
-      const response = await fetch("https://formspree.io/f/your-formspree-id", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        setFormStatus({ submitted: true, submitting: false, error: false });
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          subject: "",
-          message: "",
-        });
-      } else {
-        setFormStatus({ submitted: false, submitting: false, error: true });
-      }
-    } catch (error) {
-      console.error("Form submission error:", error);
-      setFormStatus({ submitted: false, submitting: false, error: true });
-    }
-  };
-
   // WhatsApp redirect function
   const redirectToWhatsApp = () => {
     // Replace with your actual WhatsApp number (international format without +)
-    const phoneNumber = "6281234567890";
+    const phoneNumber = "6281218227597";
     const message = encodeURIComponent(
       "Halo, saya ingin bertanya tentang layanan Oknum."
     );
@@ -189,7 +155,7 @@ const ContactForms = () => {
       >
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Kirim Pesan</h2>
 
-        {formStatus.submitted ? (
+        {state.succeeded ? (
           <motion.div
             className="bg-green-50 p-6 rounded-lg border border-green-200 text-center"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -208,19 +174,6 @@ const ContactForms = () => {
               Pesan Anda telah berhasil terkirim. Tim kami akan segera
               menghubungi Anda.
             </p>
-            <Button
-              onClick={() =>
-                setFormStatus({
-                  submitted: false,
-                  submitting: false,
-                  error: false,
-                })
-              }
-              variant="outline"
-              className="border-green-300 text-green-700 hover:bg-green-50"
-            >
-              Kirim Pesan Lainnya
-            </Button>
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit}>
@@ -242,6 +195,11 @@ const ContactForms = () => {
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-600/50 focus:border-emerald-600 outline-none transition-colors"
                   placeholder="Masukkan nama lengkap Anda"
                 />
+                <ValidationError
+                  prefix="Name"
+                  field="name"
+                  errors={state.errors}
+                />
               </div>
               <div>
                 <label
@@ -259,6 +217,11 @@ const ContactForms = () => {
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-600/50 focus:border-emerald-600 outline-none transition-colors"
                   placeholder="email@anda.com"
+                />
+                <ValidationError
+                  prefix="Email"
+                  field="email"
+                  errors={state.errors}
                 />
               </div>
             </div>
@@ -280,6 +243,11 @@ const ContactForms = () => {
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-600/50 focus:border-emerald-600 outline-none transition-colors"
                   placeholder="+62 xxx xxxx xxxx"
                 />
+                <ValidationError
+                  prefix="Phone"
+                  field="phone"
+                  errors={state.errors}
+                />
               </div>
               <div>
                 <label
@@ -297,6 +265,11 @@ const ContactForms = () => {
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-600/50 focus:border-emerald-600 outline-none transition-colors"
                   placeholder="Konsultasi Project / Pertanyaan / dll"
+                />
+                <ValidationError
+                  prefix="Subject"
+                  field="subject"
+                  errors={state.errors}
                 />
               </div>
             </div>
@@ -318,9 +291,14 @@ const ContactForms = () => {
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-600/50 focus:border-emerald-600 outline-none transition-colors resize-none"
                 placeholder="Tulis pesan Anda disini..."
               ></textarea>
+              <ValidationError
+                prefix="Message"
+                field="message"
+                errors={state.errors}
+              />
             </div>
 
-            {formStatus.error && (
+            {state.errors && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md flex items-start gap-3">
                 <AlertCircle className="text-red-500 w-5 h-5 mt-0.5" />
                 <div>
@@ -343,9 +321,9 @@ const ContactForms = () => {
               <Button
                 type="submit"
                 className="bg-emerald-600 hover:bg-emerald-700 text-white px-6"
-                disabled={formStatus.submitting}
+                disabled={state.submitting}
               >
-                {formStatus.submitting ? (
+                {state.submitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Mengirim...
