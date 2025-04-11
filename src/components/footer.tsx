@@ -14,6 +14,7 @@ import {
   Send,
 } from "lucide-react";
 import { reggae } from "@/app/fonts";
+import Link from "next/link";
 
 // Animation variants
 const footerVariants = {
@@ -106,64 +107,70 @@ const Footer: React.FC = () => {
               <h3 className="text-lg font-bold text-white mb-4">Navigasi</h3>
               <ul className="space-y-2">
                 <li>
-                  <motion.a
-                    href="#tentang-kami"
-                    className="text-gray-400 hover:text-emerald-600 transition-colors inline-block"
-                    variants={linkVariants}
-                    whileHover="hover"
-                  >
-                    Tentang Kami
-                  </motion.a>
+                  <Link href="/about" passHref>
+                    <motion.span
+                      className="text-gray-400 hover:text-emerald-600 transition-colors inline-block cursor-pointer"
+                      variants={linkVariants}
+                      whileHover="hover"
+                    >
+                      Tentang Kami
+                    </motion.span>
+                  </Link>
                 </li>
                 <li>
-                  <motion.a
-                    href="#layanan"
-                    className="text-gray-400 hover:text-emerald-600 transition-colors inline-block"
-                    variants={linkVariants}
-                    whileHover="hover"
-                  >
-                    Layanan
-                  </motion.a>
+                  <Link href="/#services" passHref>
+                    <motion.span
+                      className="text-gray-400 hover:text-emerald-600 transition-colors inline-block cursor-pointer"
+                      variants={linkVariants}
+                      whileHover="hover"
+                    >
+                      Layanan
+                    </motion.span>
+                  </Link>
                 </li>
                 <li>
-                  <motion.a
-                    href="#portfolio"
-                    className="text-gray-400 hover:text-emerald-600 transition-colors inline-block"
-                    variants={linkVariants}
-                    whileHover="hover"
-                  >
-                    Portfolio
-                  </motion.a>
+                  <Link href="/portfolio" passHref>
+                    <motion.span
+                      className="text-gray-400 hover:text-emerald-600 transition-colors inline-block cursor-pointer"
+                      variants={linkVariants}
+                      whileHover="hover"
+                    >
+                      Portfolio
+                    </motion.span>
+                  </Link>
                 </li>
                 <li>
-                  <motion.a
-                    href="#pricing"
-                    className="text-gray-400 hover:text-emerald-600 transition-colors inline-block"
-                    variants={linkVariants}
-                    whileHover="hover"
-                  >
-                    Pricing
-                  </motion.a>
+                  <Link href="/pricing" passHref>
+                    <motion.span
+                      className="text-gray-400 hover:text-emerald-600 transition-colors inline-block cursor-pointer"
+                      variants={linkVariants}
+                      whileHover="hover"
+                    >
+                      Pricing
+                    </motion.span>
+                  </Link>
                 </li>
                 <li>
-                  <motion.a
-                    href="#faq"
-                    className="text-gray-400 hover:text-emerald-600 transition-colors inline-block"
-                    variants={linkVariants}
-                    whileHover="hover"
-                  >
-                    FAQ
-                  </motion.a>
+                  <Link href="/faq" passHref>
+                    <motion.span
+                      className="text-gray-400 hover:text-emerald-600 transition-colors inline-block cursor-pointer"
+                      variants={linkVariants}
+                      whileHover="hover"
+                    >
+                      FAQ
+                    </motion.span>
+                  </Link>
                 </li>
                 <li>
-                  <motion.a
-                    href="#kontak"
-                    className="text-gray-400 hover:text-emerald-600 transition-colors inline-block"
-                    variants={linkVariants}
-                    whileHover="hover"
-                  >
-                    Kontak
-                  </motion.a>
+                  <Link href="/contact" passHref>
+                    <motion.span
+                      className="text-gray-400 hover:text-emerald-600 transition-colors inline-block cursor-pointer"
+                      variants={linkVariants}
+                      whileHover="hover"
+                    >
+                      Kontak
+                    </motion.span>
+                  </Link>
                 </li>
               </ul>
             </motion.div>
@@ -173,44 +180,37 @@ const Footer: React.FC = () => {
               <h3 className="text-lg font-bold text-white mb-4">Legal</h3>
               <ul className="space-y-2">
                 <li>
-                  <motion.a
-                    href="#privacy-policy"
-                    className="text-gray-400 hover:text-emerald-600 transition-colors inline-block"
-                    variants={linkVariants}
-                    whileHover="hover"
-                  >
-                    Privacy Policy
-                  </motion.a>
+                  <Link href="/privacy-policy" passHref>
+                    <motion.span
+                      className="text-gray-400 hover:text-emerald-600 transition-colors inline-block cursor-pointer"
+                      variants={linkVariants}
+                      whileHover="hover"
+                    >
+                      Privacy Policy
+                    </motion.span>
+                  </Link>
                 </li>
                 <li>
-                  <motion.a
-                    href="#terms-conditions"
-                    className="text-gray-400 hover:text-emerald-600 transition-colors inline-block"
-                    variants={linkVariants}
-                    whileHover="hover"
-                  >
-                    Terms & Conditions
-                  </motion.a>
+                  <Link href="/terms-conditions" passHref>
+                    <motion.span
+                      className="text-gray-400 hover:text-emerald-600 transition-colors inline-block cursor-pointer"
+                      variants={linkVariants}
+                      whileHover="hover"
+                    >
+                      Terms & Conditions
+                    </motion.span>
+                  </Link>
                 </li>
                 <li>
-                  <motion.a
-                    href="#refund-policy"
-                    className="text-gray-400 hover:text-emerald-600 transition-colors inline-block"
-                    variants={linkVariants}
-                    whileHover="hover"
-                  >
-                    Refund Policy
-                  </motion.a>
-                </li>
-                <li>
-                  <motion.a
-                    href="#cookie-policy"
-                    className="text-gray-400 hover:text-emerald-600 transition-colors inline-block"
-                    variants={linkVariants}
-                    whileHover="hover"
-                  >
-                    Cookie Policy
-                  </motion.a>
+                  <Link href="/refund-policy" passHref>
+                    <motion.span
+                      className="text-gray-400 hover:text-emerald-600 transition-colors inline-block cursor-pointer"
+                      variants={linkVariants}
+                      whileHover="hover"
+                    >
+                      Refund Policy
+                    </motion.span>
+                  </Link>
                 </li>
               </ul>
 
