@@ -50,7 +50,7 @@ const Clients: React.FC<ClientsProps> = ({
 
   return (
     <motion.section
-      className="py-16 md:py-20 bg-[#FEF9E1] overflow-hidden"
+      className="py-16 md:py-20 bg-gray-50 overflow-hidden"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
@@ -78,7 +78,7 @@ const Clients: React.FC<ClientsProps> = ({
       </div>
 
       <div className="relative max-w-6xl mx-auto overflow-hidden">
-        <div className="absolute left-0 top-0 h-full w-24 z-10 bg-gradient-to-r from-[#FEF9E1] to-transparent pointer-events-none"></div>
+        <div className="absolute left-0 top-0 h-full w-24 z-10 bg-gradient-to-r from-gray-50 to-transparent pointer-events-none"></div>
 
         <motion.div
           className="flex items-center py-6 whitespace-nowrap"
@@ -91,7 +91,7 @@ const Clients: React.FC<ClientsProps> = ({
               whileHover={{ scale: 1.1 }}
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
-              <div className="bg-gray-50 border border-gray-100 rounded-lg px-8 py-6 min-w-[180px] h-20 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow duration-300">
+              <div className="bg-white border border-purple-200 rounded-lg px-8 py-6 min-w-[180px] h-20 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow duration-300">
                 <span className="text-xl font-bold text-gray-700">
                   {client.name}
                 </span>
@@ -100,7 +100,7 @@ const Clients: React.FC<ClientsProps> = ({
           ))}
         </motion.div>
 
-        <div className="absolute right-0 top-0 h-full w-24 z-10 bg-gradient-to-l from-[#FEF9E1] to-transparent pointer-events-none"></div>
+        <div className="absolute right-0 top-0 h-full w-24 z-10 bg-gradient-to-l fromgray-50 to-transparent pointer-events-none"></div>
       </div>
 
       <div className="container mx-auto max-w-6xl px-4 mt-10">
