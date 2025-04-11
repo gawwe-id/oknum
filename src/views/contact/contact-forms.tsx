@@ -97,7 +97,7 @@ const ContactForms = () => {
               <h3 className="text-sm font-semibold text-gray-800 mb-1">
                 Email
               </h3>
-              <p className="text-gray-600">info@oknum.id</p>
+              <p className="text-gray-600">info@oknum.studio</p>
             </div>
           </div>
 

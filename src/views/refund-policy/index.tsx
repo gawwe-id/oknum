@@ -202,7 +202,7 @@ const RefundPolicyView = () => {
             <li className="mb-2">
               <strong>Pengajuan Permintaan:</strong> Kirimkan permintaan
               pengembalian dana secara tertulis melalui email ke
-              finance@oknum.id dengan subjek "Permintaan Pengembalian Dana -
+              finance@oknum.studio dengan subjek "Permintaan Pengembalian Dana -
               [Nama Proyek]"
             </li>
             <li className="mb-2">
@@ -398,7 +398,7 @@ const RefundPolicyView = () => {
             <p>Jl. Teknologi Digital No. 123</p>
             <p>Tangerang Selatan, Banten 15413</p>
             <p>Indonesia</p>
-            <p>Email: finance@oknum.id</p>
+            <p>Email: finance@oknum.studio</p>
             <p>Telepon: +62 812 3456 7890</p>
           </div>
         </div>
