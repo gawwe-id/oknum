@@ -100,7 +100,7 @@ interface ServiceCardProps {
   technologies: string[];
 }
 
-interface ServiceType extends ServiceCardProps {}
+type ServiceType = ServiceCardProps;
 
 // Feature list component
 const FeatureItem: React.FC<FeatureItemProps> = ({ icon, text }) => (

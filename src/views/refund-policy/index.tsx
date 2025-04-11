@@ -24,10 +24,10 @@ const RefundPolicyView = () => {
         <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-8">
           <h2 className="text-2xl font-bold mb-4 text-gray-800">Pendahuluan</h2>
           <p className="text-gray-700 mb-4">
-            Oknum ("Kami") berkomitmen untuk memberikan layanan berkualitas
-            tinggi dan kepuasan pelanggan. Kebijakan Pengembalian Dana ini
-            menjelaskan prosedur, syarat, dan ketentuan terkait pengembalian
-            dana untuk layanan yang kami sediakan.
+            Oknum (&quot;Kami&quot;) berkomitmen untuk memberikan layanan
+            berkualitas tinggi dan kepuasan pelanggan. Kebijakan Pengembalian
+            Dana ini menjelaskan prosedur, syarat, dan ketentuan terkait
+            pengembalian dana untuk layanan yang kami sediakan.
           </p>
           <p className="text-gray-700 mb-4">
             Dengan menggunakan layanan kami, Anda menyetujui Kebijakan
@@ -202,8 +202,8 @@ const RefundPolicyView = () => {
             <li className="mb-2">
               <strong>Pengajuan Permintaan:</strong> Kirimkan permintaan
               pengembalian dana secara tertulis melalui email ke
-              finance@oknum.studio dengan subjek "Permintaan Pengembalian Dana -
-              [Nama Proyek]"
+              finance@oknum.studio dengan subjek &quot;Permintaan Pengembalian
+              Dana - [Nama Proyek]&quot;
             </li>
             <li className="mb-2">
               <strong>Informasi yang Diperlukan:</strong> Sertakan informasi
@@ -368,7 +368,7 @@ const RefundPolicyView = () => {
             Oknum berhak untuk mengubah atau memperbarui Kebijakan Pengembalian
             Dana ini kapan saja atas kebijakan kami sendiri. Perubahan akan
             berlaku setelah dipublikasikan di situs web kami dengan tanggal
-            "Terakhir diperbarui" yang direvisi.
+            &quot;Terakhir diperbarui&quot; yang direvisi.
           </p>
           <p className="text-gray-700 mb-4">
             Perubahan kebijakan tidak akan berlaku surut untuk transaksi yang

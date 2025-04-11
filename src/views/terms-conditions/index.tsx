@@ -25,9 +25,10 @@ const TermsConditionsView = () => {
           <h2 className="text-2xl font-bold mb-4 text-gray-800">Pendahuluan</h2>
           <p className="text-gray-700 mb-4">
             Selamat datang di Oknum. Syarat dan Ketentuan ini mengatur
-            penggunaan Anda atas layanan yang disediakan oleh Oknum ("Kami",
-            "Kita", atau "Perusahaan kami"), termasuk situs web, aplikasi, dan
-            layanan digital lainnya.
+            penggunaan Anda atas layanan yang disediakan oleh Oknum
+            (&quot;Kami&quot;, &quot;Kita&quot;, atau &quot;Perusahaan
+            kami&quot;), termasuk situs web, aplikasi, dan layanan digital
+            lainnya.
           </p>
           <p className="text-gray-700 mb-4">
             Dengan mengakses atau menggunakan layanan kami, Anda menyetujui
@@ -312,8 +313,8 @@ const TermsConditionsView = () => {
             Kami berhak untuk memodifikasi atau mengganti Syarat dan Ketentuan
             ini kapan saja, atas kebijakan kami sendiri. Kami akan memberi tahu
             Anda tentang perubahan material dengan memposting versi terbaru di
-            situs web kami dan memperbarui tanggal "Terakhir diperbarui" di
-            bagian atas.
+            situs web kami dan memperbarui tanggal &quot;Terakhir
+            diperbarui&quot; di bagian atas.
           </p>
           <p className="text-gray-700 mb-4">
             Dengan terus mengakses atau menggunakan layanan kami setelah revisi

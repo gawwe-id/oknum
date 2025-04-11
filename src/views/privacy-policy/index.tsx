@@ -24,11 +24,11 @@ const PrivacyPolicyView = () => {
         <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-8">
           <h2 className="text-2xl font-bold mb-4 text-gray-800">Pendahuluan</h2>
           <p className="text-gray-700 mb-4">
-            Oknum ("Kami", "Kita", atau "Perusahaan kami") berkomitmen untuk
-            melindungi privasi Anda. Kebijakan Privasi ini menjelaskan bagaimana
-            kami mengumpulkan, menggunakan, dan melindungi informasi pribadi
-            Anda ketika Anda mengunjungi situs web kami atau menggunakan layanan
-            kami.
+            Oknum (&quot;Kami&quot;, &quot;Kita&quot;, atau &quot;Perusahaan
+            kami&quot;) berkomitmen untuk melindungi privasi Anda. Kebijakan
+            Privasi ini menjelaskan bagaimana kami mengumpulkan, menggunakan,
+            dan melindungi informasi pribadi Anda ketika Anda mengunjungi situs
+            web kami atau menggunakan layanan kami.
           </p>
           <p className="text-gray-700 mb-4">
             Dengan menggunakan situs web atau layanan kami, Anda menyetujui
@@ -204,8 +204,8 @@ const PrivacyPolicyView = () => {
           </ul>
           <p className="text-gray-700 mb-4">
             Untuk mengajukan permintaan terkait dengan hak Anda, silakan hubungi
-            kami menggunakan informasi kontak yang tercantum di bagian "Hubungi
-            Kami".
+            kami menggunakan informasi kontak yang tercantum di bagian
+            &quot;Hubungi Kami&quot;.
           </p>
         </div>
 
@@ -249,8 +249,8 @@ const PrivacyPolicyView = () => {
             untuk mencerminkan perubahan dalam praktik kami atau untuk alasan
             operasional, hukum, atau peraturan lainnya. Kami akan memberi tahu
             Anda tentang perubahan apa pun dengan memposting Kebijakan Privasi
-            yang baru di halaman ini dan memperbarui tanggal "Terakhir
-            diperbarui" di bagian atas.
+            yang baru di halaman ini dan memperbarui tanggal &quot;Terakhir
+            diperbarui&quot; di bagian atas.
           </p>
           <p className="text-gray-700 mb-4">
             Kami mendorong Anda untuk meninjau Kebijakan Privasi ini secara
