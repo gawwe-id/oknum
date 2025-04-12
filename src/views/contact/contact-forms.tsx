@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { reggae } from "@/app/fonts";
 import {
   AlertCircle,
   Check,
@@ -65,10 +64,8 @@ const ContactForms = () => {
         variants={itemVariants}
       >
         <div className="mb-8">
-          <h2
-            className={`text-2xl font-bold mb-6 text-gray-800 ${reggae.className}`}
-          >
-            Oknum
+          <h2 className={`text-2xl font-black mb-6 text-gray-800`}>
+            Oknum Studio
           </h2>
           <p className="text-gray-600 mb-6">
             Tim kami siap membantu menjawab pertanyaan Anda dan menyediakan

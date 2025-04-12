@@ -13,7 +13,6 @@ import {
   ArrowUp,
   Send,
 } from "lucide-react";
-import { reggae } from "@/app/fonts";
 import Link from "next/link";
 
 // Animation variants
@@ -75,9 +74,7 @@ const Footer: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             <motion.div variants={itemVariants}>
               <div className="mb-6">
-                <h2
-                  className={`text-2xl font-bold text-white mb-2 ${reggae.className}`}
-                >
+                <h2 className={`text-2xl font-bold text-white mb-2`}>
                   Oknum Studio
                 </h2>
                 <div className="w-12 h-1 bg-emerald-600 rounded-full mb-4"></div>

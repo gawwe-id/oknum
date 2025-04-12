@@ -1,5 +1,4 @@
 import React from "react";
-import { reggae } from "@/app/fonts";
 
 const PrivacyPolicyView = () => {
   return (
@@ -10,9 +9,7 @@ const PrivacyPolicyView = () => {
           <span className="inline-block px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full text-sm font-medium mb-2">
             Kebijakan Privasi
           </span>
-          <h1
-            className={`text-3xl md:text-4xl font-bold mb-4 ${reggae.className}`}
-          >
+          <h1 className={`text-gray-700 text-3xl md:text-4xl font-black mb-4`}>
             Privacy Policy
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">

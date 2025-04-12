@@ -11,7 +11,6 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { reggae } from "@/app/fonts";
 
 const Navbar = () => {
   return (
@@ -24,9 +23,7 @@ const Navbar = () => {
       <div className="container max-w-6xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
         <div className="flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <span
-              className={`font-black text-gray-700 text-2xl ${reggae.className}`}
-            >
+            <span className={`font-black text-gray-700 text-2xl`}>
               Oknum Studio
             </span>
           </Link>
