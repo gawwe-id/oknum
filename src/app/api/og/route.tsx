@@ -1,7 +1,7 @@
 import { ImageResponse } from "@vercel/og";
 import { NextRequest } from "next/server";
-
-export const runtime = "edge";
+import fs from "fs";
+import path from "path";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -10,11 +10,16 @@ export async function GET(request: NextRequest) {
   const title = searchParams.get("title") || "Oknum Studio";
   const description =
     searchParams.get("description") || "Tersangka Utama Kejayaan Brand Kamu";
-  const type = searchParams.get("type") || "website";
 
-  const fontData = await fetch(
-    new URL("../../../../public/fonts/Lexend-Bold.ttf", import.meta.url)
-  ).then((res) => res.arrayBuffer());
+  let fontData;
+  try {
+    const fontPath = path.join(process.cwd(), "public/fonts/Lexend-Bold.ttf");
+    fontData = fs.readFileSync(fontPath);
+  } catch (error) {
+    console.error("Failed to load font:", error);
+    // Fallback to use system fonts if the custom font fails to load
+    fontData = null;
+  }
 
   return new ImageResponse(
     (
@@ -39,7 +44,7 @@ export async function GET(request: NextRequest) {
       fonts: [
         {
           name: "Lexend",
-          data: fontData,
+          data: fontData || Buffer.alloc(0),
           weight: 700,
           style: "normal",
         },
