@@ -86,7 +86,7 @@ const pricingPlans: PricingPlan[] = [
   {
     id: 1,
     name: "Oknum Jelata",
-    price: "< 1jt",
+    price: "Rp500.000",
     description: "Cocok untuk personal website atau portofolio sederhana",
     features: [
       "Landing Page 1 Halaman",
@@ -101,11 +101,11 @@ const pricingPlans: PricingPlan[] = [
   {
     id: 2,
     name: "Oknum Sipil",
-    price: "1jt - 3jt",
+    price: "Rp3.000.000",
     description: "Ideal untuk small business dan company profile",
     features: [
       "Company Profile",
-      "Multiple Pages",
+      "Multiple Pages (max: 5)",
       "2 Bahasa (Indonesia & English/Chinese/etc)",
       "Contact Form",
       "Google Maps Integration",
@@ -119,7 +119,7 @@ const pricingPlans: PricingPlan[] = [
   {
     id: 3,
     name: "Oknum Aparat",
-    price: "5jt++",
+    price: "Rp5.250.000",
     description:
       "Solusi lengkap untuk bisnis menengah dengan kebutuhan e-commerce",
     features: [
@@ -135,8 +135,8 @@ const pricingPlans: PricingPlan[] = [
   },
   {
     id: 4,
-    name: "Oknum Mentri",
-    price: "10jt - ??",
+    name: "Oknum Menteri",
+    price: "Rp9.888.000",
     description: "Paket komprehensif untuk enterprise dan aplikasi kompleks",
     features: [
       "Mobile Apps (Android & iOS)",
@@ -205,8 +205,8 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
               {plan.icon}
             </div>
             <h3
-              className={`text-xl font-bold ${
-                plan.highlight ? "text-sky-700" : "text-gray-800"
+              className={`text-2xl font-black ${
+                plan.highlight ? "text-sky-700" : "text-gray-700"
               }`}
             >
               {plan.name}
@@ -215,10 +215,11 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
 
           <div className="mb-4">
             <p className="text-gray-600 mb-4">{plan.description}</p>
+            <p className="text-gray-600 font-bold text-xs">Mulai dari</p>
             <div className="flex items-baseline mb-1">
               <span
                 className={`text-3xl font-bold ${
-                  plan.highlight ? "text-sky-700" : "text-gray-900"
+                  plan.highlight ? "text-sky-700" : "text-gray-800"
                 }`}
               >
                 {plan.price}
