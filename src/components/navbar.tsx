@@ -24,22 +24,10 @@ const Navbar = () => {
       <div className="container max-w-6xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
         <div className="flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-6 w-6 text-primary"
-              >
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-              </svg>
-            </motion.div>
-            <span className={`font-bold text-xl ${reggae.className}`}>
-              Oknum
+            <span
+              className={`font-black text-gray-700 text-2xl ${reggae.className}`}
+            >
+              Oknum Studio
             </span>
           </Link>
         </div>

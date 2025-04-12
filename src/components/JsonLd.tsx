@@ -49,7 +49,7 @@ export const organizationJsonLd = {
 export const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "Oknum - Digital Agency",
+  name: "Oknum Studio | Tersangka Utama Kejayaan Brand Kamu",
   url: "https://oknum.studio",
   potentialAction: {
     "@type": "SearchAction",

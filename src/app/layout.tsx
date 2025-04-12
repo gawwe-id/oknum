@@ -16,8 +16,8 @@ const structuredData = {
       "@type": "WebSite",
       "@id": "https://oknum.studio/#website",
       url: "https://oknum.studio",
-      name: "Oknum - Digital Agency",
-      description: "Digital Agency Indonesia",
+      name: "Oknum Studio",
+      description: "Creative Digital Agency Indonesia",
       potentialAction: [
         {
           "@type": "SearchAction",

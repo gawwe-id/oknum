@@ -22,7 +22,7 @@ export function constructMetadata({
   noIndex = false,
   pathname = "",
 }: SeoProps): Metadata {
-  const metaTitle = `${title} | Oknum - Digital Agency`;
+  const metaTitle = `${title} | Tersangka Utama Kejayaan Brand Kamu`;
   const metaDescription = description;
   const url = `${baseUrl}${pathname}`;
 
@@ -58,7 +58,7 @@ export function constructMetadata({
       url: url,
       title: metaTitle,
       description: metaDescription,
-      siteName: "Oknum - Digital Agency",
+      siteName: "Oknum Studio | Tersangka Utama Kejayaan Brand Kamu",
       images: [
         {
           url: ogImageUrl,

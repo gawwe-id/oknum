@@ -78,7 +78,7 @@ const Footer: React.FC = () => {
                 <h2
                   className={`text-2xl font-bold text-white mb-2 ${reggae.className}`}
                 >
-                  Oknum
+                  Oknum Studio
                 </h2>
                 <div className="w-12 h-1 bg-emerald-600 rounded-full mb-4"></div>
                 <p className="mb-4 text-gray-400">
