@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+// import Link from "next/link";
 
 export default function Hero() {
   const redirectToWhatsApp = () => {
@@ -85,7 +85,7 @@ export default function Hero() {
               WhatsApp
             </Button>
 
-            <Link href="/portofolio" passHref>
+            {/* <Link href="/portofolio" passHref>
               <Button
                 variant="outline"
                 className="border-gray-300 text-teal-600 hover:text-teal-500 px-6 flex items-center gap-1"
@@ -108,7 +108,7 @@ export default function Hero() {
                   />
                 </svg>
               </Button>
-            </Link>
+            </Link> */}
           </motion.div>
         </motion.div>
       </div>
