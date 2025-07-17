@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -11,6 +12,13 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { 
+  Globe, 
+  Smartphone, 
+  Bot, 
+  Megaphone, 
+  ShoppingCart 
+} from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -23,9 +31,13 @@ const Navbar = () => {
       <div className="container max-w-6xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
         <div className="flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <span className={`font-black text-gray-700 text-2xl`}>
-              Oknum Studio
-            </span>
+            <Image
+              src="/oknum-logo.png"
+              alt="Oknum Studio"
+              width={150}
+              height={40}
+              className="h-10 w-auto"
+            />
           </Link>
         </div>
 
@@ -57,11 +69,13 @@ const Navbar = () => {
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                         href="/web"
                       >
-                        <div className="text-sm font-medium leading-none">
-                          Web App Development
+                        <div className="flex items-center gap-2 text-sm font-medium leading-none">
+                          <Globe className="h-4 w-4" />
+                          Website
                         </div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Modern & responsive websites
+                        <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
+                          Pembuatan website dan aplikasi web custom dengan
+                          teknologi modern untuk kebutuhan bisnis Anda
                         </p>
                       </Link>
                     </NavigationMenuLink>
@@ -72,11 +86,65 @@ const Navbar = () => {
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                         href="/mobile"
                       >
-                        <div className="text-sm font-medium leading-none">
-                          Mobile App Development
+                        <div className="flex items-center gap-2 text-sm font-medium leading-none">
+                          <Smartphone className="h-4 w-4" />
+                          Mobile App
                         </div>
                         <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          iOS & Android applications
+                          Pengembangan aplikasi mobile cross-platform untuk iOS
+                          dan Android yang responsif dan user-friendly
+                        </p>
+                      </Link>
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        href="/ai-automation"
+                      >
+                        <div className="flex items-center gap-2 text-sm font-medium leading-none">
+                          <Bot className="h-4 w-4" />
+                          AI, Chatbot & Automation System
+                        </div>
+                        <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
+                          Solusi AI pintar, chatbot otomatis, dan sistem
+                          automasi workflow untuk meningkatkan efisiensi
+                          operasional bisnis
+                        </p>
+                      </Link>
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        href="/digital-ads"
+                      >
+                        <div className="flex items-center gap-2 text-sm font-medium leading-none">
+                          <Megaphone className="h-4 w-4" />
+                          Digital Advertising & Brand Awareness
+                        </div>
+                        <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
+                          Strategi iklan & konten Sosmed untuk membangun
+                          awareness dan memicu traffic qualified.
+                        </p>
+                      </Link>
+                    </NavigationMenuLink>
+                  </li>
+                  <li>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        href="/e-commerce"
+                      >
+                        <div className="flex items-center gap-2 text-sm font-medium leading-none">
+                          <ShoppingCart className="h-4 w-4" />
+                          E-Commerce
+                        </div>
+                        <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
+                          Pengelolaan toko online (web + marketplace) end-to-end
+                          untuk meningkatkan sales.
                         </p>
                       </Link>
                     </NavigationMenuLink>
@@ -85,11 +153,11 @@ const Navbar = () => {
               </NavigationMenuContent>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link href="/pricing" legacyBehavior passHref>
-                <NavigationMenuLink className="font-medium">
+              <NavigationMenuLink asChild>
+                <Link href="/pricing" className="font-medium">
                   Pricing
-                </NavigationMenuLink>
-              </Link>
+                </Link>
+              </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
