@@ -13,6 +13,16 @@ import {
   LayoutDashboard,
   MessagesSquare,
   LucideIcon,
+  Bot,
+  Megaphone,
+  ShoppingCart,
+  Zap,
+  Target,
+  TrendingUp,
+  CreditCard,
+  Package,
+  Users,
+  Database,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -75,7 +85,7 @@ interface FeatureType {
   text: string;
 }
 
-type ColorType = "teal" | "blue";
+type ColorType = "teal" | "blue" | "purple" | "orange" | "green";
 
 interface ColorStyles {
   [key: string]: {
@@ -105,7 +115,7 @@ type ServiceType = ServiceCardProps;
 // Feature list component
 const FeatureItem: React.FC<FeatureItemProps> = ({ icon, text }) => (
   <motion.div
-    className="flex items-center gap-2 text-sm mb-2.5"
+    className="flex items-center gap-2 text-xs mb-2.5"
     variants={featureItemVariants}
   >
     {icon}
@@ -143,6 +153,33 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       buttonBg: "bg-sky-600 hover:bg-sky-700",
       tagBg: "bg-sky-600/10 text-sky-700",
     },
+    purple: {
+      bgGradient: "bg-gradient-to-br from-purple-50 to-purple-100",
+      iconBg: "bg-purple-600",
+      borderColor: "border-purple-200",
+      textColor: "text-purple-900",
+      lightTextColor: "text-purple-700",
+      buttonBg: "bg-purple-600 hover:bg-purple-700",
+      tagBg: "bg-purple-600/10 text-purple-700",
+    },
+    orange: {
+      bgGradient: "bg-gradient-to-br from-orange-50 to-orange-100",
+      iconBg: "bg-orange-600",
+      borderColor: "border-orange-200",
+      textColor: "text-orange-900",
+      lightTextColor: "text-orange-700",
+      buttonBg: "bg-orange-600 hover:bg-orange-700",
+      tagBg: "bg-orange-600/10 text-orange-700",
+    },
+    green: {
+      bgGradient: "bg-gradient-to-br from-green-50 to-green-100",
+      iconBg: "bg-green-600",
+      borderColor: "border-green-200",
+      textColor: "text-green-900",
+      lightTextColor: "text-green-700",
+      buttonBg: "bg-green-600 hover:bg-green-700",
+      tagBg: "bg-green-600/10 text-green-700",
+    },
   };
 
   const styles = colorStyles[color];
@@ -155,18 +192,18 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
     >
       <div className={`h-full flex flex-col ${styles.bgGradient}`}>
         {/* Card Header with Icon and Title */}
-        <div className="p-6 pb-4">
-          <div className="flex items-start justify-between mb-4">
+        <div className="p-4 pb-3">
+          <div className="flex items-start justify-between mb-3">
             <div
-              className={`flex items-center justify-center w-12 h-12 rounded-lg ${styles.iconBg} text-white`}
+              className={`flex items-center justify-center w-10 h-10 rounded-lg ${styles.iconBg} text-white`}
             >
               {icon}
             </div>
             <div className="flex space-x-1">
-              {technologies.map((tech, i) => (
+              {technologies.slice(0, 2).map((tech, i) => (
                 <span
                   key={i}
-                  className={`text-xs px-2 py-1 rounded-full ${styles.tagBg}`}
+                  className={`text-xs px-1.5 py-0.5 rounded-md ${styles.tagBg}`}
                 >
                   {tech}
                 </span>
@@ -174,22 +211,20 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
             </div>
           </div>
 
-          <h3 className={`text-2xl font-bold mb-1 ${styles.textColor}`}>
-            {title}
-          </h3>
-          <p className={`text-sm font-medium mb-3 ${styles.lightTextColor}`}>
+          <h3 className={`text-xl font-bold ${styles.textColor}`}>{title}</h3>
+          <p className={`text-xs font-medium mb-2 ${styles.lightTextColor}`}>
             {subtitle}
           </p>
-          <p className="text-gray-600 text-sm mb-4">{description}</p>
+          <p className="text-gray-600 text-xs mb-3">{description}</p>
         </div>
 
         {/* Features List */}
-        <div className="px-6 py-3 border-t border-b border-gray-100 bg-white/50">
-          <h4 className={`text-sm font-semibold mb-3 ${styles.textColor}`}>
-            Fitur Utama
+        <div className="px-4 py-2 border-t border-b border-gray-100 bg-white/50">
+          <h4 className={`text-sm font-semibold mb-2 ${styles.textColor}`}>
+            Benefit Utama
           </h4>
           <div className="space-y-0.5">
-            {features.map((feature, index) => (
+            {features.slice(0, 3).map((feature, index) => (
               <FeatureItem
                 key={index}
                 icon={
@@ -204,13 +239,15 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         </div>
 
         {/* Card Footer with CTA */}
-        <div className="p-6 pt-4 mt-auto">
+        <div className="p-4 pt-3 mt-auto">
           <motion.div
             whileHover={{ x: 5 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             <Link href="/services">
-              <Button className={`w-full ${styles.buttonBg} text-white`}>
+              <Button
+                className={`w-full ${styles.buttonBg} text-white text-sm`}
+              >
                 <span>{ctaText}</span>
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -226,41 +263,92 @@ const ServicesSection: React.FC = () => {
   // Service data
   const services: ServiceType[] = [
     {
-      title: "Web Development",
+      title: "Website",
       subtitle: "Website Modern & Responsif",
       description:
-        "Kami membuat website dengan performa tinggi dan pengalaman pengguna yang intuitif untuk meningkatkan engagement dan konversi bisnis Anda.",
-      icon: <Globe size={24} />,
+        "Web Personal atau Web Bisnis yang memerlukan alur kompleks? kami siap garapkan!",
+      icon: <Globe size={20} />,
       color: "teal",
-      technologies: ["Typescript", "HTML", "CSS"],
+      technologies: ["Company", "Personal", "Startup"],
       features: [
         {
           icon: LayoutDashboard,
-          text: "Desain responsif untuk semua perangkat",
+          text: "Desain responsif",
         },
-        { icon: Rocket, text: "Dioptimalkan untuk performa & SEO" },
-        { icon: Sparkles, text: "Antarmuka pengguna yang intuitif" },
+        { icon: Rocket, text: "Performa optimal & SEO" },
+        { icon: Database, text: "Integrasi Database" },
         { icon: Code, text: "Kode bersih dan mudah dipelihara" },
         { icon: Share2, text: "Integrasi media sosial" },
       ],
       ctaText: "Lihat Layanan Web",
     },
     {
-      title: "Mobile Development",
+      title: "Mobile App",
       subtitle: "Aplikasi iOS & Android",
       description:
-        "Kami membangun aplikasi mobile native dan cross-platform yang memberikan pengalaman pengguna luar biasa di semua perangkat.",
-      icon: <Smartphone size={24} />,
+        "Kami bantu aplikasi Kamu dari mulai perancangan hingga masuk ke Play Store & App Store",
+      icon: <Smartphone size={20} />,
       color: "blue",
-      technologies: ["React Native", "Flutter", "Lynx"],
+      technologies: ["Native", "Hybrid", "Lynx"],
       features: [
         { icon: Code, text: "Solusi native & cross-platform" },
+        { icon: Share2, text: "Integrasi pihak ketiga" },
+        { icon: MessagesSquare, text: "Fungsionalitas offline" },
         { icon: Sparkles, text: "Desain UI/UX yang menarik" },
         { icon: Rocket, text: "Aplikasi dengan performa tinggi" },
-        { icon: MessagesSquare, text: "Fungsionalitas offline" },
-        { icon: Share2, text: "Integrasi API pihak ketiga" },
       ],
       ctaText: "Lihat Layanan Mobile",
+    },
+    {
+      title: "AI & Automation",
+      subtitle: "AI, Chatbot & Automations",
+      description:
+        "Efisiensi bisnis sangant penting! dengan teknologi AI, berbagai alur pekerjaan bisa otomatis",
+      icon: <Bot size={20} />,
+      color: "purple",
+      technologies: ["n8n", "OpenAI", "TensorFlow"],
+      features: [
+        { icon: Zap, text: "Chatbot AI asisten" },
+        { icon: Rocket, text: "Otomasi laporan bisnis" },
+        { icon: Code, text: "Custom AI integration" },
+        { icon: Target, text: "Machine learning solutions" },
+        { icon: Sparkles, text: "Natural language processing" },
+      ],
+      ctaText: "Lihat Layanan AI",
+    },
+    {
+      title: "Digital Ads",
+      subtitle: "Pemasaran Digital & Branding",
+      description:
+        "Strategi pemasaran untuk meningkatkan brand awareness & menghasilkan qualified leads",
+      icon: <Megaphone size={20} />,
+      color: "orange",
+      technologies: ["Google Ads", "Meta Ads", "Analytics"],
+      features: [
+        { icon: Target, text: "Targeted ad campaigns" },
+        { icon: TrendingUp, text: "Brand awareness strategy" },
+        { icon: Users, text: "Social media management" },
+        { icon: Sparkles, text: "Creative content development" },
+        { icon: Share2, text: "Multi-platform campaigns" },
+      ],
+      ctaText: "Lihat Digital Ads",
+    },
+    {
+      title: "E-Commerce",
+      subtitle: "Toko Online & Marketplace",
+      description:
+        "Pasarkan produk kamu secara independen agar membangun kepercayaan konsumen",
+      icon: <ShoppingCart size={20} />,
+      color: "green",
+      technologies: ["Shopify", "WooCommerce", "Custom"],
+      features: [
+        { icon: Package, text: "Product management system" },
+        { icon: CreditCard, text: "Payment gateway integration" },
+        { icon: TrendingUp, text: "Sales analytics & reporting" },
+        { icon: Users, text: "Customer management" },
+        { icon: Rocket, text: "Mobile-optimized checkout" },
+      ],
+      ctaText: "Lihat E-Commerce",
     },
   ];
 
@@ -272,9 +360,9 @@ const ServicesSection: React.FC = () => {
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
     >
-      <div className="container mx-auto max-w-5xl px-4">
+      <div className="container mx-auto max-w-7xl px-4">
         {/* Service Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
           {services.map((service, index) => (
             <ServiceCard key={index} {...service} />
           ))}
