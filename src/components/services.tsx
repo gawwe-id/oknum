@@ -4,25 +4,23 @@ import React from "react";
 import { motion } from "framer-motion";
 import {
   Code,
-  Share2,
-  Smartphone,
   Globe,
   Sparkles,
   Rocket,
   ArrowRight,
   LayoutDashboard,
-  MessagesSquare,
   LucideIcon,
   Bot,
   Megaphone,
-  ShoppingCart,
   Zap,
   Target,
   TrendingUp,
-  CreditCard,
-  Package,
   Users,
   Database,
+  BarChart3,
+  FileSearch,
+  Handshake,
+  ShoppingCart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -263,92 +261,75 @@ const ServicesSection: React.FC = () => {
   // Service data
   const services: ServiceType[] = [
     {
-      title: "Website",
-      subtitle: "Website Modern & Responsif",
+      title: "Web & Mobile Apps",
+      subtitle: "Konsultasi & Development End-to-End",
       description:
-        "Web Personal atau Web Bisnis yang memerlukan alur kompleks? kami siap garapkan!",
+        "Dari konsultasi perencanaan hingga deployment. Kami guide bisnis Kamu di setiap tahap.",
       icon: <Globe size={20} />,
       color: "teal",
-      technologies: ["Company", "Personal", "Startup"],
+      technologies: ["Web", "Mobile", "Hybrid"],
       features: [
         {
-          icon: LayoutDashboard,
-          text: "Desain responsif",
+          icon: Handshake,
+          text: "Konsultasi strategi digital gratis",
         },
-        { icon: Rocket, text: "Performa optimal & SEO" },
-        { icon: Database, text: "Integrasi Database" },
-        { icon: Code, text: "Kode bersih dan mudah dipelihara" },
-        { icon: Share2, text: "Integrasi media sosial" },
+        { icon: LayoutDashboard, text: "Design responsif & modern" },
+        { icon: Rocket, text: "SEO & performance optimization" },
+        { icon: Database, text: "Backend & database setup" },
+        { icon: Users, text: "Workshop untuk tim internal" },
       ],
-      ctaText: "Lihat Layanan Web",
-    },
-    {
-      title: "Mobile App",
-      subtitle: "Aplikasi iOS & Android",
-      description:
-        "Kami bantu aplikasi Kamu dari mulai perancangan hingga masuk ke Play Store & App Store",
-      icon: <Smartphone size={20} />,
-      color: "blue",
-      technologies: ["Native", "Hybrid", "Lynx"],
-      features: [
-        { icon: Code, text: "Solusi native & cross-platform" },
-        { icon: Share2, text: "Integrasi pihak ketiga" },
-        { icon: MessagesSquare, text: "Fungsionalitas offline" },
-        { icon: Sparkles, text: "Desain UI/UX yang menarik" },
-        { icon: Rocket, text: "Aplikasi dengan performa tinggi" },
-      ],
-      ctaText: "Lihat Layanan Mobile",
+      ctaText: "Konsultasi Sekarang",
     },
     {
       title: "AI & Automation",
-      subtitle: "AI, Chatbot & Automations",
+      subtitle: "Efisiensi Operasional dengan AI",
       description:
-        "Efisiensi bisnis sangant penting! dengan teknologi AI, berbagai alur pekerjaan bisa otomatis",
+        "Audit proses bisnis untuk identifikasi area automasi. Tingkatkan efisiensi UMKM dengan AI.",
       icon: <Bot size={20} />,
-      color: "purple",
-      technologies: ["n8n", "OpenAI", "TensorFlow"],
+      color: "blue",
+      technologies: ["n8n", "OpenAI", "Zapier"],
       features: [
-        { icon: Zap, text: "Chatbot AI asisten" },
-        { icon: Rocket, text: "Otomasi laporan bisnis" },
+        { icon: FileSearch, text: "Audit proses bisnis" },
+        { icon: Zap, text: "Chatbot & AI assistant" },
+        { icon: Rocket, text: "Otomasi workflow & laporan" },
         { icon: Code, text: "Custom AI integration" },
-        { icon: Target, text: "Machine learning solutions" },
-        { icon: Sparkles, text: "Natural language processing" },
+        { icon: Target, text: "ROI-focused automation" },
       ],
-      ctaText: "Lihat Layanan AI",
+      ctaText: "Audit Gratis",
     },
     {
       title: "Digital Ads",
-      subtitle: "Pemasaran Digital & Branding",
+      subtitle: "Konsultasi Strategi + Setup & Management",
       description:
-        "Strategi pemasaran untuk meningkatkan brand awareness & menghasilkan qualified leads",
+        "Strategi iklan digital yang terukur untuk UMKM. Dari planning, execution, hingga optimization.",
       icon: <Megaphone size={20} />,
       color: "orange",
-      technologies: ["Google Ads", "Meta Ads", "Analytics"],
+      technologies: ["Google Ads", "Meta Ads", "TikTok Ads"],
       features: [
-        { icon: Target, text: "Targeted ad campaigns" },
-        { icon: TrendingUp, text: "Brand awareness strategy" },
-        { icon: Users, text: "Social media management" },
-        { icon: Sparkles, text: "Creative content development" },
-        { icon: Share2, text: "Multi-platform campaigns" },
+        { icon: Target, text: "Campaign strategy consulting" },
+        { icon: TrendingUp, text: "ROI analysis & optimization" },
+        { icon: BarChart3, text: "Budget optimization" },
+        { icon: Users, text: "Audience targeting strategy" },
+        { icon: Sparkles, text: "Creative & copywriting support" },
       ],
-      ctaText: "Lihat Digital Ads",
+      ctaText: "Konsultasi Strategi",
     },
     {
       title: "E-Commerce",
-      subtitle: "Toko Online & Marketplace",
+      subtitle: "Online Store Development",
       description:
-        "Pasarkan produk kamu secara independen agar membangun kepercayaan konsumen",
+        "Platform toko online lengkap untuk UMKM. Dari konsultasi, development, hingga integrasi payment.",
       icon: <ShoppingCart size={20} />,
       color: "green",
       technologies: ["Shopify", "WooCommerce", "Custom"],
       features: [
-        { icon: Package, text: "Product management system" },
-        { icon: CreditCard, text: "Payment gateway integration" },
-        { icon: TrendingUp, text: "Sales analytics & reporting" },
-        { icon: Users, text: "Customer management" },
-        { icon: Rocket, text: "Mobile-optimized checkout" },
+        { icon: LayoutDashboard, text: "Custom storefront design" },
+        { icon: Rocket, text: "Payment gateway integration" },
+        { icon: BarChart3, text: "Inventory management" },
+        { icon: Users, text: "Customer management system" },
+        { icon: Sparkles, text: "Marketing tools integration" },
       ],
-      ctaText: "Lihat E-Commerce",
+      ctaText: "Buat Toko Online",
     },
   ];
 
@@ -362,7 +343,7 @@ const ServicesSection: React.FC = () => {
     >
       <div className="container mx-auto max-w-7xl px-4">
         {/* Service Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {services.map((service, index) => (
             <ServiceCard key={index} {...service} />
           ))}

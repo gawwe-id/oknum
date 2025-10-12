@@ -2,7 +2,14 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Zap, Shield, Users, Clock, Lightbulb, Globe } from "lucide-react";
+import {
+  Target,
+  Handshake,
+  Store,
+  TrendingUp,
+  Code2,
+  BarChart3,
+} from "lucide-react";
 import Link from "next/link";
 
 // Animation variants
@@ -85,59 +92,57 @@ const Features: React.FC = () => {
         {/* Heading */}
         <motion.div className="text-center mb-16" variants={headingVariants}>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
-            Kami membuat produk digital{" "}
+            Kenapa Pilih{" "}
             <span className="relative inline-block">
               <span className="absolute inset-0 transform -skew-x-6 bg-emerald-700 -z-10 rounded-sm" />
-              <span className="relative z-0 text-white px-2">
-                yang terbaik!
-              </span>
+              <span className="relative z-0 text-white px-2">Oknum?</span>
             </span>
           </h2>
           <p className="text-gray-400 max-w-3xl mx-auto">
-            Oknum hadir dengan keunggulan yang akan membuat brand Kamu lebih
-            bersinar di dunia digital.
+            Partner konsultasi & development yang fokus pada pertumbuhan bisnis
+            UMKM Kamu dengan pendekatan yang terukur dan terpercaya.
           </p>
         </motion.div>
 
         {/* First Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
           <FeatureCard
-            title="Performa Optimal"
-            description="Website dan aplikasi yang cepat, responsif, dan optimal di semua perangkat untuk pengalaman pengguna terbaik."
-            icon={<Zap size={24} />}
+            title="Strategic Consulting"
+            description="Konsultasi strategis untuk pertumbuhan bisnis yang terukur. Kami bantu identifikasi peluang dan solusi terbaik untuk UMKM Kamu."
+            icon={<Target size={24} />}
           />
 
           <FeatureCard
-            title="Keamanan Terjamin"
-            description="Implementasi standar keamanan terkini untuk melindungi data dan privasi pengguna dari berbagai ancaman."
-            icon={<Shield size={24} />}
+            title="End-to-End Partnership"
+            description="Partner dari konsultasi hingga implementasi & maintenance. Tidak cuma ngerjakan, tapi guide Kamu di setiap step."
+            icon={<Handshake size={24} />}
           />
 
           <FeatureCard
-            title="Berpusat Pada Pengguna"
-            description="Desain intuitif yang memudahkan pengguna, meningkatkan engagement, dan mengoptimalkan konversi."
-            icon={<Users size={24} />}
+            title="UMKM Focused"
+            description="Paket dan solusi yang dirancang khusus untuk UMKM Indonesia. Harga transparan, tanpa hidden cost, project-based."
+            icon={<Store size={24} />}
           />
         </div>
 
         {/* Second Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <FeatureCard
-            title="Support Responsif"
-            description="Tim dukungan yang siap membantu Kamu kapan saja dengan solusi cepat untuk setiap masalah."
-            icon={<Clock size={24} />}
+            title="Flexible & Scalable"
+            description="Solusi yang grow bersama bisnis Kamu tanpa biaya bulanan. Bayar per project, scale kapan siap."
+            icon={<TrendingUp size={24} />}
           />
 
           <FeatureCard
-            title="Solusi Inovatif"
-            description="Teknologi terkini dan pendekatan kreatif untuk membuat produk digital yang unik dan memukau."
-            icon={<Lightbulb size={24} />}
+            title="Tech Expertise"
+            description="Tim expert di web, mobile, AI, dan digital marketing. Teknologi modern dengan best practices industry."
+            icon={<Code2 size={24} />}
           />
 
           <FeatureCard
-            title="Jangkauan Global"
-            description="Membantu produk Kamu mencapai pasar internasional dengan dukungan multi bahasa dan SEO yang kuat."
-            icon={<Globe size={24} />}
+            title="Business Growth Mindset"
+            description="Fokus pada ROI dan pertumbuhan bisnis yang nyata. Setiap solusi dirancang untuk impact yang terukur."
+            icon={<BarChart3 size={24} />}
           />
         </div>
 
@@ -149,7 +154,7 @@ const Features: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              Mulai Kerjasama Sekarang →
+              Konsultasi Gratis Sekarang →
             </motion.button>
           </Link>
         </motion.div>

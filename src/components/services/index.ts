@@ -1,0 +1,10 @@
+export { HeroService } from "./hero-service";
+export { WebMobileSection } from "./web-mobile";
+export { AIAutomationsSection } from "./ai-automations";
+export { DigitalAdsSection } from "./ads";
+export { EcommerceSection } from "./ecommerce";
+export { CTASection } from "./cta-section";
+export { FloatingNav } from "./floating-nav";
+export { ServiceCard } from "./service-card";
+export { ContentSection } from "./content-section";
+export * from "./types";

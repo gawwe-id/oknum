@@ -49,15 +49,15 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Kami adalah <span className={`text-teal-600 font-bold`}>Oknum</span>
-            , creator produk digital berkualitas dengan{" "}
+            <span className={`text-teal-600 font-bold`}>Oknum</span> adalah{" "}
             <span className="relative inline-block">
               <span className="absolute inset-0 transform -skew-x-6 bg-teal-600 -z-10" />
               <span className="relative z-0 text-white px-1">
-                design yang intuitive
+                konsultan & development partner
               </span>
             </span>{" "}
-            dan performa optimal.
+            untuk UMKM Indonesia. Dari konsultasi strategi hingga implementasi
+            teknologi, kami bantu bisnis Kamu tumbuh dan berkembang.
           </motion.p>
 
           <motion.div

@@ -12,13 +12,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { 
-  Globe, 
-  Smartphone, 
-  Bot, 
-  Megaphone, 
-  ShoppingCart 
-} from "lucide-react";
+import { Globe, Bot, Megaphone, TrendingUp } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -54,11 +48,11 @@ const Navbar = () => {
                         href="/"
                       >
                         <div className="mb-2 mt-4 text-lg font-medium">
-                          Our Services
+                          Layanan Konsultasi
                         </div>
                         <p className="text-sm leading-tight text-muted-foreground">
-                          Professional digital solutions tailored for your
-                          business needs.
+                          Solusi konsultasi & development untuk pertumbuhan UMKM
+                          Kamu.
                         </p>
                       </Link>
                     </NavigationMenuLink>
@@ -67,32 +61,15 @@ const Navbar = () => {
                     <NavigationMenuLink asChild>
                       <Link
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        href="/web"
+                        href="/web-mobile"
                       >
                         <div className="flex items-center gap-2 text-sm font-medium leading-none">
                           <Globe className="h-4 w-4" />
-                          Website
+                          Web & Mobile Apps
                         </div>
                         <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
-                          Pembuatan website dan aplikasi web custom dengan
-                          teknologi modern untuk kebutuhan bisnis Anda
-                        </p>
-                      </Link>
-                    </NavigationMenuLink>
-                  </li>
-                  <li>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        href="/mobile"
-                      >
-                        <div className="flex items-center gap-2 text-sm font-medium leading-none">
-                          <Smartphone className="h-4 w-4" />
-                          Mobile App
-                        </div>
-                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                          Pengembangan aplikasi mobile cross-platform untuk iOS
-                          dan Android yang responsif dan user-friendly
+                          Konsultasi & development website dan mobile app dari
+                          perencanaan hingga deployment
                         </p>
                       </Link>
                     </NavigationMenuLink>
@@ -105,12 +82,11 @@ const Navbar = () => {
                       >
                         <div className="flex items-center gap-2 text-sm font-medium leading-none">
                           <Bot className="h-4 w-4" />
-                          AI, Chatbot & Automation System
+                          AI & Automation
                         </div>
                         <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
-                          Solusi AI pintar, chatbot otomatis, dan sistem
-                          automasi workflow untuk meningkatkan efisiensi
-                          operasional bisnis
+                          Audit proses bisnis & implementasi AI untuk efisiensi
+                          operasional UMKM
                         </p>
                       </Link>
                     </NavigationMenuLink>
@@ -123,11 +99,11 @@ const Navbar = () => {
                       >
                         <div className="flex items-center gap-2 text-sm font-medium leading-none">
                           <Megaphone className="h-4 w-4" />
-                          Digital Advertising & Brand Awareness
+                          Digital Ads
                         </div>
                         <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
-                          Strategi iklan & konten Sosmed untuk membangun
-                          awareness dan memicu traffic qualified.
+                          Konsultasi strategi iklan digital, setup & management
+                          untuk ROI maksimal
                         </p>
                       </Link>
                     </NavigationMenuLink>
@@ -136,15 +112,15 @@ const Navbar = () => {
                     <NavigationMenuLink asChild>
                       <Link
                         className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        href="/e-commerce"
+                        href="/umkm-growth"
                       >
                         <div className="flex items-center gap-2 text-sm font-medium leading-none">
-                          <ShoppingCart className="h-4 w-4" />
-                          E-Commerce
+                          <TrendingUp className="h-4 w-4" />
+                          UMKM Growth
                         </div>
                         <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">
-                          Pengelolaan toko online (web + marketplace) end-to-end
-                          untuk meningkatkan sales.
+                          Konsultasi pertumbuhan bisnis UMKM dari digitalisasi
+                          hingga scaling
                         </p>
                       </Link>
                     </NavigationMenuLink>
@@ -223,7 +199,9 @@ const Navbar = () => {
 
         <div className="flex items-center">
           <Link href="/contact">
-            <Button className="text-sm font-medium">Contact Us</Button>
+            <Button className="text-sm font-medium bg-white border border-teal-700 hover:bg-teal-100 text-teal-700">
+              Contact Us
+            </Button>
           </Link>
         </div>
       </div>

@@ -85,68 +85,66 @@ interface PricingPlan {
 const pricingPlans: PricingPlan[] = [
   {
     id: 1,
-    name: "Oknum Jelata",
-    price: "Rp500.000",
-    description: "Cocok untuk personal website atau portofolio sederhana",
+    name: "Starter Package",
+    price: "Rp1.500.000",
+    description: "Mulai perjalanan digital UMKM Kamu dengan paket ini",
     features: [
-      "Landing Page 1 Halaman",
-      "1 Bahasa (Indonesia)",
-      "Responsive Design",
-      "Basic SEO Setup",
-      "2 minggu Maintenance",
+      "1x Konsultasi bisnis & digital assessment",
+      "Landing page sederhana & responsif",
+      "Basic SEO setup",
+      "Digital presence setup (Google Business)",
+      "2 minggu support & maintenance",
     ],
     icon: <Star className="h-8 w-8 text-yellow-400" />,
     duration: "1-2 minggu",
   },
   {
     id: 2,
-    name: "Oknum Sipil",
-    price: "Rp3.000.000",
-    description: "Ideal untuk small business dan company profile",
+    name: "Growth Package",
+    price: "Rp4.500.000",
+    description: "Paket terpopuler untuk UMKM yang siap scale up",
     features: [
-      "Company Profile",
-      "Multiple Pages (max: 5)",
-      "2 Bahasa (Indonesia & English/Chinese/etc)",
-      "Contact Form",
-      "Google Maps Integration",
-      "1 bulan Maintenance",
+      "3x Konsultasi strategy session",
+      "Company profile website/simple app",
+      "Digital ads setup (Google/Meta)",
+      "Content strategy & copywriting",
+      "1 bulan consulting support",
+      "Analytics & reporting dashboard",
     ],
     icon: <Shield className="h-8 w-8 text-sky-700" />,
     highlight: true,
     popular: true,
-    duration: "2-4 minggu",
+    duration: "3-4 minggu",
   },
   {
     id: 3,
-    name: "Oknum Aparat",
-    price: "Rp5.250.000",
-    description:
-      "Solusi lengkap untuk bisnis menengah dengan kebutuhan e-commerce",
+    name: "Scale Package",
+    price: "Rp8.500.000",
+    description: "Solusi lengkap untuk UMKM menengah yang ingin bertumbuh",
     features: [
-      "Multi Bahasa (sesuai permintaan)",
-      "Blog / E-Commerce",
-      "Payment Gateway",
-      "Analytics Dashboard",
-      "Social Media Integration",
-      "3 bulan Maintenance",
+      "Comprehensive business audit",
+      "Custom web/mobile app development",
+      "AI/Automation implementation",
+      "Digital marketing strategy & execution",
+      "3 bulan consulting support",
+      "Monthly growth review sessions",
     ],
     icon: <Crown className="h-8 w-8 text-purple-500" />,
-    duration: "1-2 bulan",
+    duration: "1.5-2 bulan",
   },
   {
     id: 4,
-    name: "Oknum Menteri",
-    price: "Rp9.888.000",
-    description: "Paket komprehensif untuk enterprise dan aplikasi kompleks",
+    name: "Enterprise Package",
+    price: "Rp15.000.000",
+    description: "Transformasi digital penuh untuk SME & enterprise",
     features: [
-      "Mobile Apps (Android & iOS)",
-      "SPA (Single Page Application)",
-      "Database",
-      "Admin Dashboard",
-      "API Integration",
-      "Custom Features Development",
-      "Priority Support",
-      "6 bulan Maintenance",
+      "Full digital transformation consulting",
+      "Complex app/platform development",
+      "Complete automation suite",
+      "Dedicated consulting team",
+      "6 bulan+ consulting & support",
+      "Priority support & custom features",
+      "Quarterly business review",
     ],
     icon: <Cpu className="h-8 w-8 text-red-500" />,
     duration: "3+ bulan",
@@ -297,11 +295,12 @@ const Pricing: React.FC = () => {
             Pricing Plan
           </motion.span>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Pilih Paket Yang Sesuai Kebutuhan
+            Investasi Terbaik untuk Pertumbuhan UMKM
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Kami menawarkan berbagai paket layanan pengembangan website dan
-            aplikasi yang dapat disesuaikan dengan kebutuhan dan anggaran Kamu.
+            Paket konsultasi & development yang dirancang khusus untuk UMKM
+            Indonesia. Semua paket include konsultasi strategy session.
+            Project-based, tanpa biaya bulanan.
           </p>
         </motion.div>
 
@@ -321,11 +320,12 @@ const Pricing: React.FC = () => {
           viewport={{ once: true }}
         >
           <h3 className="text-xl md:text-2xl font-bold text-sky-800 mb-4">
-            Butuh Solusi Custom?
+            Butuh Konsultasi Khusus?
           </h3>
           <p className="text-sky-700 opacity-80 mb-6 max-w-3xl mx-auto">
-            Jika kebutuhan Kamu tidak tercakup dalam paket di atas, kami siap
-            menyediakan solusi khusus yang dirancang spesifik untuk bisnis Kamu.
+            Setiap bisnis punya kebutuhan unik. Kami siap merancang paket custom
+            yang sesuai dengan goals dan budget UMKM Kamu. Konsultasi pertama
+            gratis!
           </p>
           <Link href={"/contact"}>
             <motion.button
