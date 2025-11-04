@@ -1,8 +1,6 @@
 // app/page.tsx
 import { Metadata } from "next";
 
-import { lexend } from "./fonts";
-
 import Hero from "@/components/vuehero";
 import Navbar from "@/components/navbar";
 import Services from "@/components/services";
@@ -31,7 +29,7 @@ export const metadata: Metadata = constructMetadata({
 
 export default function Home() {
   return (
-    <main className={`min-h-screen ${lexend.className}`}>
+    <main className="min-h-screen">
       <JsonLd data={organizationJsonLd} />
       <JsonLd data={websiteJsonLd} />
       <Navbar />

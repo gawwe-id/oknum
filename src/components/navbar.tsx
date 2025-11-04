@@ -12,7 +12,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { Globe, Bot, Megaphone, TrendingUp } from "lucide-react";
+import { Globe, Bot, Megaphone, TrendingUp, LogIn } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -198,9 +198,10 @@ const Navbar = () => {
         </NavigationMenu>
 
         <div className="flex items-center">
-          <Link href="/contact">
+          <Link href="/login">
             <Button className="text-sm font-medium bg-white border border-teal-700 hover:bg-teal-100 text-teal-700">
-              Contact Us
+              <LogIn className="h-4 w-4 mr-2" />
+              Masuk
             </Button>
           </Link>
         </div>

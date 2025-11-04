@@ -26,7 +26,11 @@ export const createUser = mutation({
     email: v.string(),
     name: v.string(),
     phone: v.optional(v.string()),
-    role: v.union(v.literal("student"), v.literal("expert"), v.literal("admin")),
+    role: v.union(
+      v.literal("student"),
+      v.literal("expert"),
+      v.literal("admin")
+    ),
     avatar: v.optional(v.string()),
     emailVerified: v.boolean(),
   },
@@ -42,6 +46,45 @@ export const createUser = mutation({
       createdAt: now,
       updatedAt: now,
     });
+  },
+});
+
+// Update user role and phone after Better Auth signup
+export const updateUserAfterSignup = mutation({
+  args: {
+    email: v.string(),
+    phone: v.optional(v.string()),
+    role: v.optional(
+      v.union(v.literal("student"), v.literal("expert"), v.literal("admin"))
+    ),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const updateData: any = {
+      updatedAt: Date.now(),
+    };
+
+    // Set role to student by default if not set
+    if (args.role !== undefined) {
+      updateData.role = args.role;
+    } else if (!user.role) {
+      updateData.role = "student";
+    }
+
+    if (args.phone !== undefined) {
+      updateData.phone = args.phone;
+    }
+
+    await ctx.db.patch(user._id, updateData);
+    return await ctx.db.get(user._id);
   },
 });
 
@@ -69,11 +112,11 @@ export const updateUser = mutation({
     if (updates.name !== undefined) updateData.name = updates.name;
     if (updates.phone !== undefined) updateData.phone = updates.phone;
     if (updates.avatar !== undefined) updateData.avatar = updates.avatar;
-    if (updates.emailVerified !== undefined) updateData.emailVerified = updates.emailVerified;
+    if (updates.emailVerified !== undefined)
+      updateData.emailVerified = updates.emailVerified;
     if (updates.expertId !== undefined) updateData.expertId = updates.expertId;
 
     await ctx.db.patch(userId, updateData);
     return await ctx.db.get(userId);
   },
 });
-
