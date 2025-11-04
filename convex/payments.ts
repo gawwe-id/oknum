@@ -99,10 +99,13 @@ export const updatePaymentStatus = mutation({
     if (updates.status !== undefined) updateData.status = updates.status;
     if (updates.gatewayTransactionId !== undefined)
       updateData.gatewayTransactionId = updates.gatewayTransactionId;
-    if (updates.duitkuReference !== undefined) updateData.duitkuReference = updates.duitkuReference;
-    if (updates.paymentUrl !== undefined) updateData.paymentUrl = updates.paymentUrl;
+    if (updates.duitkuReference !== undefined)
+      updateData.duitkuReference = updates.duitkuReference;
+    if (updates.paymentUrl !== undefined)
+      updateData.paymentUrl = updates.paymentUrl;
     if (updates.paidAt !== undefined) updateData.paidAt = updates.paidAt;
-    if (updates.failureReason !== undefined) updateData.failureReason = updates.failureReason;
+    if (updates.failureReason !== undefined)
+      updateData.failureReason = updates.failureReason;
     if (updates.metadata !== undefined) updateData.metadata = updates.metadata;
 
     await ctx.db.patch(paymentId, updateData);
@@ -130,161 +133,161 @@ export const updatePaymentStatus = mutation({
 });
 
 // Initiate Duitku payment (action - can make HTTP calls)
-export const initiateDuitkuPayment = action({
-  args: {
-    paymentId: v.id("payments"),
-    customerName: v.string(),
-    customerEmail: v.string(),
-    customerPhone: v.optional(v.string()),
-    returnUrl: v.string(),
-    callbackUrl: v.string(),
-  },
-  handler: async (ctx, args) => {
-    // Get payment and booking details
-    const payment = await ctx.runQuery(internal.payments.getPaymentByIdInternal, {
-      paymentId: args.paymentId,
-    });
+// export const initiateDuitkuPayment = action({
+//   args: {
+//     paymentId: v.id("payments"),
+//     customerName: v.string(),
+//     customerEmail: v.string(),
+//     customerPhone: v.optional(v.string()),
+//     returnUrl: v.string(),
+//     callbackUrl: v.string(),
+//   },
+//   handler: async (ctx, args) => {
+//     // Get payment and booking details
+//     const payment = await ctx.runQuery(internal.payments.getPaymentByIdInternal, {
+//       paymentId: args.paymentId,
+//     });
 
-    if (!payment) {
-      throw new Error("Payment not found");
-    }
+//     if (!payment) {
+//       throw new Error("Payment not found");
+//     }
 
-    const booking = await ctx.runQuery(internal.bookings.getBookingByIdInternal, {
-      bookingId: payment.bookingId,
-    });
+//     const booking = await ctx.runQuery(internal.bookings.getBookingByIdInternal, {
+//       bookingId: payment.bookingId,
+//     });
 
-    if (!booking) {
-      throw new Error("Booking not found");
-    }
+//     if (!booking) {
+//       throw new Error("Booking not found");
+//     }
 
-    // Get Duitku API credentials from environment
-    const merchantCode = process.env.DUITKU_MERCHANT_CODE;
-    const apiKey = process.env.DUITKU_API_KEY;
-    const baseUrl = process.env.DUITKU_BASE_URL || "https://api.duitku.com";
+//     // Get Duitku API credentials from environment
+//     const merchantCode = process.env.DUITKU_MERCHANT_CODE;
+//     const apiKey = process.env.DUITKU_API_KEY;
+//     const baseUrl = process.env.DUITKU_BASE_URL || "https://api.duitku.com";
 
-    if (!merchantCode || !apiKey) {
-      throw new Error("Duitku credentials not configured");
-    }
+//     if (!merchantCode || !apiKey) {
+//       throw new Error("Duitku credentials not configured");
+//     }
 
-    // Prepare Duitku payment request
-    const paymentRequest = {
-      merchantCode,
-      paymentAmount: payment.amount,
-      merchantOrderId: payment._id,
-      productDetails: `Booking for ${booking.classItem?.title || "Class"}`,
-      customerVaName: args.customerName,
-      customerEmail: args.customerEmail,
-      customerPhone: args.customerPhone || "",
-      callbackUrl: args.callbackUrl,
-      returnUrl: args.returnUrl,
-      paymentMethod: payment.paymentMethod,
-      signature: "", // Will be calculated below
-    };
+//     // Prepare Duitku payment request
+//     const paymentRequest = {
+//       merchantCode,
+//       paymentAmount: payment.amount,
+//       merchantOrderId: payment._id,
+//       productDetails: `Booking for ${booking.classItem?.title || "Class"}`,
+//       customerVaName: args.customerName,
+//       customerEmail: args.customerEmail,
+//       customerPhone: args.customerPhone || "",
+//       callbackUrl: args.callbackUrl,
+//       returnUrl: args.returnUrl,
+//       paymentMethod: payment.paymentMethod,
+//       signature: "", // Will be calculated below
+//     };
 
-    // Calculate signature (MD5 hash)
-    // In Convex actions, we can use Node.js crypto module
-    const crypto = require("crypto");
-    const signatureString = `${merchantCode}${paymentRequest.merchantOrderId}${payment.amount}${apiKey}`;
-    const signatureHex = crypto.createHash("md5").update(signatureString).digest("hex");
-    paymentRequest.signature = signatureHex;
+//     // Calculate signature (MD5 hash)
+//     // In Convex actions, we can use Node.js crypto module
+//     const crypto = require("crypto");
+//     const signatureString = `${merchantCode}${paymentRequest.merchantOrderId}${payment.amount}${apiKey}`;
+//     const signatureHex = crypto.createHash("md5").update(signatureString).digest("hex");
+//     paymentRequest.signature = signatureHex;
 
-    // Make request to Duitku API
-    const response = await fetch(`${baseUrl}/api/merchant/v2/inquiry`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(paymentRequest),
-    });
+//     // Make request to Duitku API
+//     const response = await fetch(`${baseUrl}/api/merchant/v2/inquiry`, {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(paymentRequest),
+//     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Duitku API error: ${errorText}`);
-    }
+//     if (!response.ok) {
+//       const errorText = await response.text();
+//       throw new Error(`Duitku API error: ${errorText}`);
+//     }
 
-    const result = await response.json();
+//     const result = await response.json();
 
-    // Update payment with Duitku response
-    await ctx.runMutation(internal.payments.updatePaymentStatus, {
-      paymentId: args.paymentId,
-      status: result.statusCode === "00" ? "processing" : "failed",
-      gatewayTransactionId: result.reference,
-      duitkuReference: result.reference,
-      paymentUrl: result.paymentUrl,
-      metadata: result,
-    });
+//     // Update payment with Duitku response
+//     await ctx.runMutation(internal.payments.updatePaymentStatus, {
+//       paymentId: args.paymentId,
+//       status: result.statusCode === "00" ? "processing" : "failed",
+//       gatewayTransactionId: result.reference,
+//       duitkuReference: result.reference,
+//       paymentUrl: result.paymentUrl,
+//       metadata: result,
+//     });
 
-    return {
-      paymentUrl: result.paymentUrl,
-      reference: result.reference,
-      status: result.statusCode === "00" ? "processing" : "failed",
-    };
-  },
-});
+//     return {
+//       paymentUrl: result.paymentUrl,
+//       reference: result.reference,
+//       status: result.statusCode === "00" ? "processing" : "failed",
+//     };
+//   },
+// });
 
 // Process Duitku webhook (action - can make HTTP calls)
-export const processDuitkuWebhook = action({
-  args: {
-    merchantCode: v.string(),
-    merchantOrderId: v.string(),
-    reference: v.string(),
-    amount: v.number(),
-    statusCode: v.string(),
-    statusMessage: v.string(),
-    signature: v.string(),
-  },
-  handler: async (ctx, args) => {
-    // Verify signature
-    const apiKey = process.env.DUITKU_API_KEY;
-    if (!apiKey) {
-      throw new Error("Duitku API key not configured");
-    }
+// export const processDuitkuWebhook = action({
+//   args: {
+//     merchantCode: v.string(),
+//     merchantOrderId: v.string(),
+//     reference: v.string(),
+//     amount: v.number(),
+//     statusCode: v.string(),
+//     statusMessage: v.string(),
+//     signature: v.string(),
+//   },
+//   handler: async (ctx, args) => {
+//     // Verify signature
+//     const apiKey = process.env.DUITKU_API_KEY;
+//     if (!apiKey) {
+//       throw new Error("Duitku API key not configured");
+//     }
 
-    const crypto = require("crypto");
-    const signatureString = `${args.merchantCode}${args.merchantOrderId}${args.amount}${apiKey}`;
-    const expectedSignatureHex = crypto.createHash("md5").update(signatureString).digest("hex");
+//     const crypto = require("crypto");
+//     const signatureString = `${args.merchantCode}${args.merchantOrderId}${args.amount}${apiKey}`;
+//     const expectedSignatureHex = crypto.createHash("md5").update(signatureString).digest("hex");
 
-    if (args.signature !== expectedSignatureHex) {
-      throw new Error("Invalid signature");
-    }
+//     if (args.signature !== expectedSignatureHex) {
+//       throw new Error("Invalid signature");
+//     }
 
-    // Get payment by ID (merchantOrderId is paymentId)
-    const paymentId = args.merchantOrderId as any;
-    const payment = await ctx.runQuery(internal.payments.getPaymentById, {
-      paymentId,
-    });
+//     // Get payment by ID (merchantOrderId is paymentId)
+//     const paymentId = args.merchantOrderId as any;
+//     const payment = await ctx.runQuery(internal.payments.getPaymentById, {
+//       paymentId,
+//     });
 
-    if (!payment) {
-      throw new Error("Payment not found");
-    }
+//     if (!payment) {
+//       throw new Error("Payment not found");
+//     }
 
-    // Update payment status based on Duitku response
-    let paymentStatus: "pending" | "processing" | "success" | "failed" | "expired" = "pending";
-    if (args.statusCode === "00") {
-      paymentStatus = "success";
-    } else if (args.statusCode === "01") {
-      paymentStatus = "processing";
-    } else {
-      paymentStatus = "failed";
-    }
+//     // Update payment status based on Duitku response
+//     let paymentStatus: "pending" | "processing" | "success" | "failed" | "expired" = "pending";
+//     if (args.statusCode === "00") {
+//       paymentStatus = "success";
+//     } else if (args.statusCode === "01") {
+//       paymentStatus = "processing";
+//     } else {
+//       paymentStatus = "failed";
+//     }
 
-    await ctx.runMutation(internal.payments.updatePaymentStatus, {
-      paymentId,
-      status: paymentStatus,
-      gatewayTransactionId: args.reference,
-      duitkuReference: args.reference,
-      paidAt: paymentStatus === "success" ? Date.now() : undefined,
-      failureReason: paymentStatus === "failed" ? args.statusMessage : undefined,
-      metadata: {
-        statusCode: args.statusCode,
-        statusMessage: args.statusMessage,
-        webhookReceivedAt: Date.now(),
-      },
-    });
+//     await ctx.runMutation(internal.payments.updatePaymentStatus, {
+//       paymentId,
+//       status: paymentStatus,
+//       gatewayTransactionId: args.reference,
+//       duitkuReference: args.reference,
+//       paidAt: paymentStatus === "success" ? Date.now() : undefined,
+//       failureReason: paymentStatus === "failed" ? args.statusMessage : undefined,
+//       metadata: {
+//         statusCode: args.statusCode,
+//         statusMessage: args.statusMessage,
+//         webhookReceivedAt: Date.now(),
+//       },
+//     });
 
-    return { success: true };
-  },
-});
+//     return { success: true };
+//   },
+// });
 
 // Internal query for getting payment by ID (used in actions)
 export const getPaymentByIdInternal = query({
@@ -293,4 +296,3 @@ export const getPaymentByIdInternal = query({
     return await ctx.db.get(args.paymentId);
   },
 });
-
