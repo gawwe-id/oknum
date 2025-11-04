@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { constructMetadata } from "@/lib/seo";
+import { ConvexClientProvider } from "@/lib/convex-provider";
 
 export const metadata: Metadata = constructMetadata({
   title: "Oknum Studio | Tersangka Utama Kejayaan Brand Kamu",
@@ -79,7 +80,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <ConvexClientProvider>{children}</ConvexClientProvider>
+      </body>
     </html>
   );
 }
