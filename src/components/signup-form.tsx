@@ -8,7 +8,10 @@ export function SignupForm({
   ...props
 }: React.ComponentProps<"div">) {
   return (
-    <div className={cn("flex flex-col items-center justify-center", className)} {...props}>
+    <div
+      className={cn("flex flex-col items-center justify-center", className)}
+      {...props}
+    >
       <SignUp
         appearance={{
           elements: {
@@ -19,7 +22,7 @@ export function SignupForm({
         routing="path"
         path="/signup"
         signInUrl="/login"
-        afterSignUpUrl="/"
+        afterSignUpUrl="/overview"
       />
     </div>
   );

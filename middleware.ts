@@ -1,8 +1,43 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-export default clerkMiddleware({
-  // Clerk middleware automatically handles auth routes, but we can be explicit
-  publicRoutes: ["/signup(.*)", "/login(.*)"],
+const isProtectedRoute = createRouteMatcher([
+  "/overview",
+  "/settings",
+  "/classes",
+  "/classes/:id",
+  "/room",
+  "/room/:id",
+  "/consultant",
+  "/consultant/:id",
+  "/payment-invoices",
+  "/contact-us",
+]);
+
+const isAuthRoute = createRouteMatcher(["/login", "/signup"]);
+
+export default clerkMiddleware(async (auth, req) => {
+  const { userId } = await auth();
+
+  // If user is authenticated and trying to access login/signup, redirect to overview
+  if (userId) {
+    if (
+      req.nextUrl.pathname.startsWith("/login") ||
+      req.nextUrl.pathname.startsWith("/signup")
+    ) {
+      return NextResponse.redirect(new URL("/overview", req.url));
+    }
+  }
+
+  if (isProtectedRoute(req)) {
+    await auth.protect();
+  }
+
+  if (isAuthRoute(req)) {
+    return NextResponse.next();
+  }
+
+  return NextResponse.next();
 });
 
 export const config = {
