@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 const adminMenuItems: MenuItem[] = [
-  { href: "/admin/overview", label: "Overview", icon: LayoutDashboard },
+  { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/settings", label: "Settings", icon: Settings },
   { type: "separator" },
   { href: "/admin/classes", label: "Classes", icon: GraduationCap },

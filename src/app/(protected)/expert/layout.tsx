@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 const expertMenuItems: MenuItem[] = [
-  { href: "/expert/overview", label: "Overview", icon: LayoutDashboard },
+  { href: "/expert", label: "Overview", icon: LayoutDashboard },
   { href: "/expert/settings", label: "Settings", icon: Settings },
   { type: "separator" },
   { href: "/expert/classes", label: "Classes", icon: GraduationCap },

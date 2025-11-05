@@ -1,79 +1,28 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-// Student routes - no prefix
-const studentRoutes = createRouteMatcher([
-  "/overview",
-  "/settings",
-  "/classes",
-  "/room",
-  "/consultant",
-  "/payment-invoices",
-  "/contact-us",
-]);
-
-// Expert routes - /expert/* prefix
-const expertRoutes = createRouteMatcher(["/expert(.*)"]);
-
-// Admin routes - /admin/* prefix
-const adminRoutes = createRouteMatcher(["/admin(.*)"]);
-
-// All protected routes (student, expert, admin)
-const protectedRoutes = createRouteMatcher([
-  "/overview",
-  "/settings",
-  "/classes",
-  "/room",
-  "/consultant",
-  "/payment-invoices",
-  "/contact-us",
-  "/expert(.*)",
-  "/admin(.*)",
-]);
-
 const isAuthRoute = createRouteMatcher(["/login", "/signup"]);
-
-// Helper function to get user role from Convex
-async function getUserRole(
-  userId: string
-): Promise<"student" | "expert" | "admin"> {
-  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!convexUrl) {
-    console.error("NEXT_PUBLIC_CONVEX_URL is not set");
-    return "student"; // Default to student
-  }
-
-  try {
-    const response = await fetch(
-      `${convexUrl}/get-user-role?userId=${encodeURIComponent(userId)}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      console.error("Failed to fetch user role:", response.status);
-      return "student"; // Default to student
-    }
-
-    const data = await response.json();
-    return (data.role || "student") as "student" | "expert" | "admin";
-  } catch (error) {
-    console.error("Error fetching user role:", error);
-    return "student"; // Default to student
-  }
-}
+const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+const isExpertRoute = createRouteMatcher(["/expert(.*)"]);
+const isStudentRoute = createRouteMatcher([
+  "/overview",
+  "/settings",
+  "/classes",
+  "/room",
+  "/consultant",
+  "/payment-invoices",
+  "/contact-us",
+]);
 
 // Helper function to get default route for a role
-function getDefaultRouteForRole(role: "student" | "expert" | "admin"): string {
+function getDefaultRouteForRole(
+  role: "student" | "expert" | "admin" | null
+): string {
   switch (role) {
-    case "expert":
-      return "/expert/overview";
     case "admin":
-      return "/admin/overview";
+      return "/admin";
+    case "expert":
+      return "/expert";
     case "student":
     default:
       return "/overview";
@@ -82,48 +31,72 @@ function getDefaultRouteForRole(role: "student" | "expert" | "admin"): string {
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
-  const pathname = req.nextUrl.pathname;
+
+  const role = (await auth()).sessionClaims?.metadata?.role;
+
+  // Check user roles
+  const isRoleStudent = role === "student";
+  const isRoleExpert = role === "expert";
+  const isRoleAdmin = role === "admin";
+
+  // Determine user's actual role
+  let userRole: "student" | "expert" | "admin" | null = null;
+  if (isRoleAdmin) userRole = "admin";
+  else if (isRoleExpert) userRole = "expert";
+  else if (isRoleStudent) userRole = "student";
 
   // If user is authenticated and trying to access login/signup, redirect based on role
-  if (userId) {
-    if (pathname.startsWith("/login") || pathname.startsWith("/signup")) {
-      const role = await getUserRole(userId);
-      const defaultRoute = getDefaultRouteForRole(role);
-      return NextResponse.redirect(new URL(defaultRoute, req.url));
-    }
+  if (userId && isAuthRoute(req)) {
+    const defaultRoute = getDefaultRouteForRole(userRole);
+    return NextResponse.redirect(new URL(defaultRoute, req.url));
   }
 
-  // Check if route is protected
-  if (protectedRoutes(req)) {
-    await auth.protect();
-
-    // Only check role-based access if user is authenticated
-    if (userId) {
-      const userRole = await getUserRole(userId);
-
-      // Check if user is accessing routes for their role
-      const isStudentRoute = studentRoutes(req);
-      const isExpertRoute = expertRoutes(req);
-      const isAdminRoute = adminRoutes(req);
-
-      // Redirect if user tries to access routes for other roles
-      if (userRole === "student" && (isExpertRoute || isAdminRoute)) {
-        return NextResponse.redirect(new URL("/overview", req.url));
-      }
-
-      if (userRole === "expert" && (isStudentRoute || isAdminRoute)) {
-        return NextResponse.redirect(new URL("/expert/overview", req.url));
-      }
-
-      if (userRole === "admin" && (isStudentRoute || isExpertRoute)) {
-        return NextResponse.redirect(new URL("/admin/overview", req.url));
-      }
-    }
-  }
-
-  // Allow auth routes to proceed
-  if (isAuthRoute(req)) {
+  // Only check role-based redirects if user is authenticated
+  if (!userId) {
     return NextResponse.next();
+  }
+
+  // Scenario 1: Student accessing admin or expert routes → redirect to /overview
+  if (userRole === "student") {
+    if (isAdminRoute(req) || isExpertRoute(req)) {
+      return NextResponse.redirect(new URL("/overview", req.url));
+    }
+  }
+
+  // Scenario 2: Admin accessing student routes or expert routes → redirect to /admin
+  if (userRole === "admin") {
+    if (isStudentRoute(req) || isExpertRoute(req)) {
+      return NextResponse.redirect(new URL("/admin", req.url));
+    }
+  }
+
+  // Scenario 3: Expert accessing admin routes or student routes → redirect to /expert
+  if (userRole === "expert") {
+    if (isAdminRoute(req) || isStudentRoute(req)) {
+      return NextResponse.redirect(new URL("/expert", req.url));
+    }
+  }
+
+  // Edge case: User without role trying to access protected routes
+  // Redirect to default route based on attempted access
+  if (userRole === null) {
+    if (isAdminRoute(req) || isExpertRoute(req)) {
+      // User tanpa role mencoba akses admin/expert → redirect ke student default
+      return NextResponse.redirect(new URL("/overview", req.url));
+    }
+    // User tanpa role bisa akses student routes (default behavior)
+  }
+
+  // Final protection: Double-check for admin and expert routes
+  // This handles edge cases where role check might fail
+  if (isAdminRoute(req) && !isRoleAdmin) {
+    const defaultRoute = getDefaultRouteForRole(userRole);
+    return NextResponse.redirect(new URL(defaultRoute, req.url));
+  }
+
+  if (isExpertRoute(req) && !isRoleExpert) {
+    const defaultRoute = getDefaultRouteForRole(userRole);
+    return NextResponse.redirect(new URL(defaultRoute, req.url));
   }
 
   return NextResponse.next();

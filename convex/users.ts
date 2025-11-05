@@ -43,6 +43,18 @@ export const getUserByClerkId = query({
   },
 });
 
+// Get user role by Clerk userId (public query for API routes)
+export const getUserRoleByClerkIdPublic = query({
+  args: { clerkUserId: v.string() },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_userId", (q) => q.eq("userId", args.clerkUserId))
+      .first();
+    return user ? user.role : null;
+  },
+});
+
 // Get user by email
 export const getUserByEmail = query({
   args: { email: v.string() },
