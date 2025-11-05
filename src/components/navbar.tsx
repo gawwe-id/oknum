@@ -17,7 +17,7 @@ import { Globe, Bot, Megaphone, TrendingUp, LogIn } from "lucide-react";
 const Navbar = () => {
   return (
     <motion.header
-      className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+      className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60"
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.3 }}

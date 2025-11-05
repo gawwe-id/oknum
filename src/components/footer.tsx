@@ -33,7 +33,7 @@ const itemVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 100,
       damping: 15,
     },
@@ -44,7 +44,7 @@ const linkVariants = {
   hover: {
     x: 5,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 300,
       damping: 10,
     },
@@ -228,7 +228,7 @@ const Footer: React.FC = () => {
                 <input
                   type="email"
                   placeholder="Email Kamu"
-                  className="flex-grow px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-l-md focus:outline-none focus:ring-2 focus:ring-emerald-600"
+                  className="grow px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-l-md focus:outline-none focus:ring-2 focus:ring-emerald-600"
                 />
                 <motion.button
                   className="px-4 py-2 bg-emerald-600 rounded-r-md text-white"
