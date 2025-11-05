@@ -54,6 +54,9 @@ http.route({
         );
       }
 
+      // Default role for new users
+      const defaultRole = "student";
+
       // Create user in Convex with default role "student"
       try {
         await ctx.runMutation(internal.users.createUserFromClerk, {
@@ -63,8 +66,46 @@ http.route({
           phone,
           avatar,
           emailVerified,
-          role: "student", // Default role
+          role: defaultRole, // Default role
         });
+
+        // Update Clerk user metadata with default role
+        // Using Clerk REST API directly since @clerk/nextjs/server doesn't work in Convex
+        const clerkSecretKey = process.env.CLERK_SECRET_KEY;
+        if (clerkSecretKey) {
+          try {
+            const clerkResponse = await fetch(
+              `https://api.clerk.com/v1/users/${userId}/metadata`,
+              {
+                method: "PATCH",
+                headers: {
+                  Authorization: `Bearer ${clerkSecretKey}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  public_metadata: { role: defaultRole },
+                }),
+              }
+            );
+
+            if (!clerkResponse.ok) {
+              const errorText = await clerkResponse.text();
+              console.error(
+                "Failed to update Clerk metadata:",
+                clerkResponse.status,
+                errorText
+              );
+              // Don't fail the webhook if metadata update fails
+              // The user is already created in Convex
+            }
+          } catch (metadataError) {
+            console.error("Error updating Clerk user metadata:", metadataError);
+            // Don't fail the webhook if metadata update fails
+            // The user is already created in Convex
+          }
+        } else {
+          console.warn("CLERK_SECRET_KEY not set, skipping metadata update");
+        }
 
         return new Response(JSON.stringify({ success: true }), {
           status: 200,
