@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useUser, UserButton } from "@clerk/nextjs";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,9 +14,20 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { Globe, Bot, Megaphone, TrendingUp, LogIn } from "lucide-react";
+import {
+  Globe,
+  Bot,
+  Megaphone,
+  TrendingUp,
+  LogIn,
+  LayoutDashboard,
+} from "lucide-react";
 
 const Navbar = () => {
+  const pathname = usePathname();
+  const { isSignedIn } = useUser();
+  const isLoginPage = pathname?.startsWith("/login");
+
   return (
     <motion.header
       className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60"
@@ -197,13 +210,34 @@ const Navbar = () => {
           </NavigationMenuList>
         </NavigationMenu>
 
-        <div className="flex items-center">
-          <Link href="/login">
-            <Button className="text-sm font-medium bg-white border border-teal-700 hover:bg-teal-100 text-teal-700">
-              <LogIn className="h-4 w-4 mr-2" />
-              Masuk
-            </Button>
-          </Link>
+        <div className="flex items-center gap-3">
+          {isSignedIn ? (
+            // Authenticated: Show dashboard button and UserButton
+            <>
+              <Link href="/overview">
+                <Button className="text-sm font-medium bg-white border border-teal-700 hover:bg-teal-100 text-teal-700">
+                  <LayoutDashboard className="h-4 w-4 mr-2" />
+                  Dashboard
+                </Button>
+              </Link>
+              <UserButton />
+            </>
+          ) : isLoginPage ? (
+            // On login page: Show signup button, hide login button
+            <Link href="/signup">
+              <Button className="text-sm font-medium bg-white border border-teal-700 hover:bg-teal-100 text-teal-700">
+                Daftar
+              </Button>
+            </Link>
+          ) : (
+            // Default: Show login button
+            <Link href="/login">
+              <Button className="text-sm font-medium bg-white border border-teal-700 hover:bg-teal-100 text-teal-700">
+                <LogIn className="h-4 w-4 mr-2" />
+                Masuk
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </motion.header>
