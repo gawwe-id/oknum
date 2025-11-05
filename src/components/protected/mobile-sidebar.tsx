@@ -3,14 +3,15 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Sidebar } from "./sidebar";
+import { Sidebar, MenuItem } from "./sidebar";
 
 interface MobileSidebarProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  menuItems: MenuItem[];
 }
 
-export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
+export function MobileSidebar({ open, onOpenChange, menuItems }: MobileSidebarProps) {
   const pathname = usePathname();
 
   // Close sidebar when route changes
@@ -24,7 +25,7 @@ export function MobileSidebar({ open, onOpenChange }: MobileSidebarProps) {
         <SheetHeader className="sr-only">
           <SheetTitle>Navigation</SheetTitle>
         </SheetHeader>
-        <Sidebar className="md:hidden border-0 h-full" />
+        <Sidebar className="md:hidden border-0 h-full" menuItems={menuItems} />
       </SheetContent>
     </Sheet>
   );

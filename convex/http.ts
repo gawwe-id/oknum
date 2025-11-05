@@ -90,4 +90,43 @@ http.route({
   }),
 });
 
+// Get user role by Clerk userId (for middleware)
+http.route({
+  path: "/get-user-role",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    const url = new URL(request.url);
+    const userId = url.searchParams.get("userId");
+
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ error: "userId parameter is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    try {
+      const role = await ctx.runQuery(internal.users.getUserRoleByClerkId, {
+        clerkUserId: userId,
+      });
+
+      // Default to "student" if user not found
+      return new Response(JSON.stringify({ role: role || "student" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error("Error getting user role:", error);
+      // Default to "student" on error
+      return new Response(JSON.stringify({ role: "student" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  }),
+});
+
 export default http;

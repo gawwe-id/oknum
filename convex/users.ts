@@ -81,6 +81,21 @@ export const checkUserExists = internalQuery({
   },
 });
 
+// Internal query to get user role by Clerk userId (for middleware)
+export const getUserRoleByClerkId = internalQuery({
+  args: {
+    clerkUserId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_userId", (q) => q.eq("userId", args.clerkUserId))
+      .first();
+
+    return user ? user.role : null;
+  },
+});
+
 // Internal mutation to create user from Clerk (used by webhook and lazy creation)
 export const createUserFromClerk = internalMutation({
   args: {

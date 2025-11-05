@@ -5,33 +5,24 @@ import { usePathname } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import {
-  LayoutDashboard,
-  Settings,
-  GraduationCap,
-  DoorOpen,
-  UserCircle,
-  CreditCard,
-  MessageCircle,
-} from "lucide-react";
+import { LucideIcon } from "lucide-react";
 
-const menuItems = [
-  { href: "/overview", label: "Overview", icon: LayoutDashboard },
-  { href: "/settings", label: "Setting", icon: Settings },
-  { type: "separator" },
-  { href: "/classes", label: "Classes", icon: GraduationCap },
-  { href: "/room", label: "Room", icon: DoorOpen },
-  { href: "/consultant", label: "Consultant", icon: UserCircle },
-  { type: "separator" },
-  { href: "/payment-invoices", label: "Payment & Invoices", icon: CreditCard },
-  { href: "/contact-us", label: "Contact Us", icon: MessageCircle },
-];
+export type MenuItem =
+  | {
+      href: string;
+      label: string;
+      icon: LucideIcon;
+    }
+  | {
+      type: "separator";
+    };
 
 interface SidebarProps {
   className?: string;
+  menuItems: MenuItem[];
 }
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, menuItems }: SidebarProps) {
   const pathname = usePathname();
   const { user } = useUser();
 
@@ -64,7 +55,7 @@ export function Sidebar({ className }: SidebarProps) {
           return (
             <Link
               key={item.href}
-              href={item.href as string}
+              href={item.href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                 isActive
