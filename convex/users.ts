@@ -1,12 +1,26 @@
-import { query, mutation } from "./_generated/server";
+import {
+  query,
+  mutation,
+  internalMutation,
+  internalQuery,
+} from "./_generated/server";
 import { v } from "convex/values";
-import { getCurrentUser, getCurrentUserOrThrow } from "./auth";
+import { getCurrentUserOrThrow } from "./auth";
 
 // Get current authenticated user
 export const getCurrentUserQuery = query({
   args: {},
   handler: async (ctx) => {
-    return await getCurrentUser(ctx);
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return null;
+
+    // Find user by Clerk userId
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_userId", (q) => q.eq("userId", identity.subject))
+      .first();
+
+    return user;
   },
 });
 
@@ -40,30 +54,55 @@ export const getUserByEmail = query({
   },
 });
 
-// Create user (for registration with Clerk)
-export const createUser = mutation({
+// Internal query to check if user exists by userId or email (for webhook)
+export const checkUserExists = internalQuery({
+  args: {
+    userId: v.string(),
+    email: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // Check by userId first
+    const userByUserId = await ctx.db
+      .query("users")
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .first();
+
+    if (userByUserId) {
+      return userByUserId;
+    }
+
+    // Check by email
+    const userByEmail = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", args.email))
+      .first();
+
+    return userByEmail;
+  },
+});
+
+// Internal mutation to create user from Clerk (used by webhook and lazy creation)
+export const createUserFromClerk = internalMutation({
   args: {
     userId: v.string(), // Clerk user ID
     email: v.string(),
     name: v.string(),
     phone: v.optional(v.string()),
-    role: v.union(
-      v.literal("student"),
-      v.literal("expert"),
-      v.literal("admin")
-    ),
     avatar: v.optional(v.string()),
     emailVerified: v.boolean(),
+    role: v.optional(
+      v.union(v.literal("student"), v.literal("expert"), v.literal("admin"))
+    ),
   },
   handler: async (ctx, args) => {
-    // Check if user already exists
+    // Check if user already exists (idempotent)
     const existing = await ctx.db
       .query("users")
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
       .first();
 
     if (existing) {
-      throw new Error("User already exists");
+      return existing;
     }
 
     const now = Date.now();
@@ -72,7 +111,46 @@ export const createUser = mutation({
       email: args.email,
       name: args.name,
       phone: args.phone,
-      role: args.role,
+      role: args.role || "student", // Default role is "student"
+      avatar: args.avatar,
+      emailVerified: args.emailVerified,
+      createdAt: now,
+      updatedAt: now,
+    });
+  },
+});
+
+// Create user (for registration with Clerk)
+export const createUser = mutation({
+  args: {
+    userId: v.string(), // Clerk user ID
+    email: v.string(),
+    name: v.string(),
+    phone: v.optional(v.string()),
+    role: v.optional(
+      v.union(v.literal("student"), v.literal("expert"), v.literal("admin"))
+    ),
+    avatar: v.optional(v.string()),
+    emailVerified: v.boolean(),
+  },
+  handler: async (ctx, args) => {
+    // Check if user already exists (idempotent)
+    const existing = await ctx.db
+      .query("users")
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .first();
+
+    if (existing) {
+      return existing;
+    }
+
+    const now = Date.now();
+    return await ctx.db.insert("users", {
+      userId: args.userId,
+      email: args.email,
+      name: args.name,
+      phone: args.phone,
+      role: args.role || "student", // Default role is "student"
       avatar: args.avatar,
       emailVerified: args.emailVerified,
       createdAt: now,
@@ -114,6 +192,59 @@ export const updateUserAfterSignup = mutation({
 
     await ctx.db.patch(currentUser._id, updateData);
     return await ctx.db.get(currentUser._id);
+  },
+});
+
+// Ensure user exists (lazy creation - can be called from client side)
+export const ensureUser = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Unauthorized: Authentication required");
+    }
+
+    // Check if user already exists
+    const existing = await ctx.db
+      .query("users")
+      .withIndex("by_userId", (q) => q.eq("userId", identity.subject))
+      .first();
+
+    if (existing) {
+      return existing;
+    }
+
+    // Extract user information from Clerk identity
+    const email = identity.email || "";
+    const name =
+      identity.name ||
+      `${identity.given_name || ""} ${identity.family_name || ""}`.trim() ||
+      email.split("@")[0] ||
+      "User";
+    const avatar =
+      typeof identity.picture === "string" ? identity.picture : undefined;
+    const emailVerified =
+      typeof identity.email_verified === "boolean"
+        ? identity.email_verified
+        : false;
+    const phone =
+      typeof identity.phone_number === "string"
+        ? identity.phone_number
+        : undefined;
+
+    // Create user with default role "student" (directly insert since we're in mutation context)
+    const now = Date.now();
+    return await ctx.db.insert("users", {
+      userId: identity.subject,
+      email,
+      name,
+      phone,
+      avatar,
+      emailVerified,
+      role: "student", // Default role
+      createdAt: now,
+      updatedAt: now,
+    });
   },
 });
 
