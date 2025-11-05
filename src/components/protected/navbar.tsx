@@ -11,7 +11,7 @@ interface ProtectedNavbarProps {
 export function ProtectedNavbar({ onMenuClick }: ProtectedNavbarProps) {
   return (
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 border-b">
-      <div className="container max-w-4xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
+      <div className="container max-w-5xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-4">
           {/* Mobile menu button */}
           <Button
