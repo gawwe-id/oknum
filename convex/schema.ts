@@ -7,7 +7,11 @@ export default defineSchema({
     email: v.string(),
     name: v.string(),
     phone: v.optional(v.string()),
-    role: v.union(v.literal("student"), v.literal("expert"), v.literal("admin")),
+    role: v.union(
+      v.literal("student"),
+      v.literal("expert"),
+      v.literal("admin")
+    ),
     expertId: v.optional(v.id("experts")),
     avatar: v.optional(v.string()),
     emailVerified: v.boolean(),
@@ -44,7 +48,11 @@ export default defineSchema({
     category: v.string(),
     price: v.number(),
     currency: v.string(),
-    type: v.union(v.literal("offline"), v.literal("online"), v.literal("hybrid")),
+    type: v.union(
+      v.literal("offline"),
+      v.literal("online"),
+      v.literal("hybrid")
+    ),
     maxStudents: v.optional(v.number()),
     minStudents: v.optional(v.number()),
     duration: v.number(),
@@ -90,7 +98,11 @@ export default defineSchema({
     endTime: v.string(),
     timezone: v.string(),
     location: v.object({
-      type: v.union(v.literal("offline"), v.literal("online"), v.literal("hybrid")),
+      type: v.union(
+        v.literal("offline"),
+        v.literal("online"),
+        v.literal("hybrid")
+      ),
       address: v.optional(v.string()),
       city: v.optional(v.string()),
       province: v.optional(v.string()),
@@ -187,4 +199,3 @@ export default defineSchema({
     .index("by_parentId", ["parentId"])
     .index("by_isActive", ["isActive"]),
 });
-

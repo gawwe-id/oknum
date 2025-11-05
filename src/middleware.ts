@@ -1,15 +1,13 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const isProtectedRoute = createRouteMatcher([
+// Protected routes - routes that require authentication
+const protectedRoutes = createRouteMatcher([
   "/overview",
   "/settings",
   "/classes",
-  "/classes/:id",
   "/room",
-  "/room/:id",
   "/consultant",
-  "/consultant/:id",
   "/payment-invoices",
   "/contact-us",
 ]);
@@ -18,21 +16,20 @@ const isAuthRoute = createRouteMatcher(["/login", "/signup"]);
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();
+  const pathname = req.nextUrl.pathname;
 
   // If user is authenticated and trying to access login/signup, redirect to overview
   if (userId) {
-    if (
-      req.nextUrl.pathname.startsWith("/login") ||
-      req.nextUrl.pathname.startsWith("/signup")
-    ) {
+    if (pathname.startsWith("/login") || pathname.startsWith("/signup")) {
       return NextResponse.redirect(new URL("/overview", req.url));
     }
   }
 
-  if (isProtectedRoute(req)) {
+  if (protectedRoutes(req)) {
     await auth.protect();
   }
 
+  // Allow auth routes to proceed
   if (isAuthRoute(req)) {
     return NextResponse.next();
   }
