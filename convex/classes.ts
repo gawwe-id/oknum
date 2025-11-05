@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { getCurrentUserOrThrow } from "./auth";
 
 // Get all published classes with optional filters
 export const getClasses = query({
@@ -90,10 +91,9 @@ export const getClassesByExpert = query({
   },
 });
 
-// Create class (expert creates class)
+// Create class (expert creates class - requires authentication)
 export const createClass = mutation({
   args: {
-    expertId: v.id("experts"),
     title: v.string(),
     description: v.string(),
     category: v.string(),
@@ -113,15 +113,23 @@ export const createClass = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    // Get authenticated user
+    const currentUser = await getCurrentUserOrThrow(ctx);
+
+    // Verify user is an expert
+    if (!currentUser.expertId) {
+      throw new Error("Only experts can create classes");
+    }
+
     // Verify expert exists
-    const expert = await ctx.db.get(args.expertId);
+    const expert = await ctx.db.get(currentUser.expertId);
     if (!expert) {
-      throw new Error("Expert not found");
+      throw new Error("Expert profile not found");
     }
 
     const now = Date.now();
     return await ctx.db.insert("classes", {
-      expertId: args.expertId,
+      expertId: currentUser.expertId,
       title: args.title,
       description: args.description,
       category: args.category,
@@ -140,7 +148,7 @@ export const createClass = mutation({
   },
 });
 
-// Update class
+// Update class (requires authentication - can only update own classes unless admin)
 export const updateClass = mutation({
   args: {
     classId: v.id("classes"),
@@ -164,10 +172,24 @@ export const updateClass = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    // Get authenticated user
+    const currentUser = await getCurrentUserOrThrow(ctx);
+
     const { classId, ...updates } = args;
     const existing = await ctx.db.get(classId);
     if (!existing) {
       throw new Error("Class not found");
+    }
+
+    // Get the expert who owns this class
+    const expert = await ctx.db.get(existing.expertId);
+    if (!expert) {
+      throw new Error("Expert not found for this class");
+    }
+
+    // Check if user owns the expert profile that owns this class, or is an admin
+    if (expert.userId !== currentUser._id && currentUser.role !== "admin") {
+      throw new Error("Unauthorized: You can only update your own classes");
     }
 
     const updateData: any = {

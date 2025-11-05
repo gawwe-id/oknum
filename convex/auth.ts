@@ -1,51 +1,55 @@
-import { createClient, type GenericCtx } from "@convex-dev/better-auth";
-import { convex } from "@convex-dev/better-auth/plugins";
-import { components } from "./_generated/api";
-import { DataModel } from "./_generated/dataModel";
 import { query } from "./_generated/server";
-import { betterAuth } from "better-auth";
+import type { QueryCtx, MutationCtx } from "./_generated/server";
 
-const siteUrl = process.env.SITE_URL!;
+type AuthCtx = QueryCtx | MutationCtx;
 
-// The component client has methods needed for integrating Convex with Better Auth,
-// as well as helper methods for general use.
-export const authComponent = createClient<DataModel>(components.betterAuth);
-
-export const createAuth = (
-  ctx: GenericCtx<DataModel>,
-  { optionsOnly } = { optionsOnly: false }
-) => {
-  return betterAuth({
-    // disable logging when createAuth is called just to generate options.
-    // this is not required, but there's a lot of noise in logs without it.
-    logger: {
-      disabled: optionsOnly,
-    },
-    baseURL: siteUrl,
-    database: authComponent.adapter(ctx),
-    // Configure simple, non-verified email/password to get started
-    emailAndPassword: {
-      enabled: true,
-      requireEmailVerification: false,
-    },
-    socialProviders: {
-      google: {
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      },
-    },
-    plugins: [
-      // The Convex plugin is required for Convex compatibility
-      convex(),
-    ],
-  });
-};
-
-// Example function for getting the current user
-// Feel free to edit, omit, etc.
+/**
+ * Get the current authenticated user from Clerk
+ * Returns null if not authenticated
+ */
 export const getCurrentUser = query({
   args: {},
   handler: async (ctx) => {
-    return authComponent.getAuthUser(ctx);
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return null;
+
+    // Find user by Clerk userId
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_userId", (q) => q.eq("userId", identity.subject))
+      .first();
+
+    return user;
   },
 });
+
+/**
+ * Helper function to require authentication and get the identity
+ * Throws error if not authenticated
+ */
+export async function requireAuth(ctx: AuthCtx) {
+  const identity = await ctx.auth.getUserIdentity();
+  if (!identity) {
+    throw new Error("Unauthorized: Authentication required");
+  }
+  return identity;
+}
+
+/**
+ * Helper function to get the current user or throw if not authenticated
+ * Throws error if not authenticated or user not found in database
+ */
+export async function getCurrentUserOrThrow(ctx: AuthCtx) {
+  const identity = await requireAuth(ctx);
+  const user = await ctx.db
+    .query("users")
+    .withIndex("by_userId", (q) => q.eq("userId", identity.subject))
+    .first();
+
+  if (!user) {
+    throw new Error("User not found in database");
+  }
+
+  return user;
+}
+

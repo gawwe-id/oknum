@@ -1,13 +1,17 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { getCurrentUserOrThrow } from "./auth";
 
-// Get bookings by user (requires auth)
+// Get bookings by current authenticated user
 export const getBookingsByUser = query({
-  args: { userId: v.id("users") },
-  handler: async (ctx, args) => {
+  args: {},
+  handler: async (ctx) => {
+    // Get authenticated user
+    const currentUser = await getCurrentUserOrThrow(ctx);
+
     const bookings = await ctx.db
       .query("bookings")
-      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .withIndex("by_userId", (q) => q.eq("userId", currentUser._id))
       .collect();
 
     // Enrich with class and schedule data
@@ -52,20 +56,16 @@ export const getBookingById = query({
   },
 });
 
-// Create booking (requires userId, can book multiple sessions)
+// Create booking (requires authentication, can book multiple sessions)
 export const createBooking = mutation({
   args: {
-    userId: v.id("users"),
     classId: v.id("classes"),
     scheduleIds: v.array(v.id("schedules")),
     notes: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    // Verify user exists
-    const user = await ctx.db.get(args.userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
+    // Get authenticated user
+    const user = await getCurrentUserOrThrow(ctx);
 
     // Verify class exists
     const classItem = await ctx.db.get(args.classId);
@@ -104,7 +104,7 @@ export const createBooking = mutation({
 
     // Create booking
     const bookingId = await ctx.db.insert("bookings", {
-      userId: args.userId,
+      userId: user._id,
       classId: args.classId,
       scheduleIds: args.scheduleIds,
       sessionNumbers,
@@ -125,7 +125,7 @@ export const createBooking = mutation({
   },
 });
 
-// Update booking status
+// Update booking status (requires authentication - can only update own bookings unless admin)
 export const updateBookingStatus = mutation({
   args: {
     bookingId: v.id("bookings"),
@@ -143,10 +143,18 @@ export const updateBookingStatus = mutation({
     paymentId: v.optional(v.id("payments")),
   },
   handler: async (ctx, args) => {
+    // Get authenticated user
+    const currentUser = await getCurrentUserOrThrow(ctx);
+
     const { bookingId, ...updates } = args;
     const existing = await ctx.db.get(bookingId);
     if (!existing) {
       throw new Error("Booking not found");
+    }
+
+    // Check if user owns the booking or is an admin
+    if (existing.userId !== currentUser._id && currentUser.role !== "admin") {
+      throw new Error("Unauthorized: You can only update your own bookings");
     }
 
     const updateData: any = {};

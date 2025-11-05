@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { getCurrentUserOrThrow } from "./auth";
 
 // Get expert by ID
 export const getExpertById = query({
@@ -43,10 +44,9 @@ export const getActiveExperts = query({
   },
 });
 
-// Create expert (self-registration, no approval needed)
+// Create expert (self-registration, no approval needed - requires authentication)
 export const createExpert = mutation({
   args: {
-    userId: v.id("users"),
     name: v.string(),
     email: v.string(),
     bio: v.string(),
@@ -55,16 +55,13 @@ export const createExpert = mutation({
     experience: v.string(),
   },
   handler: async (ctx, args) => {
-    // Check if user exists
-    const user = await ctx.db.get(args.userId);
-    if (!user) {
-      throw new Error("User not found");
-    }
+    // Get authenticated user
+    const user = await getCurrentUserOrThrow(ctx);
 
     // Check if expert already exists for this user
     const existingExpert = await ctx.db
       .query("experts")
-      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .withIndex("by_userId", (q) => q.eq("userId", user._id))
       .first();
 
     if (existingExpert) {
@@ -73,7 +70,7 @@ export const createExpert = mutation({
 
     const now = Date.now();
     const expertId = await ctx.db.insert("experts", {
-      userId: args.userId,
+      userId: user._id,
       name: args.name,
       email: args.email,
       bio: args.bio,
@@ -86,7 +83,7 @@ export const createExpert = mutation({
     });
 
     // Update user to link expertId
-    await ctx.db.patch(args.userId, {
+    await ctx.db.patch(user._id, {
       expertId,
       role: "expert",
       updatedAt: now,
@@ -96,7 +93,7 @@ export const createExpert = mutation({
   },
 });
 
-// Update expert
+// Update expert (requires authentication - can only update own expert profile unless admin)
 export const updateExpert = mutation({
   args: {
     expertId: v.id("experts"),
@@ -108,10 +105,18 @@ export const updateExpert = mutation({
     status: v.optional(v.union(v.literal("active"), v.literal("inactive"))),
   },
   handler: async (ctx, args) => {
+    // Get authenticated user
+    const currentUser = await getCurrentUserOrThrow(ctx);
+
     const { expertId, ...updates } = args;
     const existing = await ctx.db.get(expertId);
     if (!existing) {
       throw new Error("Expert not found");
+    }
+
+    // Check if user owns the expert profile or is an admin
+    if (existing.userId !== currentUser._id && currentUser.role !== "admin") {
+      throw new Error("Unauthorized: You can only update your own expert profile");
     }
 
     const updateData: any = {

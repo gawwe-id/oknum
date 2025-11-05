@@ -1,11 +1,31 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { getCurrentUser, getCurrentUserOrThrow } from "./auth";
+
+// Get current authenticated user
+export const getCurrentUserQuery = query({
+  args: {},
+  handler: async (ctx) => {
+    return await getCurrentUser(ctx);
+  },
+});
 
 // Get user profile by ID
 export const getUserProfile = query({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.userId);
+  },
+});
+
+// Get user by Clerk userId
+export const getUserByClerkId = query({
+  args: { clerkUserId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_userId", (q) => q.eq("userId", args.clerkUserId))
+      .first();
   },
 });
 
@@ -20,9 +40,10 @@ export const getUserByEmail = query({
   },
 });
 
-// Create user (for registration)
+// Create user (for registration with Clerk)
 export const createUser = mutation({
   args: {
+    userId: v.string(), // Clerk user ID
     email: v.string(),
     name: v.string(),
     phone: v.optional(v.string()),
@@ -35,8 +56,19 @@ export const createUser = mutation({
     emailVerified: v.boolean(),
   },
   handler: async (ctx, args) => {
+    // Check if user already exists
+    const existing = await ctx.db
+      .query("users")
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .first();
+
+    if (existing) {
+      throw new Error("User already exists");
+    }
+
     const now = Date.now();
     return await ctx.db.insert("users", {
+      userId: args.userId,
       email: args.email,
       name: args.name,
       phone: args.phone,
@@ -49,23 +81,20 @@ export const createUser = mutation({
   },
 });
 
-// Update user role and phone after Better Auth signup
+// Update user role and phone after Clerk signup
 export const updateUserAfterSignup = mutation({
   args: {
-    email: v.string(),
+    userId: v.string(), // Clerk user ID
     phone: v.optional(v.string()),
     role: v.optional(
       v.union(v.literal("student"), v.literal("expert"), v.literal("admin"))
     ),
   },
   handler: async (ctx, args) => {
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_email", (q) => q.eq("email", args.email))
-      .first();
-
-    if (!user) {
-      throw new Error("User not found");
+    // Validate that the authenticated user matches the userId
+    const currentUser = await getCurrentUserOrThrow(ctx);
+    if (currentUser.userId !== args.userId) {
+      throw new Error("Unauthorized: Cannot update another user");
     }
 
     const updateData: any = {
@@ -75,7 +104,7 @@ export const updateUserAfterSignup = mutation({
     // Set role to student by default if not set
     if (args.role !== undefined) {
       updateData.role = args.role;
-    } else if (!user.role) {
+    } else if (!currentUser.role) {
       updateData.role = "student";
     }
 
@@ -83,15 +112,14 @@ export const updateUserAfterSignup = mutation({
       updateData.phone = args.phone;
     }
 
-    await ctx.db.patch(user._id, updateData);
-    return await ctx.db.get(user._id);
+    await ctx.db.patch(currentUser._id, updateData);
+    return await ctx.db.get(currentUser._id);
   },
 });
 
-// Update user
+// Update user (requires authentication - can only update own profile)
 export const updateUser = mutation({
   args: {
-    userId: v.id("users"),
     name: v.optional(v.string()),
     phone: v.optional(v.string()),
     avatar: v.optional(v.string()),
@@ -99,24 +127,21 @@ export const updateUser = mutation({
     expertId: v.optional(v.id("experts")),
   },
   handler: async (ctx, args) => {
-    const { userId, ...updates } = args;
-    const existing = await ctx.db.get(userId);
-    if (!existing) {
-      throw new Error("User not found");
-    }
+    // Get authenticated user
+    const currentUser = await getCurrentUserOrThrow(ctx);
 
     const updateData: any = {
       updatedAt: Date.now(),
     };
 
-    if (updates.name !== undefined) updateData.name = updates.name;
-    if (updates.phone !== undefined) updateData.phone = updates.phone;
-    if (updates.avatar !== undefined) updateData.avatar = updates.avatar;
-    if (updates.emailVerified !== undefined)
-      updateData.emailVerified = updates.emailVerified;
-    if (updates.expertId !== undefined) updateData.expertId = updates.expertId;
+    if (args.name !== undefined) updateData.name = args.name;
+    if (args.phone !== undefined) updateData.phone = args.phone;
+    if (args.avatar !== undefined) updateData.avatar = args.avatar;
+    if (args.emailVerified !== undefined)
+      updateData.emailVerified = args.emailVerified;
+    if (args.expertId !== undefined) updateData.expertId = args.expertId;
 
-    await ctx.db.patch(userId, updateData);
-    return await ctx.db.get(userId);
+    await ctx.db.patch(currentUser._id, updateData);
+    return await ctx.db.get(currentUser._id);
   },
 });
