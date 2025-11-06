@@ -48,10 +48,8 @@ export default function AdminClassesPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Admin Classes</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage all classes in the system
-            </p>
+            <h1 className="text-3xl font-bold">Classes</h1>
+            <p className="text-muted-foreground mt-1">Manage all classes</p>
           </div>
           <ButtonPrimary
             variant="solid"

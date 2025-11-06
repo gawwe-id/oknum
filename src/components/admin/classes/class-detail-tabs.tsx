@@ -59,7 +59,7 @@ export function ClassDetailTabs({
       </TabsContent>
 
       <TabsContent value="curriculum" className="mt-6">
-        <ClassCurriculumTabContent classData={classData} />
+        <ClassCurriculumTabContent />
       </TabsContent>
 
       <TabsContent value="schedules" className="mt-6">

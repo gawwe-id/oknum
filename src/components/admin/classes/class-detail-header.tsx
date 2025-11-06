@@ -21,7 +21,7 @@ export function ClassDetailHeader({
       <Button
         variant="ghost"
         size="sm"
-        onClick={() => router.back()}
+        onClick={() => router.push("/admin/classes")}
         className="gap-2"
       >
         <ArrowLeft className="size-4" />
@@ -34,4 +34,3 @@ export function ClassDetailHeader({
     </div>
   );
 }
-
