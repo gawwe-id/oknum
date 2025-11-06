@@ -24,6 +24,8 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 type Expert = {
   _id: string;
@@ -31,11 +33,14 @@ type Expert = {
   email: string;
   name: string;
   avatar?: string;
+  expertId?: string;
   createdAt: number;
   updatedAt: number;
 };
 
-const columns: ColumnDef<Expert>[] = [
+const createColumns = (
+  router: ReturnType<typeof useRouter>
+): ColumnDef<Expert>[] => [
   {
     accessorKey: "name",
     header: "User",
@@ -96,14 +101,57 @@ const columns: ColumnDef<Expert>[] = [
       );
     },
   },
+  {
+    id: "actions",
+    header: () => <div className="text-right">Action</div>,
+    cell: ({ row }) => {
+      const expert = row.original;
+      const hasExpertId = !!expert.expertId;
+
+      return (
+        <div className="flex items-center justify-end">
+          {hasExpertId ? (
+            <Button
+              variant="outline"
+              size="xs"
+              onClick={() => {
+                router.push(`/admin/experts/${expert._id}`);
+              }}
+              className={cn(
+                "border-orange-500 bg-white text-orange-600 shadow-xs hover:bg-orange-50 hover:border-orange-600 active:bg-orange-100 focus-visible:border-orange-500 focus-visible:ring-orange-500/50"
+              )}
+            >
+              Detail
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="xs"
+              onClick={() => {
+                router.push(`/admin/experts/${expert._id}`);
+              }}
+              className={cn(
+                "border-orange-500 bg-white text-orange-600 shadow-xs hover:bg-orange-50 hover:border-orange-600 active:bg-orange-100 focus-visible:border-orange-500 focus-visible:ring-orange-500/50"
+              )}
+            >
+              Need Update
+            </Button>
+          )}
+        </div>
+      );
+    },
+  },
 ];
 
 export function ExpertsTable() {
+  const router = useRouter();
   const experts = useQuery(api.users.getExperts) || [];
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
   const [globalFilter, setGlobalFilter] = React.useState("");
+
+  const columns = React.useMemo(() => createColumns(router), [router]);
 
   const table = useReactTable({
     data: experts,
