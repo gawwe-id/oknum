@@ -63,7 +63,7 @@ export function ClassDetailTabs({
       </TabsContent>
 
       <TabsContent value="schedules" className="mt-6">
-        <ClassSchedulesTabContent classData={classData} />
+        <ClassSchedulesTabContent />
       </TabsContent>
     </Tabs>
   );

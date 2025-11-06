@@ -1,5 +1,6 @@
 export { ClassCard } from "./class-card";
 export { DialogAddClass } from "./dialog-add-class";
+export { DialogSchedule } from "./dialog-schedule";
 export { ClassDetailHeader } from "./class-detail-header";
 export { ClassDetailTabs } from "./class-detail-tabs";
 export { ClassDetailTabContent } from "./class-detail-tab-content";

@@ -10,7 +10,9 @@ export const getSchedulesByClass = query({
       .withIndex("by_classId", (q) => q.eq("classId", args.classId))
       .collect();
 
-    return schedules.sort((a, b) => a.sessionNumber - b.sessionNumber);
+    return schedules.sort((a, b) =>
+      a.sessionNumber.localeCompare(b.sessionNumber)
+    );
   },
 });
 
@@ -44,7 +46,7 @@ export const getUpcomingSchedules = query({
 export const createSchedule = mutation({
   args: {
     classId: v.id("classes"),
-    sessionNumber: v.number(),
+    sessionNumber: v.string(),
     sessionTitle: v.optional(v.string()),
     startDate: v.string(),
     endDate: v.string(),
@@ -52,7 +54,11 @@ export const createSchedule = mutation({
     endTime: v.string(),
     timezone: v.string(),
     location: v.object({
-      type: v.union(v.literal("offline"), v.literal("online"), v.literal("hybrid")),
+      type: v.union(
+        v.literal("offline"),
+        v.literal("online"),
+        v.literal("hybrid")
+      ),
       address: v.optional(v.string()),
       city: v.optional(v.string()),
       province: v.optional(v.string()),
@@ -83,7 +89,9 @@ export const createSchedule = mutation({
       .first();
 
     if (existing) {
-      throw new Error(`Session ${args.sessionNumber} already exists for this class`);
+      throw new Error(
+        `Session ${args.sessionNumber} already exists for this class`
+      );
     }
 
     return await ctx.db.insert("schedules", {
@@ -116,7 +124,11 @@ export const updateSchedule = mutation({
     timezone: v.optional(v.string()),
     location: v.optional(
       v.object({
-        type: v.union(v.literal("offline"), v.literal("online"), v.literal("hybrid")),
+        type: v.union(
+          v.literal("offline"),
+          v.literal("online"),
+          v.literal("hybrid")
+        ),
         address: v.optional(v.string()),
         city: v.optional(v.string()),
         province: v.optional(v.string()),
@@ -149,10 +161,13 @@ export const updateSchedule = mutation({
 
     const updateData: any = {};
 
-    if (updates.sessionTitle !== undefined) updateData.sessionTitle = updates.sessionTitle;
-    if (updates.startDate !== undefined) updateData.startDate = updates.startDate;
+    if (updates.sessionTitle !== undefined)
+      updateData.sessionTitle = updates.sessionTitle;
+    if (updates.startDate !== undefined)
+      updateData.startDate = updates.startDate;
     if (updates.endDate !== undefined) updateData.endDate = updates.endDate;
-    if (updates.startTime !== undefined) updateData.startTime = updates.startTime;
+    if (updates.startTime !== undefined)
+      updateData.startTime = updates.startTime;
     if (updates.endTime !== undefined) updateData.endTime = updates.endTime;
     if (updates.timezone !== undefined) updateData.timezone = updates.timezone;
     if (updates.location !== undefined) updateData.location = updates.location;
@@ -187,3 +202,33 @@ export const incrementBookedSeats = mutation({
   },
 });
 
+// Delete schedule
+export const deleteSchedule = mutation({
+  args: {
+    scheduleId: v.id("schedules"),
+  },
+  handler: async (ctx, args) => {
+    const schedule = await ctx.db.get(args.scheduleId);
+    if (!schedule) {
+      throw new Error("Schedule not found");
+    }
+
+    // Check if there are any bookings for this schedule
+    const bookings = await ctx.db
+      .query("bookings")
+      .withIndex("by_classId", (q) => q.eq("classId", schedule.classId))
+      .collect();
+
+    const hasBookings = bookings.some((booking) =>
+      booking.scheduleIds.includes(args.scheduleId)
+    );
+
+    if (hasBookings) {
+      throw new Error(
+        "Cannot delete schedule with existing bookings. Please cancel bookings first."
+      );
+    }
+
+    await ctx.db.delete(args.scheduleId);
+  },
+});

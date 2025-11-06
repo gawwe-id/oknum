@@ -90,7 +90,7 @@ export default defineSchema({
 
   schedules: defineTable({
     classId: v.id("classes"),
-    sessionNumber: v.number(),
+    sessionNumber: v.string(),
     sessionTitle: v.optional(v.string()),
     startDate: v.string(),
     endDate: v.string(),

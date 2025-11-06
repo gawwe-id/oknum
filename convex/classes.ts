@@ -64,8 +64,8 @@ export const getClasses = query({
           ...classItem,
           expert,
           curriculum,
-          schedules: schedules.sort(
-            (a, b) => a.sessionNumber - b.sessionNumber
+          schedules: schedules.sort((a, b) =>
+            a.sessionNumber.localeCompare(b.sessionNumber)
           ),
         };
       })
@@ -96,7 +96,9 @@ export const getClassById = query({
       ...classItem,
       expert,
       curriculum,
-      schedules: schedules.sort((a, b) => a.sessionNumber - b.sessionNumber),
+      schedules: schedules.sort((a, b) =>
+        a.sessionNumber.localeCompare(b.sessionNumber)
+      ),
     };
   },
 });
