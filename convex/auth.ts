@@ -1,40 +1,19 @@
 import { query } from "./_generated/server";
-import type { QueryCtx, MutationCtx } from "./_generated/server";
+import type { QueryCtx, MutationCtx, ActionCtx } from "./_generated/server";
 import { internal } from "./_generated/api";
 import type { Doc } from "./_generated/dataModel";
 
 type AuthCtx = QueryCtx | MutationCtx;
 
-/**
- * Get the current authenticated user from Clerk
- * Returns null if not authenticated
- */
-export const getCurrentUser = query({
-  args: {},
-  handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return null;
-
-    // Find user by Clerk userId
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_userId", (q) => q.eq("userId", identity.subject))
-      .first();
-
-    return user;
-  },
-});
-
-/**
- * Helper function to require authentication and get the identity
- * Throws error if not authenticated
- */
-export async function requireAuth(ctx: AuthCtx) {
+export async function assertIdentity(ctx: QueryCtx | MutationCtx | ActionCtx) {
   const identity = await ctx.auth.getUserIdentity();
-  if (!identity) {
-    throw new Error("Unauthorized: Authentication required");
-  }
+  if (!identity) throw new Error("UNAUTHENTICATED");
   return identity;
+}
+
+export async function currentUserId(ctx: QueryCtx | MutationCtx | ActionCtx) {
+  const identity = (await assertIdentity(ctx)).subject;
+  return identity; // Clerk user id
 }
 
 /**
@@ -44,7 +23,7 @@ export async function requireAuth(ctx: AuthCtx) {
 export async function getCurrentUserOrThrow(
   ctx: AuthCtx
 ): Promise<Doc<"users">> {
-  const identity = await requireAuth(ctx);
+  const identity = await assertIdentity(ctx);
   let user = await ctx.db
     .query("users")
     .withIndex("by_userId", (q) => q.eq("userId", identity.subject))

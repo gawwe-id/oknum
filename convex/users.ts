@@ -5,19 +5,19 @@ import {
   internalQuery,
 } from "./_generated/server";
 import { v } from "convex/values";
-import { getCurrentUserOrThrow } from "./auth";
+import { currentUserId, getCurrentUserOrThrow } from "./auth";
 
 // Get current authenticated user
 export const getCurrentUserQuery = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
+    const identity = await currentUserId(ctx);
     if (!identity) return null;
 
     // Find user by Clerk userId
     const user = await ctx.db
       .query("users")
-      .withIndex("by_userId", (q) => q.eq("userId", identity.subject))
+      .withIndex("by_userId", (q) => q.eq("userId", identity))
       .first();
 
     return user;
