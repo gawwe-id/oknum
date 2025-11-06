@@ -22,11 +22,19 @@ import {
   LogIn,
   LayoutDashboard,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const Navbar = () => {
   const pathname = usePathname();
   const { isSignedIn } = useUser();
   const isLoginPage = pathname?.startsWith("/login");
+  const [mounted, setMounted] = useState(false);
+
+  // Ensure component is mounted before using auth state
+  // This prevents hydration mismatch between server and client
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <motion.header
@@ -211,7 +219,7 @@ const Navbar = () => {
         </NavigationMenu>
 
         <div className="flex items-center gap-3">
-          {isSignedIn ? (
+          {mounted && isSignedIn ? (
             // Authenticated: Show dashboard button and UserButton
             <>
               <Link href="/overview">
@@ -230,7 +238,7 @@ const Navbar = () => {
               </Button>
             </Link>
           ) : (
-            // Default: Show login button
+            // Default: Show login button (also used during SSR to prevent hydration mismatch)
             <Link href="/login">
               <Button className="text-sm font-medium bg-white border border-teal-700 hover:bg-teal-100 text-teal-700">
                 <LogIn className="h-4 w-4 mr-2" />
