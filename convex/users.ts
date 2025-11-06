@@ -303,3 +303,62 @@ export const updateUser = mutation({
     return await ctx.db.get(currentUser._id);
   },
 });
+
+// Get all students
+export const getStudents = query({
+  args: {},
+  handler: async (ctx) => {
+    const students = await ctx.db
+      .query("users")
+      .withIndex("by_role", (q) => q.eq("role", "student"))
+      .collect();
+    
+    return students;
+  },
+});
+
+// Get all experts
+export const getExperts = query({
+  args: {},
+  handler: async (ctx) => {
+    const experts = await ctx.db
+      .query("users")
+      .withIndex("by_role", (q) => q.eq("role", "expert"))
+      .collect();
+    
+    return experts;
+  },
+});
+
+// Update user role to expert (admin only)
+export const updateUserRoleToExpert = mutation({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    // Get current authenticated user and verify admin role
+    const currentUser = await getCurrentUserOrThrow(ctx);
+    if (currentUser.role !== "admin") {
+      throw new Error("Unauthorized: Only admin can update user roles");
+    }
+
+    // Get the user to update
+    const userToUpdate = await ctx.db.get(args.userId);
+    if (!userToUpdate) {
+      throw new Error("User not found");
+    }
+
+    // Only allow updating from student to expert
+    if (userToUpdate.role !== "student") {
+      throw new Error("User must be a student to be promoted to expert");
+    }
+
+    // Update role to expert
+    await ctx.db.patch(args.userId, {
+      role: "expert",
+      updatedAt: Date.now(),
+    });
+
+    return await ctx.db.get(args.userId);
+  },
+});

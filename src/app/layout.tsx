@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { constructMetadata } from "@/lib/seo";
 import { ConvexClientProvider } from "@/lib/convex-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { lexend } from "./fonts";
 
 export const metadata: Metadata = constructMetadata({
@@ -82,7 +83,10 @@ export default function RootLayout({
         />
       </head>
       <body className={lexend.className} suppressHydrationWarning>
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <ConvexClientProvider>
+          {children}
+          <Toaster />
+        </ConvexClientProvider>
       </body>
     </html>
   );
