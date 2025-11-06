@@ -4,6 +4,7 @@ import { constructMetadata } from "@/lib/seo";
 import { ConvexClientProvider } from "@/lib/convex-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { lexend } from "./fonts";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 export const metadata: Metadata = constructMetadata({
   title: "Oknum Studio | Tersangka Utama Kejayaan Brand Kamu",
@@ -84,7 +85,7 @@ export default function RootLayout({
       </head>
       <body className={lexend.className} suppressHydrationWarning>
         <ConvexClientProvider>
-          {children}
+          <NuqsAdapter>{children}</NuqsAdapter>
           <Toaster />
         </ConvexClientProvider>
       </body>

@@ -1,10 +1,17 @@
 "use client";
 
 import * as React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { useRouter } from "next/navigation";
 
 type Class = {
   _id: Id<"classes">;
@@ -49,6 +56,7 @@ const typeLabels = {
 };
 
 export function ClassCard({ classItem }: ClassCardProps) {
+  const router = useRouter();
   const initials = classItem.expert?.name
     ? classItem.expert.name
         .split(" ")
@@ -59,7 +67,10 @@ export function ClassCard({ classItem }: ClassCardProps) {
     : "??";
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card
+      className="hover:shadow-md transition-shadow cursor-pointer"
+      onClick={() => router.push(`/admin/classes/${classItem._id}`)}
+    >
       <CardHeader>
         {classItem.thumbnail && (
           <img
@@ -70,13 +81,17 @@ export function ClassCard({ classItem }: ClassCardProps) {
         )}
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1">
-            <CardTitle className="line-clamp-2 mb-2">{classItem.title}</CardTitle>
+            <CardTitle className="line-clamp-2 mb-2">
+              {classItem.title}
+            </CardTitle>
             <CardDescription className="line-clamp-2 mb-3">
               {classItem.description}
             </CardDescription>
           </div>
           <Badge
-            className={`${statusColors[classItem.status]} text-white capitalize`}
+            className={`${
+              statusColors[classItem.status]
+            } text-white capitalize`}
           >
             {classItem.status}
           </Badge>
@@ -114,14 +129,16 @@ export function ClassCard({ classItem }: ClassCardProps) {
               </span>
             </div>
             <div className="text-muted-foreground">
-              {classItem.duration} {classItem.duration === 1 ? "session" : "sessions"}
+              {classItem.duration}{" "}
+              {classItem.duration === 1 ? "session" : "sessions"}
             </div>
           </div>
 
           {/* Students Capacity */}
           {(classItem.minStudents || classItem.maxStudents) && (
             <div className="text-sm text-muted-foreground">
-              Students: {classItem.minStudents || 0} - {classItem.maxStudents || "∞"}
+              Students: {classItem.minStudents || 0} -{" "}
+              {classItem.maxStudents || "∞"}
             </div>
           )}
         </div>
@@ -129,4 +146,3 @@ export function ClassCard({ classItem }: ClassCardProps) {
     </Card>
   );
 }
-
