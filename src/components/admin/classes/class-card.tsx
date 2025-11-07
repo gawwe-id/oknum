@@ -41,6 +41,7 @@ type Class = {
 
 interface ClassCardProps {
   classItem: Class;
+  basePath?: string; // Optional base path for navigation (default: "/admin/classes")
 }
 
 const statusColors = {
@@ -56,7 +57,7 @@ const typeLabels = {
   hybrid: "Hybrid",
 };
 
-export function ClassCard({ classItem }: ClassCardProps) {
+export function ClassCard({ classItem, basePath = "/admin/classes" }: ClassCardProps) {
   const router = useRouter();
   const initials = classItem.expert?.name
     ? classItem.expert.name
@@ -70,7 +71,7 @@ export function ClassCard({ classItem }: ClassCardProps) {
   return (
     <Card
       className="hover:shadow-md transition-shadow cursor-pointer overflow-hidden pt-0"
-      onClick={() => router.push(`/admin/classes/${classItem._id}`)}
+      onClick={() => router.push(`${basePath}/${classItem._id}`)}
     >
       <div className="w-full h-48 overflow-hidden bg-muted flex items-center justify-center">
         {classItem.thumbnail ? (

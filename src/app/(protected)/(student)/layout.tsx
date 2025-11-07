@@ -8,10 +8,10 @@ import {
   LayoutDashboard,
   Settings,
   GraduationCap,
-  DoorOpen,
   UserCircle,
   CreditCard,
   MessageCircle,
+  BookOpen,
 } from "lucide-react";
 
 const studentMenuItems: MenuItem[] = [
@@ -19,7 +19,7 @@ const studentMenuItems: MenuItem[] = [
   { href: "/settings", label: "Settings", icon: Settings },
   { type: "separator" },
   { href: "/classes", label: "Classes", icon: GraduationCap },
-  { href: "/room", label: "Room", icon: DoorOpen },
+  { href: "/enrollments", label: "Enrollments", icon: BookOpen },
   { href: "/consultant", label: "Consultant", icon: UserCircle },
   { type: "separator" },
   { href: "/payment-invoices", label: "Payment & Invoices", icon: CreditCard },

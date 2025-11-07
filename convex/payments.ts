@@ -1,4 +1,10 @@
-import { query, mutation, action } from "./_generated/server";
+import {
+  query,
+  mutation,
+  action,
+  internalQuery,
+  internalMutation,
+} from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 
@@ -289,10 +295,75 @@ export const updatePaymentStatus = mutation({
 //   },
 // });
 
-// Internal query for getting payment by ID (used in actions)
-export const getPaymentByIdInternal = query({
+// Internal query for getting payment by ID (used in actions and http routes)
+export const getPaymentByIdInternal = internalQuery({
   args: { paymentId: v.id("payments") },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.paymentId);
+  },
+});
+
+// Internal mutation for updating payment status (used in http routes/webhooks)
+export const updatePaymentStatusInternal = internalMutation({
+  args: {
+    paymentId: v.id("payments"),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("processing"),
+      v.literal("success"),
+      v.literal("failed"),
+      v.literal("expired")
+    ),
+    gatewayTransactionId: v.optional(v.string()),
+    duitkuReference: v.optional(v.string()),
+    paymentUrl: v.optional(v.string()),
+    paidAt: v.optional(v.number()),
+    failureReason: v.optional(v.string()),
+    metadata: v.optional(v.any()),
+  },
+  handler: async (ctx, args) => {
+    const { paymentId, ...updates } = args;
+    const existing = await ctx.db.get(paymentId);
+    if (!existing) {
+      throw new Error("Payment not found");
+    }
+
+    const updateData: any = {
+      updatedAt: Date.now(),
+    };
+
+    if (updates.status !== undefined) updateData.status = updates.status;
+    if (updates.gatewayTransactionId !== undefined)
+      updateData.gatewayTransactionId = updates.gatewayTransactionId;
+    if (updates.duitkuReference !== undefined)
+      updateData.duitkuReference = updates.duitkuReference;
+    if (updates.paymentUrl !== undefined)
+      updateData.paymentUrl = updates.paymentUrl;
+    if (updates.paidAt !== undefined) updateData.paidAt = updates.paidAt;
+    if (updates.failureReason !== undefined)
+      updateData.failureReason = updates.failureReason;
+    if (updates.metadata !== undefined) updateData.metadata = updates.metadata;
+
+    await ctx.db.patch(paymentId, updateData);
+
+    // If payment is successful, update booking status
+    if (updates.status === "success") {
+      const booking = await ctx.db.get(existing.bookingId);
+      if (booking) {
+        await ctx.db.patch(existing.bookingId, {
+          paymentStatus: "paid",
+          status: "confirmed",
+        });
+      }
+    } else if (updates.status === "failed" || updates.status === "expired") {
+      const booking = await ctx.db.get(existing.bookingId);
+      if (booking) {
+        await ctx.db.patch(existing.bookingId, {
+          paymentStatus: "failed",
+        });
+      }
+    }
+
+    return await ctx.db.get(paymentId);
   },
 });

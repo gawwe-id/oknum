@@ -134,7 +134,7 @@ export default defineSchema({
     userId: v.id("users"),
     classId: v.id("classes"),
     scheduleIds: v.array(v.id("schedules")),
-    sessionNumbers: v.array(v.number()),
+    sessionNumbers: v.array(v.string()),
     status: v.union(
       v.literal("pending"),
       v.literal("confirmed"),
