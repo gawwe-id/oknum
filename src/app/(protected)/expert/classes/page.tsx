@@ -37,10 +37,10 @@ type Class = {
   schedules?: any[];
 };
 
-export default function AdminClassesPage() {
-  // Get all classes for admin (no status filter - gets published by default, but we want all)
-  // Note: getClasses returns published by default, so for admin we might want to query without status filter
-  const classes = (useQuery(api.classes.getClasses, {}) || []) as Class[];
+export default function ExpertClassesPage() {
+  // Get classes by current expert (all statuses)
+  const classes = (useQuery(api.classes.getClassesByCurrentExpert, {}) ||
+    []) as Class[];
 
   return (
     <Protect>
@@ -49,9 +49,9 @@ export default function AdminClassesPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Classes</h1>
-            <p className="text-muted-foreground mt-1">Manage all classes</p>
+            <p className="text-muted-foreground mt-1">Manage your classes</p>
           </div>
-          <Link href="/admin/classes/new">
+          <Link href="/expert/classes/new">
             <ButtonPrimary variant="solid" size="md">
               <Plus className="size-4" />
               Add Class
@@ -63,7 +63,11 @@ export default function AdminClassesPage() {
         {classes.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {classes.map((classItem: Class) => (
-              <ClassCard key={classItem._id} classItem={classItem} />
+              <ClassCard
+                key={classItem._id}
+                classItem={classItem}
+                basePath="/expert/classes"
+              />
             ))}
           </div>
         ) : (
@@ -72,12 +76,12 @@ export default function AdminClassesPage() {
               No classes found
             </p>
             <p className="text-muted-foreground text-sm mb-4">
-              Get started by creating class for expert
+              Get started by creating class
             </p>
-            <Link href="/admin/classes/new">
+            <Link href="/expert/classes/new">
               <ButtonPrimary variant="outline" size="sm">
                 <Plus className="size-4" />
-                Add Class for Expert
+                Add Class
               </ButtonPrimary>
             </Link>
           </div>

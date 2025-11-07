@@ -114,6 +114,61 @@ export const getClassesByExpert = query({
   },
 });
 
+// Get classes by current authenticated expert (for expert dashboard)
+export const getClassesByCurrentExpert = query({
+  args: {},
+  handler: async (ctx) => {
+    // Get authenticated user
+    const currentUser = await getCurrentUserOrThrow(ctx);
+
+    // Verify user is an expert
+    if (currentUser.role !== "expert") {
+      throw new Error("Unauthorized: Only experts can access this query");
+    }
+
+    // Get expert record
+    if (!currentUser.expertId) {
+      return [];
+    }
+
+    const expert = await ctx.db.get(currentUser.expertId);
+    if (!expert) {
+      return [];
+    }
+
+    // Get all classes by this expert (all statuses)
+    const classes = await ctx.db
+      .query("classes")
+      .withIndex("by_expertId", (q) => q.eq("expertId", expert._id))
+      .collect();
+
+    // Enrich with expert and curriculum data
+    const enriched = await Promise.all(
+      classes.map(async (classItem) => {
+        const curriculum = await ctx.db
+          .query("curriculum")
+          .withIndex("by_classId", (q) => q.eq("classId", classItem._id))
+          .first();
+        const schedules = await ctx.db
+          .query("schedules")
+          .withIndex("by_classId", (q) => q.eq("classId", classItem._id))
+          .collect();
+
+        return {
+          ...classItem,
+          expert,
+          curriculum,
+          schedules: schedules.sort((a, b) =>
+            a.sessionNumber.localeCompare(b.sessionNumber)
+          ),
+        };
+      })
+    );
+
+    return enriched.sort((a, b) => b.createdAt - a.createdAt);
+  },
+});
+
 // Create class (expert creates class - requires authentication)
 export const createClass = mutation({
   args: {
