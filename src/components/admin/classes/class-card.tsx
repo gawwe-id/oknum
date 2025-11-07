@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useRouter } from "next/navigation";
+import { Image } from "lucide-react";
 
 type Class = {
   _id: Id<"classes">;
@@ -68,17 +69,24 @@ export function ClassCard({ classItem }: ClassCardProps) {
 
   return (
     <Card
-      className="hover:shadow-md transition-shadow cursor-pointer"
+      className="hover:shadow-md transition-shadow cursor-pointer overflow-hidden pt-0"
       onClick={() => router.push(`/admin/classes/${classItem._id}`)}
     >
-      <CardHeader>
-        {classItem.thumbnail && (
+      <div className="w-full h-48 overflow-hidden bg-muted flex items-center justify-center">
+        {classItem.thumbnail ? (
           <img
             src={classItem.thumbnail}
             alt={classItem.title}
-            className="w-full h-48 object-cover rounded-lg mb-4"
+            className="w-full h-full object-cover"
           />
+        ) : (
+          <div className="flex flex-col items-center justify-center text-muted-foreground">
+            <Image className="size-12 mb-2 opacity-50" />
+            <span className="text-sm opacity-50">No thumbnail</span>
+          </div>
         )}
+      </div>
+      <CardHeader>
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1">
             <CardTitle className="line-clamp-2 mb-2">

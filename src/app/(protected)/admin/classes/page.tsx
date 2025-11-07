@@ -2,11 +2,12 @@
 
 import { Protect } from "@clerk/nextjs";
 import * as React from "react";
+import Link from "next/link";
 import { useQuery } from "convex-helpers/react/cache";
 import { api } from "../../../../../convex/_generated/api";
 import type { Id } from "../../../../../convex/_generated/dataModel";
 import { ButtonPrimary } from "@/components/ui/button-primary";
-import { DialogAddClass, ClassCard } from "@/components/admin/classes";
+import { ClassCard } from "@/components/admin/classes";
 import { Plus } from "lucide-react";
 
 type Class = {
@@ -37,7 +38,6 @@ type Class = {
 };
 
 export default function AdminClassesPage() {
-  const [dialogOpen, setDialogOpen] = React.useState(false);
   // Get all classes for admin (no status filter - gets published by default, but we want all)
   // Note: getClasses returns published by default, so for admin we might want to query without status filter
   const classes = (useQuery(api.classes.getClasses, {}) || []) as Class[];
@@ -51,14 +51,12 @@ export default function AdminClassesPage() {
             <h1 className="text-3xl font-bold">Classes</h1>
             <p className="text-muted-foreground mt-1">Manage all classes</p>
           </div>
-          <ButtonPrimary
-            variant="solid"
-            size="md"
-            onClick={() => setDialogOpen(true)}
-          >
-            <Plus className="size-4" />
-            Add Class
-          </ButtonPrimary>
+          <Link href="/admin/classes/new">
+            <ButtonPrimary variant="solid" size="md">
+              <Plus className="size-4" />
+              Add Class
+            </ButtonPrimary>
+          </Link>
         </div>
 
         {/* Classes Grid - Responsive 6:6 (2 columns) */}
@@ -76,19 +74,14 @@ export default function AdminClassesPage() {
             <p className="text-muted-foreground text-sm mb-4">
               Get started by creating your first class
             </p>
-            <ButtonPrimary
-              variant="outline"
-              size="sm"
-              onClick={() => setDialogOpen(true)}
-            >
-              <Plus className="size-4" />
-              Add Your First Class
-            </ButtonPrimary>
+            <Link href="/admin/classes/new">
+              <ButtonPrimary variant="outline" size="sm">
+                <Plus className="size-4" />
+                Add Your First Class
+              </ButtonPrimary>
+            </Link>
           </div>
         )}
-
-        {/* Dialog */}
-        <DialogAddClass open={dialogOpen} onOpenChange={setDialogOpen} />
       </div>
     </Protect>
   );
