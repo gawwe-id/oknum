@@ -1,19 +1,19 @@
 "use client";
 
 import { Protect } from "@clerk/nextjs";
-import { AdminRevenueTable } from "@/components/admin/revenue";
+import { ExpertRevenueTable } from "@/components/expert/revenue";
 
-export default function AdminRevenuePage() {
+export default function ExpertRevenuePage() {
   return (
     <Protect>
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold">Revenue</h1>
           <p className="text-muted-foreground mt-1">
-            View all revenue from class enrollments across all experts
+            View your revenue from class enrollments
           </p>
         </div>
-        <AdminRevenueTable />
+        <ExpertRevenueTable />
       </div>
     </Protect>
   );

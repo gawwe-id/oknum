@@ -7,6 +7,8 @@ import {
 } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
+import { getCurrentUserOrThrow } from "./auth";
+import { Id } from "./_generated/dataModel";
 
 // Get payment by booking ID
 export const getPaymentByBooking = query({
@@ -138,163 +140,6 @@ export const updatePaymentStatus = mutation({
   },
 });
 
-// Initiate Duitku payment (action - can make HTTP calls)
-// export const initiateDuitkuPayment = action({
-//   args: {
-//     paymentId: v.id("payments"),
-//     customerName: v.string(),
-//     customerEmail: v.string(),
-//     customerPhone: v.optional(v.string()),
-//     returnUrl: v.string(),
-//     callbackUrl: v.string(),
-//   },
-//   handler: async (ctx, args) => {
-//     // Get payment and booking details
-//     const payment = await ctx.runQuery(internal.payments.getPaymentByIdInternal, {
-//       paymentId: args.paymentId,
-//     });
-
-//     if (!payment) {
-//       throw new Error("Payment not found");
-//     }
-
-//     const booking = await ctx.runQuery(internal.bookings.getBookingByIdInternal, {
-//       bookingId: payment.bookingId,
-//     });
-
-//     if (!booking) {
-//       throw new Error("Booking not found");
-//     }
-
-//     // Get Duitku API credentials from environment
-//     const merchantCode = process.env.DUITKU_MERCHANT_CODE;
-//     const apiKey = process.env.DUITKU_API_KEY;
-//     const baseUrl = process.env.DUITKU_BASE_URL || "https://api.duitku.com";
-
-//     if (!merchantCode || !apiKey) {
-//       throw new Error("Duitku credentials not configured");
-//     }
-
-//     // Prepare Duitku payment request
-//     const paymentRequest = {
-//       merchantCode,
-//       paymentAmount: payment.amount,
-//       merchantOrderId: payment._id,
-//       productDetails: `Booking for ${booking.classItem?.title || "Class"}`,
-//       customerVaName: args.customerName,
-//       customerEmail: args.customerEmail,
-//       customerPhone: args.customerPhone || "",
-//       callbackUrl: args.callbackUrl,
-//       returnUrl: args.returnUrl,
-//       paymentMethod: payment.paymentMethod,
-//       signature: "", // Will be calculated below
-//     };
-
-//     // Calculate signature (MD5 hash)
-//     // In Convex actions, we can use Node.js crypto module
-//     const crypto = require("crypto");
-//     const signatureString = `${merchantCode}${paymentRequest.merchantOrderId}${payment.amount}${apiKey}`;
-//     const signatureHex = crypto.createHash("md5").update(signatureString).digest("hex");
-//     paymentRequest.signature = signatureHex;
-
-//     // Make request to Duitku API
-//     const response = await fetch(`${baseUrl}/api/merchant/v2/inquiry`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(paymentRequest),
-//     });
-
-//     if (!response.ok) {
-//       const errorText = await response.text();
-//       throw new Error(`Duitku API error: ${errorText}`);
-//     }
-
-//     const result = await response.json();
-
-//     // Update payment with Duitku response
-//     await ctx.runMutation(internal.payments.updatePaymentStatus, {
-//       paymentId: args.paymentId,
-//       status: result.statusCode === "00" ? "processing" : "failed",
-//       gatewayTransactionId: result.reference,
-//       duitkuReference: result.reference,
-//       paymentUrl: result.paymentUrl,
-//       metadata: result,
-//     });
-
-//     return {
-//       paymentUrl: result.paymentUrl,
-//       reference: result.reference,
-//       status: result.statusCode === "00" ? "processing" : "failed",
-//     };
-//   },
-// });
-
-// Process Duitku webhook (action - can make HTTP calls)
-// export const processDuitkuWebhook = action({
-//   args: {
-//     merchantCode: v.string(),
-//     merchantOrderId: v.string(),
-//     reference: v.string(),
-//     amount: v.number(),
-//     statusCode: v.string(),
-//     statusMessage: v.string(),
-//     signature: v.string(),
-//   },
-//   handler: async (ctx, args) => {
-//     // Verify signature
-//     const apiKey = process.env.DUITKU_API_KEY;
-//     if (!apiKey) {
-//       throw new Error("Duitku API key not configured");
-//     }
-
-//     const crypto = require("crypto");
-//     const signatureString = `${args.merchantCode}${args.merchantOrderId}${args.amount}${apiKey}`;
-//     const expectedSignatureHex = crypto.createHash("md5").update(signatureString).digest("hex");
-
-//     if (args.signature !== expectedSignatureHex) {
-//       throw new Error("Invalid signature");
-//     }
-
-//     // Get payment by ID (merchantOrderId is paymentId)
-//     const paymentId = args.merchantOrderId as any;
-//     const payment = await ctx.runQuery(internal.payments.getPaymentById, {
-//       paymentId,
-//     });
-
-//     if (!payment) {
-//       throw new Error("Payment not found");
-//     }
-
-//     // Update payment status based on Duitku response
-//     let paymentStatus: "pending" | "processing" | "success" | "failed" | "expired" = "pending";
-//     if (args.statusCode === "00") {
-//       paymentStatus = "success";
-//     } else if (args.statusCode === "01") {
-//       paymentStatus = "processing";
-//     } else {
-//       paymentStatus = "failed";
-//     }
-
-//     await ctx.runMutation(internal.payments.updatePaymentStatus, {
-//       paymentId,
-//       status: paymentStatus,
-//       gatewayTransactionId: args.reference,
-//       duitkuReference: args.reference,
-//       paidAt: paymentStatus === "success" ? Date.now() : undefined,
-//       failureReason: paymentStatus === "failed" ? args.statusMessage : undefined,
-//       metadata: {
-//         statusCode: args.statusCode,
-//         statusMessage: args.statusMessage,
-//         webhookReceivedAt: Date.now(),
-//       },
-//     });
-
-//     return { success: true };
-//   },
-// });
-
 // Internal query for getting payment by ID (used in actions and http routes)
 export const getPaymentByIdInternal = internalQuery({
   args: { paymentId: v.id("payments") },
@@ -365,5 +210,220 @@ export const updatePaymentStatusInternal = internalMutation({
     }
 
     return await ctx.db.get(paymentId);
+  },
+});
+
+// Get revenue for current expert (list and total)
+export const getExpertRevenue = query({
+  args: {},
+  handler: async (ctx) => {
+    // Get authenticated user
+    const currentUser = await getCurrentUserOrThrow(ctx);
+
+    // Verify user is an expert
+    if (currentUser.role !== "expert") {
+      throw new Error("Unauthorized: Only experts can access this query");
+    }
+
+    // Get expert record
+    if (!currentUser.expertId) {
+      return {
+        revenue: [],
+        totalRevenue: {},
+        totalTransactions: 0,
+      };
+    }
+
+    const expert = await ctx.db.get(currentUser.expertId);
+    if (!expert) {
+      return {
+        revenue: [],
+        totalRevenue: {},
+        totalTransactions: 0,
+      };
+    }
+
+    // Get all classes by this expert
+    const classes = await ctx.db
+      .query("classes")
+      .withIndex("by_expertId", (q) => q.eq("expertId", expert._id))
+      .collect();
+
+    if (classes.length === 0) {
+      return {
+        revenue: [],
+        totalRevenue: {},
+        totalTransactions: 0,
+      };
+    }
+
+    const classIds = classes.map((c) => c._id);
+    const classMap = new Map(classIds.map((id, i) => [id, classes[i]]));
+
+    // Get all bookings for these classes with paymentStatus = "paid"
+    const allBookings = await Promise.all(
+      classIds.map(async (classId) => {
+        return await ctx.db
+          .query("bookings")
+          .withIndex("by_classId", (q) => q.eq("classId", classId))
+          .collect();
+      })
+    );
+
+    const bookings = allBookings
+      .flat()
+      .filter((booking) => booking.paymentStatus === "paid");
+
+    if (bookings.length === 0) {
+      return {
+        revenue: [],
+        totalRevenue: {},
+        totalTransactions: 0,
+      };
+    }
+
+    // Get all payments with status = "success" for these bookings
+    const revenueItems = await Promise.all(
+      bookings.map(async (booking) => {
+        if (!booking.paymentId) return null;
+
+        const payment = await ctx.db.get(booking.paymentId);
+        if (!payment || payment.status !== "success") return null;
+
+        const classItem = classMap.get(booking.classId);
+        const student = await ctx.db.get(booking.userId);
+
+        return {
+          paymentId: payment._id,
+          bookingId: booking._id,
+          classId: booking.classId,
+          className: classItem?.title || "Unknown Class",
+          studentId: booking.userId,
+          studentName: student?.name || "Unknown Student",
+          studentEmail: student?.email || "",
+          amount: payment.amount,
+          currency: payment.currency,
+          paymentMethod: payment.paymentMethod,
+          paidAt: payment.paidAt || payment.createdAt,
+          createdAt: payment.createdAt,
+          gatewayTransactionId: payment.gatewayTransactionId,
+        };
+      })
+    );
+
+    // Filter out null values
+    const revenue = revenueItems.filter((item) => item !== null);
+
+    // Calculate total revenue (group by currency)
+    const totalByCurrency = new Map<string, number>();
+    revenue.forEach((item) => {
+      if (item) {
+        const current = totalByCurrency.get(item.currency) || 0;
+        totalByCurrency.set(item.currency, current + item.amount);
+      }
+    });
+
+    // Convert Map to object for easier frontend usage
+    const totalRevenueObj: Record<string, number> = {};
+    totalByCurrency.forEach((value, key) => {
+      totalRevenueObj[key] = value;
+    });
+
+    // Sort by paidAt (most recent first)
+    revenue.sort((a, b) => (b?.paidAt || 0) - (a?.paidAt || 0));
+
+    return {
+      revenue,
+      totalRevenue: totalRevenueObj,
+      totalTransactions: revenue.length,
+    };
+  },
+});
+
+// Get revenue for admin (all payments from all classes that are paid)
+export const getAdminRevenue = query({
+  args: {},
+  handler: async (ctx) => {
+    // Get authenticated user
+    const currentUser = await getCurrentUserOrThrow(ctx);
+
+    // Verify user is an admin
+    if (currentUser.role !== "admin") {
+      throw new Error("Unauthorized: Only admins can access this query");
+    }
+
+    // Get all payments with status = "success"
+    const payments = await ctx.db
+      .query("payments")
+      .withIndex("by_status", (q) => q.eq("status", "success"))
+      .collect();
+
+    if (payments.length === 0) {
+      return {
+        revenue: [],
+        totalRevenue: {},
+        totalTransactions: 0,
+      };
+    }
+
+    // Get booking and class info for each payment
+    const revenueItems = await Promise.all(
+      payments.map(async (payment) => {
+        const booking = await ctx.db.get(payment.bookingId);
+        if (!booking) return null;
+
+        const classItem = await ctx.db.get(booking.classId);
+        if (!classItem) return null;
+
+        const expert = await ctx.db.get(classItem.expertId);
+        const student = await ctx.db.get(booking.userId);
+
+        return {
+          paymentId: payment._id,
+          bookingId: booking._id,
+          classId: booking.classId,
+          className: classItem.title,
+          expertId: classItem.expertId,
+          expertName: expert?.name || "Unknown Expert",
+          expertEmail: expert?.email || "",
+          studentId: booking.userId,
+          studentName: student?.name || "Unknown Student",
+          studentEmail: student?.email || "",
+          amount: payment.amount,
+          currency: payment.currency,
+          paymentMethod: payment.paymentMethod,
+          paidAt: payment.paidAt || payment.createdAt,
+          createdAt: payment.createdAt,
+          gatewayTransactionId: payment.gatewayTransactionId,
+        };
+      })
+    );
+
+    // Filter out null values
+    const revenue = revenueItems.filter((item) => item !== null);
+
+    // Calculate total revenue (group by currency)
+    const totalByCurrency = new Map<string, number>();
+    revenue.forEach((item) => {
+      if (item) {
+        const current = totalByCurrency.get(item.currency) || 0;
+        totalByCurrency.set(item.currency, current + item.amount);
+      }
+    });
+
+    // Convert Map to object for easier frontend usage
+    const totalRevenueObj: Record<string, number> = {};
+    totalByCurrency.forEach((value, key) => {
+      totalRevenueObj[key] = value;
+    });
+
+    // Sort by paidAt (most recent first)
+    revenue.sort((a, b) => (b?.paidAt || 0) - (a?.paidAt || 0));
+
+    return {
+      revenue,
+      totalRevenue: totalRevenueObj,
+      totalTransactions: revenue.length,
+    };
   },
 });
