@@ -163,6 +163,8 @@ export async function POST(request: NextRequest) {
       paymentUrl: result.paymentUrl,
       reference: result.reference,
       status: result.statusCode === "00" ? "processing" : "failed",
+      vaNumber: result.vaNumber, // untuk VA
+      qrString: result.qrString, // untuk QRIS
     });
   } catch (error) {
     console.error("Error initiating payment:", error);

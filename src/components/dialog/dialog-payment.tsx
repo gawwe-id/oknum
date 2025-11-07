@@ -15,11 +15,12 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { ButtonPrimary } from "@/components/ui/button-primary";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { QRCodeSVG } from "qrcode.react";
 
 interface PaymentMethod {
   paymentMethod: string;
@@ -78,6 +79,14 @@ export function DialogPayment({
   const [isLoadingMethods, setIsLoadingMethods] = React.useState(false);
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<PaymentCategory>("qris");
+  const [isPaymentInitiated, setIsPaymentInitiated] = React.useState(false);
+  const [paymentDetails, setPaymentDetails] = React.useState<{
+    vaNumber?: string;
+    qrString?: string;
+    reference: string;
+    paymentUrl?: string;
+  } | null>(null);
+  const [copiedVaNumber, setCopiedVaNumber] = React.useState(false);
 
   // Fetch payment methods when dialog opens
   React.useEffect(() => {
@@ -88,6 +97,9 @@ export function DialogPayment({
       // Reset selection and tab when dialog opens
       setSelectedMethod(null);
       setActiveTab("qris");
+      setIsPaymentInitiated(false);
+      setPaymentDetails(null);
+      setCopiedVaNumber(false);
     }
   }, [open]);
 
@@ -171,20 +183,30 @@ export function DialogPayment({
 
       const paymentData = await initiateResponse.json();
 
-      if (!paymentData.paymentUrl) {
-        throw new Error("Payment URL not received");
-      }
+      // Check if it's E-wallet (needs redirect)
+      const isEWallet = E_WALLET_METHODS.includes(selectedMethod);
 
-      // Step 3: Redirect to payment URL
-      toast.success("Redirecting to payment page...");
-      onOpenChange(false);
-
-      // Open payment URL in new tab
-      window.open(paymentData.paymentUrl, "_blank");
-
-      // Call success callback
-      if (onSuccess) {
-        onSuccess();
+      if (isEWallet) {
+        // For E-wallet: redirect to payment URL
+        if (!paymentData.paymentUrl) {
+          throw new Error("Payment URL not received");
+        }
+        toast.success("Redirecting to payment page...");
+        onOpenChange(false);
+        window.open(paymentData.paymentUrl, "_blank");
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        // For QRIS/VA: show payment details in dialog
+        setIsPaymentInitiated(true);
+        setPaymentDetails({
+          vaNumber: paymentData.vaNumber,
+          qrString: paymentData.qrString,
+          reference: paymentData.reference,
+          paymentUrl: paymentData.paymentUrl,
+        });
+        toast.success("Payment initiated successfully!");
       }
     } catch (error) {
       console.error("Error processing payment:", error);
@@ -195,6 +217,15 @@ export function DialogPayment({
       );
     } finally {
       setIsProcessing(false);
+    }
+  };
+
+  const handleCopyVaNumber = async () => {
+    if (paymentDetails?.vaNumber) {
+      await navigator.clipboard.writeText(paymentDetails.vaNumber);
+      setCopiedVaNumber(true);
+      toast.success("VA Number copied to clipboard!");
+      setTimeout(() => setCopiedVaNumber(false), 2000);
     }
   };
 
@@ -230,152 +261,250 @@ export function DialogPayment({
             </CardContent>
           </Card>
 
-          {/* Payment Methods */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold">Select Payment Method</h3>
+          {/* Payment Instructions (shown after payment initiated) */}
+          {isPaymentInitiated && paymentDetails && (
+            <Card className="shadow-none border">
+              <CardContent className="pt-6">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-sm font-semibold mb-3">
+                      Payment Instructions
+                    </h3>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Reference:{" "}
+                      <span className="font-mono">
+                        {paymentDetails.reference}
+                      </span>
+                    </p>
+                  </div>
 
-            {isLoadingMethods ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="size-6 animate-spin text-muted-foreground" />
-              </div>
-            ) : paymentMethods.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <p>No payment methods available</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={fetchPaymentMethods}
-                  className="mt-2"
-                >
-                  Retry
-                </Button>
-              </div>
-            ) : (
-              <Tabs
-                value={activeTab}
-                onValueChange={(value) =>
-                  setActiveTab(value as PaymentCategory)
-                }
-              >
-                <div className="w-full border-b">
-                  <TabsList className="w-fit justify-start h-auto p-0 bg-transparent border-0 rounded-none gap-0">
-                    <TabsTrigger
-                      value="qris"
-                      className={cn(
-                        "rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground"
-                      )}
-                    >
-                      QRIS
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="ewallet"
-                      className={cn(
-                        "rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground"
-                      )}
-                    >
-                      E-Wallet
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="va"
-                      className={cn(
-                        "rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground"
-                      )}
-                    >
-                      Virtual Account
-                    </TabsTrigger>
-                  </TabsList>
+                  {/* QRIS Display */}
+                  {paymentDetails.qrString && (
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium">Scan QR Code</p>
+                      <div className="flex justify-center p-4 bg-white rounded-lg border">
+                        <QRCodeSVG
+                          value={paymentDetails.qrString}
+                          size={200}
+                          level="H"
+                          includeMargin={true}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground text-center">
+                        Scan this QR code with your mobile banking app or
+                        e-wallet
+                      </p>
+                    </div>
+                  )}
+
+                  {/* VA Number Display */}
+                  {paymentDetails.vaNumber && (
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium">
+                        Virtual Account Number
+                      </p>
+                      <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+                        <span className="font-mono text-lg flex-1 text-center">
+                          {paymentDetails.vaNumber}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleCopyVaNumber}
+                          className="shrink-0"
+                        >
+                          {copiedVaNumber ? (
+                            <Check className="size-4" />
+                          ) : (
+                            <Copy className="size-4" />
+                          )}
+                        </Button>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Transfer the exact amount to this Virtual Account number
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="pt-2 border-t">
+                    <p className="text-xs text-muted-foreground">
+                      Payment status will be updated automatically once payment
+                      is confirmed.
+                    </p>
+                  </div>
                 </div>
+              </CardContent>
+            </Card>
+          )}
 
-                {(() => {
-                  const categorized = categorizePaymentMethods(paymentMethods);
-                  const currentMethods = categorized[activeTab];
+          {/* Payment Methods */}
+          {!isPaymentInitiated && (
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold">Select Payment Method</h3>
 
-                  return (
-                    <TabsContent value={activeTab} className="mt-6">
-                      {currentMethods.length === 0 ? (
-                        <div className="text-center py-8 text-muted-foreground">
-                          <p>No payment methods available in this category</p>
-                        </div>
-                      ) : (
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                          {currentMethods.map((method) => (
-                            <button
-                              key={method.paymentMethod}
-                              type="button"
-                              onClick={() =>
-                                setSelectedMethod(method.paymentMethod)
-                              }
-                              className={cn(
-                                "cursor-pointer flex flex-col items-center gap-3 p-4 border rounded-lg transition-all",
-                                "hover:border-primary hover:bg-accent/50",
-                                selectedMethod === method.paymentMethod &&
-                                  "border-primary bg-accent ring-2 ring-primary ring-offset-2"
-                              )}
-                            >
-                              {method.paymentImage && (
-                                <div className="relative w-20 h-12">
-                                  <Image
-                                    src={method.paymentImage}
-                                    alt={method.paymentName}
-                                    fill
-                                    className="object-contain"
-                                    unoptimized
-                                  />
+              {isLoadingMethods ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="size-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : paymentMethods.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>No payment methods available</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={fetchPaymentMethods}
+                    className="mt-2"
+                  >
+                    Retry
+                  </Button>
+                </div>
+              ) : (
+                <Tabs
+                  value={activeTab}
+                  onValueChange={(value) => {
+                    if (!isPaymentInitiated) {
+                      setActiveTab(value as PaymentCategory);
+                    }
+                  }}
+                >
+                  <div className="w-full border-b">
+                    <TabsList className="w-fit justify-start h-auto p-0 bg-transparent border-0 rounded-none gap-0">
+                      <TabsTrigger
+                        value="qris"
+                        disabled={isPaymentInitiated}
+                        className={cn(
+                          "rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground",
+                          isPaymentInitiated && "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        QRIS
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="ewallet"
+                        disabled={isPaymentInitiated}
+                        className={cn(
+                          "rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground",
+                          isPaymentInitiated && "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        E-Wallet
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="va"
+                        disabled={isPaymentInitiated}
+                        className={cn(
+                          "rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground",
+                          isPaymentInitiated && "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        Virtual Account
+                      </TabsTrigger>
+                    </TabsList>
+                  </div>
+
+                  {(() => {
+                    const categorized =
+                      categorizePaymentMethods(paymentMethods);
+                    const currentMethods = categorized[activeTab];
+
+                    return (
+                      <TabsContent value={activeTab} className="mt-6">
+                        {currentMethods.length === 0 ? (
+                          <div className="text-center py-8 text-muted-foreground">
+                            <p>No payment methods available in this category</p>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                            {currentMethods.map((method) => (
+                              <button
+                                key={method.paymentMethod}
+                                type="button"
+                                onClick={() =>
+                                  setSelectedMethod(method.paymentMethod)
+                                }
+                                disabled={isPaymentInitiated}
+                                className={cn(
+                                  "cursor-pointer flex flex-col items-center gap-3 p-4 border rounded-lg transition-all",
+                                  "hover:border-primary hover:bg-accent/50",
+                                  selectedMethod === method.paymentMethod &&
+                                    "border-primary bg-accent ring-2 ring-primary ring-offset-2",
+                                  isPaymentInitiated &&
+                                    "opacity-50 cursor-not-allowed"
+                                )}
+                              >
+                                {method.paymentImage && (
+                                  <div className="relative w-20 h-12">
+                                    <Image
+                                      src={method.paymentImage}
+                                      alt={method.paymentName}
+                                      fill
+                                      className="object-contain"
+                                      unoptimized
+                                    />
+                                  </div>
+                                )}
+                                <div className="text-center w-full">
+                                  <p className="font-medium text-xs">
+                                    {method.paymentName}
+                                  </p>
+                                  {method.totalFee &&
+                                    parseFloat(method.totalFee) > 0 && (
+                                      <p className="text-xs text-muted-foreground mt-1">
+                                        Fee:{" "}
+                                        {new Intl.NumberFormat("id-ID", {
+                                          style: "currency",
+                                          currency: classData.currency || "IDR",
+                                        }).format(parseFloat(method.totalFee))}
+                                      </p>
+                                    )}
                                 </div>
-                              )}
-                              <div className="text-center w-full">
-                                <p className="font-medium text-xs">
-                                  {method.paymentName}
-                                </p>
-                                {method.totalFee &&
-                                  parseFloat(method.totalFee) > 0 && (
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                      Fee:{" "}
-                                      {new Intl.NumberFormat("id-ID", {
-                                        style: "currency",
-                                        currency: classData.currency || "IDR",
-                                      }).format(parseFloat(method.totalFee))}
-                                    </p>
-                                  )}
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </TabsContent>
-                  );
-                })()}
-              </Tabs>
-            )}
-          </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </TabsContent>
+                    );
+                  })()}
+                </Tabs>
+              )}
+            </div>
+          )}
         </div>
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            disabled={isProcessing}
-          >
-            Cancel
-          </Button>
-          <ButtonPrimary
-            onClick={handlePay}
-            disabled={
-              !selectedMethod ||
-              isLoadingMethods ||
-              isProcessing ||
-              paymentMethods.length === 0
-            }
-          >
-            {isProcessing ? (
-              <>
-                <Loader2 className="size-4 mr-2 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              "Pay Now"
-            )}
-          </ButtonPrimary>
+          {isPaymentInitiated ? (
+            <ButtonPrimary onClick={() => onOpenChange(false)}>
+              Close
+            </ButtonPrimary>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                disabled={isProcessing}
+              >
+                Cancel
+              </Button>
+              <ButtonPrimary
+                onClick={handlePay}
+                disabled={
+                  !selectedMethod ||
+                  isLoadingMethods ||
+                  isProcessing ||
+                  paymentMethods.length === 0
+                }
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="size-4 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  "Pay Now"
+                )}
+              </ButtonPrimary>
+            </>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
