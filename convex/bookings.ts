@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getCurrentUserOrThrow } from "./auth";
+import { Id } from "./_generated/dataModel";
 
 // Get bookings by current authenticated user
 export const getBookingsByUser = query({
@@ -227,6 +228,113 @@ export const getBookingByIdInternal = query({
       classItem,
       schedules: schedules.filter((s) => s !== null),
     };
+  },
+});
+
+// Get students enrolled in expert's classes
+export const getStudentsByExpert = query({
+  args: {},
+  handler: async (ctx) => {
+    // Get authenticated user
+    const currentUser = await getCurrentUserOrThrow(ctx);
+
+    // Verify user is an expert
+    if (currentUser.role !== "expert") {
+      throw new Error("Unauthorized: Only experts can access this query");
+    }
+
+    // Get expert record
+    if (!currentUser.expertId) {
+      return [];
+    }
+
+    const expert = await ctx.db.get(currentUser.expertId);
+    if (!expert) {
+      return [];
+    }
+
+    // Get all classes by this expert
+    const classes = await ctx.db
+      .query("classes")
+      .withIndex("by_expertId", (q) => q.eq("expertId", expert._id))
+      .collect();
+
+    if (classes.length === 0) {
+      return [];
+    }
+
+    const classIds = classes.map((c) => c._id);
+
+    // Get all bookings for these classes
+    const allBookings = await Promise.all(
+      classIds.map(async (classId) => {
+        return await ctx.db
+          .query("bookings")
+          .withIndex("by_classId", (q) => q.eq("classId", classId))
+          .collect();
+      })
+    );
+
+    const bookings = allBookings.flat();
+
+    // Get unique students from bookings
+    const studentIds = new Set<string>();
+    const studentBookingsMap = new Map<
+      string,
+      Array<typeof bookings[number]>
+    >();
+
+    for (const booking of bookings) {
+      const userId = booking.userId as string;
+      if (!studentIds.has(userId)) {
+        studentIds.add(userId);
+        studentBookingsMap.set(userId, []);
+      }
+      studentBookingsMap.get(userId)!.push(booking);
+    }
+
+    // Get student details and enrich with enrollment info
+    const studentsWithEnrollments = await Promise.all(
+      Array.from(studentIds).map(async (userId) => {
+        const user = await ctx.db.get(userId as Id<"users">);
+        if (!user) return null;
+
+        const bookings = studentBookingsMap.get(userId) || [];
+        
+        // Get class details for each booking
+        const enrollments = await Promise.all(
+          bookings.map(async (booking) => {
+            const classItem = await ctx.db.get(booking.classId);
+            return {
+              bookingId: booking._id,
+              classId: booking.classId,
+              className: classItem?.title || "Unknown Class",
+              status: booking.status,
+              paymentStatus: booking.paymentStatus,
+              bookingDate: booking.bookingDate,
+              createdAt: booking.createdAt,
+            };
+          })
+        );
+
+        return {
+          _id: user._id,
+          userId: user.userId,
+          email: user.email,
+          name: user.name,
+          avatar: user.avatar,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+          enrollments,
+          totalEnrollments: enrollments.length,
+        };
+      })
+    );
+
+    // Filter out null values and sort by name
+    return studentsWithEnrollments
+      .filter((s) => s !== null)
+      .sort((a, b) => a!.name.localeCompare(b!.name));
   },
 });
 
