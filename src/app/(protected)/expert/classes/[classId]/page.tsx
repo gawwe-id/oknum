@@ -12,7 +12,13 @@ import { Button } from "@/components/ui/button";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { ClassDetailTabs } from "@/components/admin/classes";
 
-type ViewType = "detail" | "curriculum" | "schedules";
+type ViewType =
+  | "detail"
+  | "curriculum"
+  | "schedules"
+  | "benefits"
+  | "journey"
+  | "documentation";
 
 function ClassDetailHeader({
   title,
@@ -54,8 +60,12 @@ function ClassDetailContent() {
 
   // Validate and normalize view value
   const view: ViewType =
-    viewParam === "curriculum" || viewParam === "schedules"
-      ? viewParam
+    viewParam === "curriculum" ||
+    viewParam === "schedules" ||
+    viewParam === "benefits" ||
+    viewParam === "journey" ||
+    viewParam === "documentation"
+      ? (viewParam as ViewType)
       : "detail";
 
   const setView = (value: ViewType) => {

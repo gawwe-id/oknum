@@ -6,8 +6,15 @@ import { cn } from "@/lib/utils";
 import { ClassDetailTabContent } from "./class-detail-tab-content";
 import { ClassCurriculumTabContent } from "./class-curriculum-tab-content";
 import { ClassSchedulesTabContent } from "./class-schedules-tab-content";
+import { ClassBenefitsTabContent } from "./class-benefits-tab-content";
 
-type ViewType = "detail" | "curriculum" | "schedules";
+type ViewType =
+  | "detail"
+  | "curriculum"
+  | "schedules"
+  | "benefits"
+  | "journey"
+  | "documentation";
 
 interface ClassDetailTabsProps {
   view: ViewType;
@@ -51,6 +58,30 @@ export function ClassDetailTabs({
           >
             Schedules
           </TabsTrigger>
+          <TabsTrigger
+            value="benefits"
+            className={cn(
+              "rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground"
+            )}
+          >
+            Benefits
+          </TabsTrigger>
+          <TabsTrigger
+            value="journey"
+            className={cn(
+              "rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground"
+            )}
+          >
+            Journey
+          </TabsTrigger>
+          <TabsTrigger
+            value="documentation"
+            className={cn(
+              "rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground"
+            )}
+          >
+            Documentation
+          </TabsTrigger>
         </TabsList>
       </div>
 
@@ -64,6 +95,26 @@ export function ClassDetailTabs({
 
       <TabsContent value="schedules" className="mt-6">
         <ClassSchedulesTabContent />
+      </TabsContent>
+
+      <TabsContent value="benefits" className="mt-6">
+        <ClassBenefitsTabContent />
+      </TabsContent>
+
+      <TabsContent value="journey" className="mt-6">
+        <div className="p-4">
+          <p className="text-muted-foreground">
+            Journey content will be displayed here.
+          </p>
+        </div>
+      </TabsContent>
+
+      <TabsContent value="documentation" className="mt-6">
+        <div className="p-4">
+          <p className="text-muted-foreground">
+            Documentation content will be displayed here.
+          </p>
+        </div>
       </TabsContent>
     </Tabs>
   );
