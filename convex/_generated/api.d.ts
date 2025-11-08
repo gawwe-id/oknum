@@ -13,6 +13,7 @@ import type * as bookings from "../bookings.js";
 import type * as categories from "../categories.js";
 import type * as classes from "../classes.js";
 import type * as curriculum from "../curriculum.js";
+import type * as dashboard from "../dashboard.js";
 import type * as experts from "../experts.js";
 import type * as files from "../files.js";
 import type * as http from "../http.js";
@@ -40,6 +41,7 @@ declare const fullApi: ApiFromModules<{
   categories: typeof categories;
   classes: typeof classes;
   curriculum: typeof curriculum;
+  dashboard: typeof dashboard;
   experts: typeof experts;
   files: typeof files;
   http: typeof http;
