@@ -24,7 +24,7 @@ const headingVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 100,
       damping: 15,
     },
@@ -37,7 +37,7 @@ const cardVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 70,
       damping: 15,
       delay: custom * 0.1,
@@ -47,7 +47,7 @@ const cardVariants = {
     y: -10,
     scale: custom === 1 ? 1.05 : 1.02,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 400,
       damping: 10,
     },
@@ -60,7 +60,7 @@ const checkmarkVariants = {
     opacity: 1,
     scale: 1,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 300,
       damping: 15,
       delay: 0.2 + custom * 0.05,
@@ -176,7 +176,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <span className="px-4 py-1 bg-gradient-to-r from-sky-700 to-sky-500 text-white text-sm font-semibold rounded-tr-2xl rounded-tl-2xl shadow-md">
+          <span className="px-4 py-1 bg-linear-to-r from-sky-700 to-sky-500 text-white text-sm font-semibold rounded-tr-2xl rounded-tl-2xl shadow-md">
             Paling Populer
           </span>
         </motion.div>
@@ -190,7 +190,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
         }`}
       >
         {plan.highlight && (
-          <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-sky-700 to-sky-500" />
+          <div className="absolute top-0 inset-x-0 h-2 bg-linear-to-r from-sky-700 to-sky-500" />
         )}
 
         <div className="p-6 md:p-8 h-full">
@@ -242,7 +242,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
                 custom={i}
               >
                 <div
-                  className={`flex-shrink-0 p-1 rounded-full mt-0.5 ${
+                  className={`shrink-0 p-1 rounded-full mt-0.5 ${
                     plan.highlight
                       ? "bg-sky-100 text-sky-700"
                       : "bg-gray-100 text-gray-700"
@@ -260,7 +260,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan }) => {
           <motion.button
             className={`w-full py-3 mt-8 rounded-lg font-medium transition-colors ${
               plan.highlight
-                ? "bg-gradient-to-r from-sky-700 to-sky-500 hover:from-sky-600 hover:to-sky-400 text-white shadow-md"
+                ? "bg-linear-to-r from-sky-700 to-sky-500 hover:from-sky-600 hover:to-sky-400 text-white shadow-md"
                 : "bg-gray-100 hover:bg-gray-200 text-gray-800"
             }`}
             whileHover={{ scale: 1.02 }}

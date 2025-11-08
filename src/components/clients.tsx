@@ -78,7 +78,7 @@ const Clients: React.FC<ClientsProps> = ({
       </div>
 
       <div className="relative max-w-6xl mx-auto overflow-hidden">
-        <div className="absolute left-0 top-0 h-full w-24 z-10 bg-gradient-to-r from-gray-50 to-transparent pointer-events-none"></div>
+        <div className="absolute left-0 top-0 h-full w-24 z-10 bg-linear-to-r from-gray-50 to-transparent pointer-events-none"></div>
 
         <motion.div
           className="flex items-center py-6 whitespace-nowrap"
@@ -100,7 +100,7 @@ const Clients: React.FC<ClientsProps> = ({
           ))}
         </motion.div>
 
-        <div className="absolute right-0 top-0 h-full w-24 z-10 bg-gradient-to-l fromgray-50 to-transparent pointer-events-none"></div>
+        <div className="absolute right-0 top-0 h-full w-24 z-10 bg-linear-to-l fromgray-50 to-transparent pointer-events-none"></div>
       </div>
 
       <div className="container mx-auto max-w-6xl px-4 mt-10">

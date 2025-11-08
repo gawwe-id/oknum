@@ -1,7 +1,7 @@
 const PricingView = () => {
   return (
     <>
-      <section className="pt-32 pb-16 bg-gradient-to-b from-sky-50 to-white">
+      <section className="pt-32 pb-16 bg-linear-to-b from-sky-50 to-white">
         <div className="container mx-auto max-w-4xl px-4">
           <div className="text-center mb-12">
             <span className="inline-block px-3 py-1 bg-sky-100 text-sky-600 rounded-full text-sm font-medium mb-2">

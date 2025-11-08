@@ -1,17 +1,19 @@
 "use client";
 
 import * as React from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
+import { useQueryStates, parseAsString } from "nuqs";
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { ButtonPrimary } from "@/components/ui/button-primary";
 import { CheckCircle2, XCircle } from "lucide-react";
 
-export default function PaymentSuccessPage() {
-  const searchParams = useSearchParams();
+function PaymentSuccessContent() {
   const router = useRouter();
-
-  const reference = searchParams.get("reference");
-  const resultCode = searchParams.get("resultCode");
+  const [{ reference, resultCode }] = useQueryStates({
+    reference: parseAsString,
+    resultCode: parseAsString,
+  });
 
   const isSuccess = resultCode === "00";
 
@@ -95,3 +97,28 @@ export default function PaymentSuccessPage() {
   );
 }
 
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-background p-4">
+          <Card className="w-full max-w-md shadow-lg">
+            <CardContent className="pt-6">
+              <div className="flex flex-col items-center text-center space-y-6">
+                <div className="animate-pulse">
+                  <div className="rounded-full bg-gray-200 p-4 w-20 h-20"></div>
+                </div>
+                <div className="space-y-2">
+                  <div className="h-6 bg-gray-200 rounded w-48 animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded w-64 animate-pulse"></div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      }
+    >
+      <PaymentSuccessContent />
+    </Suspense>
+  );
+}

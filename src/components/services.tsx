@@ -44,7 +44,7 @@ const cardVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 100,
       damping: 15,
     },
@@ -52,7 +52,7 @@ const cardVariants = {
   hover: {
     y: -10,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 400,
       damping: 10,
     },
@@ -65,7 +65,7 @@ const featureItemVariants = {
     opacity: 1,
     x: 0,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 100,
       damping: 15,
     },
@@ -335,7 +335,7 @@ const ServicesSection: React.FC = () => {
 
   return (
     <motion.section
-      className="py-16 md:py-24 bg-gradient-to-b from-white to-gray-50"
+      className="py-16 md:py-24 bg-linear-to-b from-white to-gray-50"
       variants={sectionVariants}
       initial="hidden"
       whileInView="visible"

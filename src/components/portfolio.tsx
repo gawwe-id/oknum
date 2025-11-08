@@ -39,7 +39,7 @@ const headingVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 100,
       damping: 15,
     },
@@ -52,7 +52,7 @@ const tabsVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 100,
       damping: 15,
       delay: 0.2,
@@ -66,7 +66,7 @@ const itemVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 100,
       damping: 15,
     },
@@ -74,7 +74,7 @@ const itemVariants = {
   hover: {
     y: -8,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 400,
       damping: 10,
     },
@@ -82,7 +82,7 @@ const itemVariants = {
   tap: {
     scale: 0.98,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 400,
       damping: 10,
     },
@@ -93,7 +93,7 @@ const imageVariants = {
   hover: {
     scale: 1.05,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 300,
       damping: 10,
     },
