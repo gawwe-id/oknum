@@ -8,6 +8,7 @@ import { ClassCurriculumTabContent } from "./class-curriculum-tab-content";
 import { ClassSchedulesTabContent } from "./class-schedules-tab-content";
 import { ClassBenefitsTabContent } from "./class-benefits-tab-content";
 import { ClassJourneyTabContent } from "./class-journey-tab-content";
+import { ClassDocumentationTabContent } from "./class-documentation-tab-content";
 
 type ViewType =
   | "detail"
@@ -107,11 +108,7 @@ export function ClassDetailTabs({
       </TabsContent>
 
       <TabsContent value="documentation" className="mt-6">
-        <div className="p-4">
-          <p className="text-muted-foreground">
-            Documentation content will be displayed here.
-          </p>
-        </div>
+        <ClassDocumentationTabContent />
       </TabsContent>
     </Tabs>
   );
