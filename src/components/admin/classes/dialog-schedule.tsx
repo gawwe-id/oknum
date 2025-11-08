@@ -26,7 +26,6 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import type { DateRange } from "react-day-picker";
-import { cn } from "@/lib/utils";
 
 interface DialogScheduleProps {
   open: boolean;

@@ -21,13 +21,6 @@ const statusColors: Record<string, string> = {
   completed: "bg-blue-600",
 };
 
-const paymentStatusColors: Record<string, string> = {
-  pending: "bg-yellow-500",
-  paid: "bg-emerald-600",
-  failed: "bg-red-600",
-  refunded: "bg-gray-600",
-};
-
 export type BookingWithDetails = {
   _id: Id<"bookings">;
   userId: Id<"users">;

@@ -3,14 +3,7 @@ import type { Id } from "../../../../convex/_generated/dataModel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ButtonPrimary } from "@/components/ui/button-primary";
-import { CreditCard, Calendar, MapPin, Download } from "lucide-react";
-
-const statusColors: Record<string, string> = {
-  pending: "bg-yellow-500",
-  confirmed: "bg-emerald-600",
-  cancelled: "bg-red-600",
-  completed: "bg-blue-600",
-};
+import { Calendar, MapPin, Download, CreditCard } from "lucide-react";
 
 const paymentStatusColors: Record<string, string> = {
   pending: "bg-yellow-500",
@@ -143,6 +136,19 @@ export function CardPaymentInvoice({
           <div className="text-sm">
             <p className="text-muted-foreground mb-1">Notes:</p>
             <p className="bg-muted/50 p-2 rounded">{booking.notes}</p>
+          </div>
+        )}
+
+        {/* Payment Button */}
+        {isPendingPayment && (
+          <div className="pt-2 border-t">
+            <ButtonPrimary
+              onClick={() => onOpenPayment(booking)}
+              className="w-full sm:w-auto"
+            >
+              <CreditCard className="size-4 mr-2" />
+              Complete Payment
+            </ButtonPrimary>
           </div>
         )}
 
