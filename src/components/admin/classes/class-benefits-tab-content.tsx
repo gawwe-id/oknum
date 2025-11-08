@@ -2,13 +2,22 @@
 
 import * as React from "react";
 import { useParams } from "next/navigation";
-import { useQuery, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
+import { useQuery } from "convex-helpers/react/cache";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ButtonPrimary } from "@/components/ui/button-primary";
-import { Plus, Loader2, Edit2, Trash2, X } from "lucide-react";
+import {
+  Plus,
+  Loader2,
+  Edit2,
+  Trash2,
+  X,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 import { toast } from "sonner";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import {
@@ -35,6 +44,7 @@ export function ClassBenefitsTabContent() {
   const createBenefit = useMutation(api.benefits.createBenefit);
   const updateBenefit = useMutation(api.benefits.updateBenefit);
   const deleteBenefit = useMutation(api.benefits.deleteBenefit);
+  const reorderBenefits = useMutation(api.benefits.reorderBenefits);
 
   const [isCreating, setIsCreating] = React.useState(false);
   const [editingId, setEditingId] = React.useState<Id<"benefits"> | null>(null);
@@ -135,6 +145,56 @@ export function ClassBenefitsTabContent() {
       setEditingBenefit({ ...editingBenefit, emoji });
     }
     setEmojiPickerOpen(false);
+  };
+
+  const handleMoveUp = async (index: number) => {
+    if (!benefits || index === 0) return;
+
+    const sortedBenefits = [...benefits];
+    [sortedBenefits[index - 1], sortedBenefits[index]] = [
+      sortedBenefits[index],
+      sortedBenefits[index - 1],
+    ];
+
+    // Reorder
+    const benefitOrders = sortedBenefits.map((benefit, i) => ({
+      benefitId: benefit._id,
+      order: i,
+    }));
+
+    try {
+      await reorderBenefits({ benefitOrders });
+      toast.success("Benefits reordered successfully");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to reorder benefits"
+      );
+    }
+  };
+
+  const handleMoveDown = async (index: number) => {
+    if (!benefits || index === benefits.length - 1) return;
+
+    const sortedBenefits = [...benefits];
+    [sortedBenefits[index], sortedBenefits[index + 1]] = [
+      sortedBenefits[index + 1],
+      sortedBenefits[index],
+    ];
+
+    // Reorder
+    const benefitOrders = sortedBenefits.map((benefit, i) => ({
+      benefitId: benefit._id,
+      order: i,
+    }));
+
+    try {
+      await reorderBenefits({ benefitOrders });
+      toast.success("Benefits reordered successfully");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to reorder benefits"
+      );
+    }
   };
 
   return (
@@ -293,29 +353,52 @@ export function ClassBenefitsTabContent() {
                   </Button>
                 </div>
               ) : (
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  {/* Order buttons */}
+                  <div className="flex flex-col gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => handleMoveUp(index)}
+                      disabled={index === 0}
+                    >
+                      <ChevronUp className="size-3" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => handleMoveDown(index)}
+                      disabled={index === (benefits?.length ?? 0) - 1}
+                    >
+                      <ChevronDown className="size-3" />
+                    </Button>
+                  </div>
+                  {/* Emoji */}
                   <div className="text-2xl shrink-0">{benefit.emoji}</div>
+                  {/* Benefit text */}
                   <p className="text-sm text-muted-foreground flex-1">
                     {benefit.text}
                   </p>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => handleStartEdit(benefit)}
-                    >
-                      <Edit2 className="size-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-destructive hover:text-destructive"
-                      onClick={() => handleDelete(benefit._id)}
-                    >
-                      <Trash2 className="size-4" />
-                    </Button>
-                  </div>
+                  {/* Edit button */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => handleStartEdit(benefit)}
+                  >
+                    <Edit2 className="size-4" />
+                  </Button>
+                  {/* Delete button */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 shrink-0 text-destructive hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => handleDelete(benefit._id)}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
                 </div>
               )}
             </div>
