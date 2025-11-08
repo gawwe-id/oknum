@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useQuery } from "convex-helpers/react/cache";
 import { api } from "../../../../convex/_generated/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,15 +14,33 @@ import { Id } from "../../../../convex/_generated/dataModel";
 export function ClassCurriculumTabContent() {
   const params = useParams();
   const router = useRouter();
+  const pathname = usePathname();
   const classId = params.classId as Id<"classes">;
 
   const classData = useQuery(api.classes.getClassById, { classId });
   const curriculum = useQuery(api.curriculum.getCurriculumsByClass, {
     classId,
   });
+  const currentUser = useQuery(api.users.getCurrentUserQuery);
 
   const handleAddCurriculum = () => {
-    router.push(`/admin/classes/${classId}/curriculum`);
+    // Determine base path from current pathname or user role
+    const isExpertRoute = pathname?.includes("/expert/");
+    const isAdminRoute = pathname?.includes("/admin/");
+
+    // Use pathname first, fallback to user role
+    let basePath = "/admin";
+    if (isExpertRoute) {
+      basePath = "/expert";
+    } else if (isAdminRoute) {
+      basePath = "/admin";
+    } else if (currentUser?.role === "expert") {
+      basePath = "/expert";
+    } else if (currentUser?.role === "admin") {
+      basePath = "/admin";
+    }
+
+    router.push(`${basePath}/classes/${classId}/curriculum`);
   };
 
   // Loading state
