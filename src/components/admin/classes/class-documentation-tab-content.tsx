@@ -21,20 +21,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-interface Documentation {
-  _id: Id<"documentation">;
-  classId: Id<"classes">;
-  type: "photo" | "video";
-  url: string;
-  title?: string;
-  description?: string;
-  uploadedBy: Id<"users">;
-  fileSize?: number;
-  mimeType?: string;
-  createdAt: number;
-  updatedAt: number;
-}
-
 // Format bytes to human readable format
 const formatBytes = (bytes?: number): string => {
   if (!bytes) return "Unknown";

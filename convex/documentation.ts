@@ -11,10 +11,11 @@ export const getDocumentationByClassId = query({
   handler: async (ctx, args) => {
     let docs;
     if (args.type) {
+      const type = args.type; // Type narrowing helper
       docs = await ctx.db
         .query("documentation")
         .withIndex("by_classId_type", (q) =>
-          q.eq("classId", args.classId).eq("type", args.type)
+          q.eq("classId", args.classId).eq("type", type)
         )
         .collect();
     } else {

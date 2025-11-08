@@ -23,6 +23,7 @@ const eslintConfig = [
           ignoreRestSiblings: true,
         },
       ],
+      "@typescript-eslint/no-empty-object-type": "off",
       "react/jsx-key": "off",
       "react/react-in-jsx-scope": "off",
       "react/no-unescaped-entities": "off",
