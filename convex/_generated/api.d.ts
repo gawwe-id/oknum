@@ -8,15 +8,19 @@
  * @module
  */
 
+import type * as additionalPerks from "../additionalPerks.js";
 import type * as auth from "../auth.js";
+import type * as benefits from "../benefits.js";
 import type * as bookings from "../bookings.js";
 import type * as categories from "../categories.js";
 import type * as classes from "../classes.js";
 import type * as curriculum from "../curriculum.js";
 import type * as dashboard from "../dashboard.js";
+import type * as documentation from "../documentation.js";
 import type * as experts from "../experts.js";
 import type * as files from "../files.js";
 import type * as http from "../http.js";
+import type * as journey from "../journey.js";
 import type * as payments from "../payments.js";
 import type * as schedules from "../schedules.js";
 import type * as users from "../users.js";
@@ -36,15 +40,19 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  additionalPerks: typeof additionalPerks;
   auth: typeof auth;
+  benefits: typeof benefits;
   bookings: typeof bookings;
   categories: typeof categories;
   classes: typeof classes;
   curriculum: typeof curriculum;
   dashboard: typeof dashboard;
+  documentation: typeof documentation;
   experts: typeof experts;
   files: typeof files;
   http: typeof http;
+  journey: typeof journey;
   payments: typeof payments;
   schedules: typeof schedules;
   users: typeof users;

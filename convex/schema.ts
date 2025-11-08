@@ -88,6 +88,53 @@ export default defineSchema({
     materials: v.optional(v.array(v.string())),
   }).index("by_classId", ["classId"]),
 
+  journey: defineTable({
+    classId: v.id("classes"),
+    steps: v.array(
+      v.object({
+        order: v.number(),
+        title: v.string(),
+        description: v.string(),
+      })
+    ),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  }).index("by_classId", ["classId"]),
+
+  benefits: defineTable({
+    classId: v.id("classes"),
+    emoji: v.string(),
+    text: v.string(),
+    order: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  }).index("by_classId", ["classId"]),
+
+  additionalPerks: defineTable({
+    classId: v.id("classes"),
+    title: v.string(),
+    description: v.string(),
+    image: v.optional(v.string()),
+    price: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  }).index("by_classId", ["classId"]),
+
+  documentation: defineTable({
+    classId: v.id("classes"),
+    type: v.union(v.literal("photo"), v.literal("video")),
+    url: v.string(),
+    title: v.optional(v.string()),
+    description: v.optional(v.string()),
+    uploadedBy: v.id("users"),
+    fileSize: v.optional(v.number()),
+    mimeType: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_classId", ["classId"])
+    .index("by_classId_type", ["classId", "type"]),
+
   schedules: defineTable({
     classId: v.id("classes"),
     sessionNumber: v.string(),
