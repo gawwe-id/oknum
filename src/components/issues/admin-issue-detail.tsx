@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useQuery, useMutation } from 'convex/react';
+import { useQuery } from 'convex-helpers/react/cache';
+import { useMutation } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import { Id } from '../../../convex/_generated/dataModel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
