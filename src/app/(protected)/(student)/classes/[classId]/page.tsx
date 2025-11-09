@@ -279,7 +279,7 @@ export default function StudentClassDetailPage() {
               <CardContent>
                 <div className="flex items-center gap-4">
                   <Avatar className="size-12">
-                    <AvatarImage src={classData.expert.profileImage} />
+                    <AvatarImage src={classData.expert.userAvatar} />
                     <AvatarFallback>{initials}</AvatarFallback>
                   </Avatar>
                   <div>

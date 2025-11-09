@@ -1,54 +1,54 @@
-"use client";
+'use client';
 
-import { Protect } from "@clerk/nextjs";
-import { useQuery, useMutation } from "convex/react";
-import { api } from "../../../../../convex/_generated/api";
-import { useQueryState, parseAsString } from "nuqs";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Protect } from '@clerk/nextjs';
+import { useQuery, useMutation } from 'convex/react';
+import { api } from '../../../../../convex/_generated/api';
+import { useQueryState, parseAsString } from 'nuqs';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import { Loader2, Upload, User, Trash2, AlertTriangle } from "lucide-react";
-import { useState, useEffect, Suspense } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { toast } from "sonner";
+  CardDescription
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
+import { Loader2, Upload, User, Trash2, AlertTriangle } from 'lucide-react';
+import { useState, useEffect, Suspense } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { toast } from 'sonner';
 
 const profileSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
+  name: z.string().min(2, 'Name must be at least 2 characters'),
   phone: z.string().optional(),
-  email: z.string().email("Please enter a valid email address"),
+  email: z.string().email('Please enter a valid email address')
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
-type TabType = "profile" | "account";
+type TabType = 'profile' | 'account';
 
 function SettingsContent() {
   const currentUser = useQuery(api.users.getCurrentUserQuery);
   const expertData = useQuery(
     api.experts.getExpertByUserId,
-    currentUser?._id ? { userId: currentUser._id } : "skip"
+    currentUser?._id ? { userId: currentUser._id } : 'skip'
   );
 
   const [tab, setTab] = useQueryState(
-    "tab",
-    parseAsString.withDefault("profile")
+    'tab',
+    parseAsString.withDefault('profile')
   );
 
   // Validate and normalize tab value
-  const activeTab: TabType = tab === "account" ? "account" : "profile";
+  const activeTab: TabType = tab === 'account' ? 'account' : 'profile';
 
   const updateUser = useMutation(api.users.updateUser);
   const updateExpert = useMutation(api.experts.updateExpert);
@@ -56,7 +56,7 @@ function SettingsContent() {
   const getFileUrl = useMutation(api.files.getFileUrl);
 
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState<string>("");
+  const [avatarPreview, setAvatarPreview] = useState<string>('');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -64,23 +64,23 @@ function SettingsContent() {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
+    reset
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: currentUser?.name || "",
-      phone: currentUser?.phone || "",
-      email: currentUser?.email || "",
-    },
+      name: currentUser?.name || '',
+      phone: currentUser?.phone || '',
+      email: currentUser?.email || ''
+    }
   });
 
   // Reset form when user data loads
   useEffect(() => {
     if (currentUser) {
       reset({
-        name: currentUser.name || "",
-        phone: currentUser.phone || "",
-        email: currentUser.email || "",
+        name: currentUser.name || '',
+        phone: currentUser.phone || '',
+        email: currentUser.email || ''
       });
     }
   }, [currentUser, reset]);
@@ -89,14 +89,14 @@ function SettingsContent() {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith("image/")) {
-        toast.error("Please upload an image file");
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please upload an image file');
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image size must be less than 5MB");
+        toast.error('Image size must be less than 5MB');
         return;
       }
 
@@ -120,13 +120,13 @@ function SettingsContent() {
 
       // Upload file
       const result = await fetch(uploadUrl, {
-        method: "POST",
-        headers: { "Content-Type": file.type },
-        body: file,
+        method: 'POST',
+        headers: { 'Content-Type': file.type },
+        body: file
       });
 
       if (!result.ok) {
-        throw new Error("Failed to upload file");
+        throw new Error('Failed to upload file');
       }
 
       const { storageId } = await result.json();
@@ -135,12 +135,12 @@ function SettingsContent() {
       const fileUrl = await getFileUrl({ storageId });
 
       if (!fileUrl) {
-        throw new Error("Failed to get file URL");
+        throw new Error('Failed to get file URL');
       }
 
       return fileUrl as string;
     } catch (error) {
-      console.error("Error uploading avatar:", error);
+      console.error('Error uploading avatar:', error);
       throw error;
     }
   };
@@ -153,18 +153,18 @@ function SettingsContent() {
       const avatarUrl = await uploadAvatar(avatarFile);
 
       await updateUser({
-        avatar: avatarUrl,
+        avatar: avatarUrl
       });
 
-      toast.success("Avatar updated successfully");
+      toast.success('Avatar updated successfully');
       setAvatarFile(null);
-      setAvatarPreview("");
+      setAvatarPreview('');
     } catch (error) {
-      console.error("Error updating avatar:", error);
+      console.error('Error updating avatar:', error);
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to update avatar. Please try again."
+          : 'Failed to update avatar. Please try again.'
       );
     } finally {
       setIsUploadingAvatar(false);
@@ -173,7 +173,7 @@ function SettingsContent() {
 
   const handleCancelAvatarUpdate = () => {
     setAvatarFile(null);
-    setAvatarPreview("");
+    setAvatarPreview('');
   };
 
   const onSubmit = async (data: ProfileFormData) => {
@@ -182,7 +182,7 @@ function SettingsContent() {
       // Update user data
       await updateUser({
         name: data.name,
-        phone: data.phone || undefined,
+        phone: data.phone || undefined
       });
 
       // Update expert data if exists
@@ -190,17 +190,17 @@ function SettingsContent() {
         await updateExpert({
           expertId: expertData._id,
           name: data.name,
-          email: data.email,
+          email: data.email
         });
       }
 
-      toast.success("Profile updated successfully");
+      toast.success('Profile updated successfully');
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error('Error updating profile:', error);
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to update profile. Please try again."
+          : 'Failed to update profile. Please try again.'
       );
     } finally {
       setIsSubmitting(false);
@@ -211,7 +211,7 @@ function SettingsContent() {
     // For now, redirect to Clerk's account management
     // In the future, you can implement a custom delete flow
     toast.info(
-      "Account deletion should be handled through Clerk account management"
+      'Account deletion should be handled through Clerk account management'
     );
     // You can also implement a custom delete mutation if needed
   };
@@ -224,15 +224,16 @@ function SettingsContent() {
     );
   }
 
-  const displayAvatar = avatarPreview || currentUser?.avatar;
+  // Use avatar from users table, or preview if uploading
+  const displayAvatar = avatarPreview || currentUser?.avatar || null;
   const initials = currentUser?.name
     ? currentUser.name
-        .split(" ")
+        .split(' ')
         .map((n) => n[0])
-        .join("")
+        .join('')
         .toUpperCase()
         .slice(0, 2)
-    : "U";
+    : 'U';
 
   return (
     <div className="container max-w-4xl mx-auto">
@@ -252,7 +253,7 @@ function SettingsContent() {
             <TabsTrigger
               value="profile"
               className={cn(
-                "rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground"
+                'rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground'
               )}
             >
               <User className="size-4 mr-2" />
@@ -261,7 +262,7 @@ function SettingsContent() {
             <TabsTrigger
               value="account"
               className={cn(
-                "rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground"
+                'rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground'
               )}
             >
               <AlertTriangle className="size-4 mr-2" />
@@ -284,17 +285,19 @@ function SettingsContent() {
                 <Label>Avatar</Label>
                 <div className="flex items-center gap-6">
                   <div className="relative">
-                    <Avatar className="size-24 border-2 border-dashed border-input">
+                    <div className="w-24 h-32 overflow-hidden rounded-lg border-2 border-dashed border-input bg-muted flex items-center justify-center">
                       {displayAvatar ? (
-                        <AvatarImage
+                        <img
                           src={displayAvatar}
                           alt={currentUser?.name}
+                          className="w-full h-full object-cover"
                         />
-                      ) : null}
-                      <AvatarFallback className="text-lg">
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
+                      ) : (
+                        <span className="text-lg font-semibold text-muted-foreground">
+                          {initials}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex-1 space-y-2">
                     {avatarPreview ? (
@@ -330,8 +333,8 @@ function SettingsContent() {
                         htmlFor="avatar-upload"
                         className={`inline-flex items-center justify-center px-4 py-2 text-sm border border-input rounded-md cursor-pointer bg-background hover:bg-accent/50 transition-colors ${
                           isUploadingAvatar
-                            ? "cursor-not-allowed opacity-50"
-                            : ""
+                            ? 'cursor-not-allowed opacity-50'
+                            : ''
                         }`}
                       >
                         <Upload className="size-4 mr-2" />
@@ -363,7 +366,7 @@ function SettingsContent() {
                   </Label>
                   <Input
                     id="name"
-                    {...register("name")}
+                    {...register('name')}
                     placeholder="Enter your name"
                   />
                   {errors.name && (
@@ -378,7 +381,7 @@ function SettingsContent() {
                   <Input
                     id="email"
                     type="email"
-                    {...register("email")}
+                    {...register('email')}
                     placeholder="Enter your email"
                     disabled
                   />
@@ -393,7 +396,7 @@ function SettingsContent() {
                   <Input
                     id="phone"
                     type="tel"
-                    {...register("phone")}
+                    {...register('phone')}
                     placeholder="Enter your phone number"
                   />
                   {errors.phone && (
@@ -411,7 +414,7 @@ function SettingsContent() {
                         Saving...
                       </>
                     ) : (
-                      "Save Changes"
+                      'Save Changes'
                     )}
                   </Button>
                 </div>
