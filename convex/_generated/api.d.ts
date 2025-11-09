@@ -20,6 +20,7 @@ import type * as documentation from "../documentation.js";
 import type * as experts from "../experts.js";
 import type * as files from "../files.js";
 import type * as http from "../http.js";
+import type * as issues from "../issues.js";
 import type * as journey from "../journey.js";
 import type * as payments from "../payments.js";
 import type * as schedules from "../schedules.js";
@@ -52,6 +53,7 @@ declare const fullApi: ApiFromModules<{
   experts: typeof experts;
   files: typeof files;
   http: typeof http;
+  issues: typeof issues;
   journey: typeof journey;
   payments: typeof payments;
   schedules: typeof schedules;
