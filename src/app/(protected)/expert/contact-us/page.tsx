@@ -4,27 +4,18 @@ import * as React from 'react';
 import { Protect } from '@clerk/nextjs';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
-import { IssueForm, IssueList, IssueDetail } from '@/components/issues';
-import { Id } from '../../../../../convex/_generated/dataModel';
+import { IssueForm, IssueList } from '@/components/issues';
+import { useRouter } from 'next/navigation';
 
 export default function ExpertContactUsPage() {
-  const [selectedIssueId, setSelectedIssueId] =
-    React.useState<Id<'issues'> | null>(null);
-  const [activeTab, setActiveTab] = React.useState<
-    'list' | 'create' | 'detail'
-  >('list');
+  const router = useRouter();
+  const [activeTab, setActiveTab] = React.useState<'list' | 'create'>('list');
 
   const handleIssueClick = (issueId: string) => {
-    setSelectedIssueId(issueId as Id<'issues'>);
-    setActiveTab('detail');
+    router.push(`/contact-us/${issueId}`);
   };
 
   const handleCreateSuccess = () => {
-    setActiveTab('list');
-  };
-
-  const handleBackToList = () => {
-    setSelectedIssueId(null);
     setActiveTab('list');
   };
 
@@ -39,49 +30,37 @@ export default function ExpertContactUsPage() {
           </p>
         </div>
 
-        {activeTab === 'detail' && selectedIssueId ? (
-          <div className="space-y-4">
-            <button
-              onClick={handleBackToList}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              ← Back to Issues
-            </button>
-            <IssueDetail issueId={selectedIssueId} />
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value as typeof activeTab)}
+        >
+          <div className="w-full border-b">
+            <TabsList className="w-fit justify-start h-auto p-0 bg-transparent border-0 rounded-none gap-0">
+              <TabsTrigger
+                value="list"
+                className={cn(
+                  'rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground'
+                )}
+              >
+                My Issues
+              </TabsTrigger>
+              <TabsTrigger
+                value="create"
+                className={cn(
+                  'rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground'
+                )}
+              >
+                Create Issue
+              </TabsTrigger>
+            </TabsList>
           </div>
-        ) : (
-          <Tabs
-            value={activeTab}
-            onValueChange={(value) => setActiveTab(value as typeof activeTab)}
-          >
-            <div className="w-full border-b">
-              <TabsList className="w-fit justify-start h-auto p-0 bg-transparent border-0 rounded-none gap-0">
-                <TabsTrigger
-                  value="list"
-                  className={cn(
-                    'rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground'
-                  )}
-                >
-                  My Issues
-                </TabsTrigger>
-                <TabsTrigger
-                  value="create"
-                  className={cn(
-                    'rounded-none border-0 border-b-2 border-transparent px-4 py-3 -mb-[2px] data-[state=active]:border-b-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none hover:text-foreground'
-                  )}
-                >
-                  Create Issue
-                </TabsTrigger>
-              </TabsList>
-            </div>
-            <TabsContent value="list" className="mt-6">
-              <IssueList onIssueClick={handleIssueClick} />
-            </TabsContent>
-            <TabsContent value="create" className="mt-6">
-              <IssueForm onSuccess={handleCreateSuccess} />
-            </TabsContent>
-          </Tabs>
-        )}
+          <TabsContent value="list" className="mt-6">
+            <IssueList onIssueClick={handleIssueClick} />
+          </TabsContent>
+          <TabsContent value="create" className="mt-6">
+            <IssueForm onSuccess={handleCreateSuccess} />
+          </TabsContent>
+        </Tabs>
       </div>
     </Protect>
   );
