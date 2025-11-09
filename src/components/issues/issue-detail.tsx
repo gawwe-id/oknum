@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Empty, EmptyContent, EmptyTitle } from '@/components/ui/empty';
-import { Loader2, Calendar, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { IssueReplyForm } from './issue-reply-form';
 

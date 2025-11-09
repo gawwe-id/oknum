@@ -6,7 +6,7 @@ import { api } from '../../../convex/_generated/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Empty, EmptyContent, EmptyTitle } from '@/components/ui/empty';
-import { Loader2, MessageSquare, Calendar, User, Filter } from 'lucide-react';
+import { Loader2, MessageSquare, Calendar, User } from 'lucide-react';
 import { format } from 'date-fns';
 
 type Status = 'pending' | 'open' | 'in_progress' | 'resolved' | 'closed';
@@ -24,8 +24,8 @@ export function AdminIssueList({
   onIssueClick,
   statusFilter,
   categoryFilter,
-  onStatusFilterChange,
-  onCategoryFilterChange
+  onStatusFilterChange: _onStatusFilterChange,
+  onCategoryFilterChange: _onCategoryFilterChange
 }: AdminIssueListProps) {
   const issues = useQuery(api.issues.getIssues, {
     status: statusFilter || undefined,
@@ -124,7 +124,9 @@ export function AdminIssueList({
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  <span>{format(new Date(issue.createdAt), 'MMM d, yyyy')}</span>
+                  <span>
+                    {format(new Date(issue.createdAt), 'MMM d, yyyy')}
+                  </span>
                 </div>
               </div>
               {issue.evidences && issue.evidences.length > 0 && (
@@ -142,4 +144,3 @@ export function AdminIssueList({
     </div>
   );
 }
-

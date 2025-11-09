@@ -27,6 +27,7 @@ const eslintConfig = [
       "react/jsx-key": "off",
       "react/react-in-jsx-scope": "off",
       "react/no-unescaped-entities": "off",
+      "@next/next/no-img-element": "warn",
     },
   }),
 ];

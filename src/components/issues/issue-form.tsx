@@ -34,7 +34,6 @@ export function IssueForm({ onSuccess }: IssueFormProps) {
     description: '',
     category: 'general' as Category
   });
-  const [evidences, setEvidences] = React.useState<string[]>([]);
   const [evidenceFiles, setEvidenceFiles] = React.useState<File[]>([]);
   const [evidencePreviews, setEvidencePreviews] = React.useState<string[]>([]);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
@@ -95,7 +94,6 @@ export function IssueForm({ onSuccess }: IssueFormProps) {
   const removeEvidence = (index: number) => {
     setEvidenceFiles((prev) => prev.filter((_, i) => i !== index));
     setEvidencePreviews((prev) => prev.filter((_, i) => i !== index));
-    setEvidences((prev) => prev.filter((_, i) => i !== index));
   };
 
   const uploadEvidence = async (file: File): Promise<string> => {
@@ -178,7 +176,6 @@ export function IssueForm({ onSuccess }: IssueFormProps) {
         description: '',
         category: 'general'
       });
-      setEvidences([]);
       setEvidenceFiles([]);
       setEvidencePreviews([]);
 
@@ -303,7 +300,6 @@ export function IssueForm({ onSuccess }: IssueFormProps) {
               description: '',
               category: 'general'
             });
-            setEvidences([]);
             setEvidenceFiles([]);
             setEvidencePreviews([]);
             setErrors({});
