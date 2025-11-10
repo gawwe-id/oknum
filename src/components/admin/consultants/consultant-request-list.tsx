@@ -16,8 +16,7 @@ import {
   MessageSquare,
   User,
   Calendar,
-  Edit,
-  Phone
+  Edit
 } from 'lucide-react';
 import { format } from 'date-fns';
 

@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog';
-import { Field, FieldLabel, FieldContent, FieldError } from '@/components/ui/field';
+import { Field, FieldLabel, FieldContent } from '@/components/ui/field';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -53,9 +53,11 @@ export function ConsultantRequestForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!message.trim()) {
-      toast.error('Please provide a message describing your consultation needs');
+      toast.error(
+        'Please provide a message describing your consultation needs'
+      );
       return;
     }
 
@@ -130,7 +132,8 @@ export function ConsultantRequestForm({
                 disabled={isSubmitting}
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Provide details about what you need help with, your goals, timeline, and any specific requirements.
+                Provide details about what you need help with, your goals,
+                timeline, and any specific requirements.
               </p>
             </FieldContent>
           </Field>
@@ -145,7 +148,11 @@ export function ConsultantRequestForm({
             >
               Cancel
             </Button>
-            <ButtonPrimary type="submit" variant="solid" disabled={isSubmitting}>
+            <ButtonPrimary
+              type="submit"
+              variant="solid"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
@@ -161,4 +168,3 @@ export function ConsultantRequestForm({
     </Dialog>
   );
 }
-

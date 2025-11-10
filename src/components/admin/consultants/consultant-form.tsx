@@ -1,22 +1,26 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useMutation } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
-import type { Id } from "../../../../convex/_generated/dataModel";
-import { Field, FieldLabel, FieldContent, FieldError } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { ButtonPrimary } from "@/components/ui/button-primary";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
-import { X, Check } from "lucide-react";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { useState } from 'react';
+import { useMutation } from 'convex/react';
+import { api } from '../../../../convex/_generated/api';
+import type { Id } from '../../../../convex/_generated/dataModel';
+import { Field, FieldLabel, FieldContent } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { ButtonPrimary } from '@/components/ui/button-primary';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover';
+import { Badge } from '@/components/ui/badge';
+import { X, Check } from 'lucide-react';
+import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 type Consultant = {
-  _id: Id<"consultants">;
+  _id: Id<'consultants'>;
   title: string;
   subtitle: string;
   description: string;
@@ -24,7 +28,7 @@ type Consultant = {
   includes: string[];
   technologies: string[];
   illustration?: string;
-  status: "active" | "inactive";
+  status: 'active' | 'inactive';
   order: number;
   createdAt: number;
   updatedAt: number;
@@ -37,41 +41,45 @@ type ConsultantFormProps = {
 };
 
 const TAILWIND_COLORS = [
-  { name: "fuchsia", value: "fuchsia", class: "bg-fuchsia-500" },
-  { name: "emerald", value: "emerald", class: "bg-emerald-500" },
-  { name: "cyan", value: "cyan", class: "bg-cyan-500" },
-  { name: "amber", value: "amber", class: "bg-amber-500" },
-  { name: "blue", value: "blue", class: "bg-blue-500" },
-  { name: "indigo", value: "indigo", class: "bg-indigo-500" },
-  { name: "purple", value: "purple", class: "bg-purple-500" },
-  { name: "pink", value: "pink", class: "bg-pink-500" },
-  { name: "red", value: "red", class: "bg-red-500" },
-  { name: "orange", value: "orange", class: "bg-orange-500" },
-  { name: "green", value: "green", class: "bg-green-500" },
-  { name: "teal", value: "teal", class: "bg-teal-500" },
-  { name: "sky", value: "sky", class: "bg-sky-500" },
-  { name: "violet", value: "violet", class: "bg-violet-500" },
-  { name: "rose", value: "rose", class: "bg-rose-500" },
+  { name: 'fuchsia', value: 'fuchsia', class: 'bg-fuchsia-500' },
+  { name: 'emerald', value: 'emerald', class: 'bg-emerald-500' },
+  { name: 'cyan', value: 'cyan', class: 'bg-cyan-500' },
+  { name: 'amber', value: 'amber', class: 'bg-amber-500' },
+  { name: 'blue', value: 'blue', class: 'bg-blue-500' },
+  { name: 'indigo', value: 'indigo', class: 'bg-indigo-500' },
+  { name: 'purple', value: 'purple', class: 'bg-purple-500' },
+  { name: 'pink', value: 'pink', class: 'bg-pink-500' },
+  { name: 'red', value: 'red', class: 'bg-red-500' },
+  { name: 'orange', value: 'orange', class: 'bg-orange-500' },
+  { name: 'green', value: 'green', class: 'bg-green-500' },
+  { name: 'teal', value: 'teal', class: 'bg-teal-500' },
+  { name: 'sky', value: 'sky', class: 'bg-sky-500' },
+  { name: 'violet', value: 'violet', class: 'bg-violet-500' },
+  { name: 'rose', value: 'rose', class: 'bg-rose-500' }
 ];
 
-export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFormProps) {
+export function ConsultantForm({
+  consultant,
+  onSuccess,
+  onCancel
+}: ConsultantFormProps) {
   const createConsultant = useMutation(api.consultants.createConsultant);
   const updateConsultant = useMutation(api.consultants.updateConsultant);
 
   const [formData, setFormData] = useState({
-    title: consultant?.title || "",
-    subtitle: consultant?.subtitle || "",
-    description: consultant?.description || "",
-    color: consultant?.color || "fuchsia",
-    includes: consultant?.includes || [] as string[],
-    technologies: consultant?.technologies || [] as string[],
-    illustration: consultant?.illustration || "",
-    status: consultant?.status || ("active" as "active" | "inactive"),
-    order: consultant?.order || 0,
+    title: consultant?.title || '',
+    subtitle: consultant?.subtitle || '',
+    description: consultant?.description || '',
+    color: consultant?.color || 'fuchsia',
+    includes: consultant?.includes || ([] as string[]),
+    technologies: consultant?.technologies || ([] as string[]),
+    illustration: consultant?.illustration || '',
+    status: consultant?.status || ('active' as 'active' | 'inactive'),
+    order: consultant?.order || 0
   });
 
-  const [includeInput, setIncludeInput] = useState("");
-  const [techInput, setTechInput] = useState("");
+  const [includeInput, setIncludeInput] = useState('');
+  const [techInput, setTechInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [colorPickerOpen, setColorPickerOpen] = useState(false);
 
@@ -79,16 +87,16 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
     if (includeInput.trim()) {
       setFormData({
         ...formData,
-        includes: [...formData.includes, includeInput.trim()],
+        includes: [...formData.includes, includeInput.trim()]
       });
-      setIncludeInput("");
+      setIncludeInput('');
     }
   };
 
   const handleRemoveInclude = (index: number) => {
     setFormData({
       ...formData,
-      includes: formData.includes.filter((_, i) => i !== index),
+      includes: formData.includes.filter((_, i) => i !== index)
     });
   };
 
@@ -96,16 +104,16 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
     if (techInput.trim()) {
       setFormData({
         ...formData,
-        technologies: [...formData.technologies, techInput.trim()],
+        technologies: [...formData.technologies, techInput.trim()]
       });
-      setTechInput("");
+      setTechInput('');
     }
   };
 
   const handleRemoveTechnology = (index: number) => {
     setFormData({
       ...formData,
-      technologies: formData.technologies.filter((_, i) => i !== index),
+      technologies: formData.technologies.filter((_, i) => i !== index)
     });
   };
 
@@ -126,7 +134,7 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
           technologies: formData.technologies,
           illustration: formData.illustration || undefined,
           status: formData.status,
-          order: formData.order,
+          order: formData.order
         });
       } else {
         // Create new consultant
@@ -139,12 +147,14 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
           technologies: formData.technologies,
           illustration: formData.illustration || undefined,
           status: formData.status,
-          order: formData.order,
+          order: formData.order
         });
       }
       onSuccess();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to save consultant");
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to save consultant'
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -160,7 +170,9 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
         <FieldContent>
           <Input
             value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
             placeholder="e.g., Web Development Consultation"
             required
           />
@@ -173,7 +185,9 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
         <FieldContent>
           <Input
             value={formData.subtitle}
-            onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, subtitle: e.target.value })
+            }
             placeholder="e.g., Build your online presence"
             required
           />
@@ -186,7 +200,9 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
         <FieldContent>
           <Textarea
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
             placeholder="Detailed description of the consultancy service..."
             rows={4}
             required
@@ -206,7 +222,7 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
                 className="w-full justify-start"
               >
                 <div className="flex items-center gap-2">
-                  <div className={cn("size-4 rounded", selectedColor?.class)} />
+                  <div className={cn('size-4 rounded', selectedColor?.class)} />
                   <span className="capitalize">{formData.color}</span>
                 </div>
               </Button>
@@ -222,11 +238,11 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
                       setColorPickerOpen(false);
                     }}
                     className={cn(
-                      "size-10 rounded-md border-2 transition-all hover:scale-110",
+                      'size-10 rounded-md border-2 transition-all hover:scale-110',
                       color.class,
                       formData.color === color.value
-                        ? "border-foreground ring-2 ring-offset-2"
-                        : "border-transparent"
+                        ? 'border-foreground ring-2 ring-offset-2'
+                        : 'border-transparent'
                     )}
                     title={color.name}
                   >
@@ -251,7 +267,7 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
                 value={includeInput}
                 onChange={(e) => setIncludeInput(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === 'Enter') {
                     e.preventDefault();
                     handleAddInclude();
                   }
@@ -296,7 +312,7 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
                 value={techInput}
                 onChange={(e) => setTechInput(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === 'Enter') {
                     e.preventDefault();
                     handleAddTechnology();
                   }
@@ -338,7 +354,9 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
           <Input
             type="url"
             value={formData.illustration}
-            onChange={(e) => setFormData({ ...formData, illustration: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, illustration: e.target.value })
+            }
             placeholder="https://example.com/illustration.svg"
           />
         </FieldContent>
@@ -353,7 +371,7 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
             onChange={(e) =>
               setFormData({
                 ...formData,
-                status: e.target.value as "active" | "inactive",
+                status: e.target.value as 'active' | 'inactive'
               })
             }
             className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
@@ -392,13 +410,12 @@ export function ConsultantForm({ consultant, onSuccess, onCancel }: ConsultantFo
         </Button>
         <ButtonPrimary type="submit" variant="solid" disabled={isSubmitting}>
           {isSubmitting
-            ? "Saving..."
+            ? 'Saving...'
             : consultant
-            ? "Update Consultant"
-            : "Create Consultant"}
+            ? 'Update Consultant'
+            : 'Create Consultant'}
         </ButtonPrimary>
       </div>
     </form>
   );
 }
-
