@@ -1,34 +1,34 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { ProtectedNavbar } from "@/components/protected/navbar";
-import { Sidebar, MenuItem } from "@/components/protected/sidebar";
-import { MobileSidebar } from "@/components/protected/mobile-sidebar";
+import { useState } from 'react';
+import { ProtectedNavbar } from '@/components/protected/navbar';
+import { Sidebar, MenuItem } from '@/components/protected/sidebar';
+import { MobileSidebar } from '@/components/protected/mobile-sidebar';
 import {
   LayoutDashboard,
   Settings,
   GraduationCap,
-  DoorOpen,
   Users,
   DollarSign,
   MessageCircle,
-} from "lucide-react";
+  UserCircle
+} from 'lucide-react';
 
 const expertMenuItems: MenuItem[] = [
-  { href: "/expert", label: "Overview", icon: LayoutDashboard },
-  { href: "/expert/settings", label: "Settings", icon: Settings },
-  { type: "separator" },
-  { href: "/expert/classes", label: "Classes", icon: GraduationCap },
-  { href: "/expert/room", label: "Room", icon: DoorOpen },
-  { type: "separator" },
-  { href: "/expert/students", label: "Students", icon: Users },
-  { href: "/expert/revenue", label: "Revenue", icon: DollarSign },
-  { type: "separator" },
-  { href: "/expert/contact-us", label: "Contact Us", icon: MessageCircle },
+  { href: '/expert', label: 'Overview', icon: LayoutDashboard },
+  { href: '/expert/settings', label: 'Settings', icon: Settings },
+  { type: 'separator' },
+  { href: '/expert/classes', label: 'Classes', icon: GraduationCap },
+  { href: '/expert/consultancy', label: 'Consultancy', icon: UserCircle },
+  { type: 'separator' },
+  { href: '/expert/students', label: 'Students', icon: Users },
+  { href: '/expert/revenue', label: 'Revenue', icon: DollarSign },
+  { type: 'separator' },
+  { href: '/expert/contact-us', label: 'Contact Us', icon: MessageCircle }
 ];
 
 export default function ExpertLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {

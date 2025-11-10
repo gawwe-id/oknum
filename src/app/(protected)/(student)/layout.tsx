@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { ProtectedNavbar } from "@/components/protected/navbar";
-import { Sidebar, MenuItem } from "@/components/protected/sidebar";
-import { MobileSidebar } from "@/components/protected/mobile-sidebar";
+import { useState } from 'react';
+import { ProtectedNavbar } from '@/components/protected/navbar';
+import { Sidebar, MenuItem } from '@/components/protected/sidebar';
+import { MobileSidebar } from '@/components/protected/mobile-sidebar';
 import {
   LayoutDashboard,
   Settings,
@@ -11,23 +11,23 @@ import {
   UserCircle,
   CreditCard,
   MessageCircle,
-  BookOpen,
-} from "lucide-react";
+  BookOpen
+} from 'lucide-react';
 
 const studentMenuItems: MenuItem[] = [
-  { href: "/overview", label: "Overview", icon: LayoutDashboard },
-  { href: "/settings", label: "Settings", icon: Settings },
-  { type: "separator" },
-  { href: "/classes", label: "Classes", icon: GraduationCap },
-  { href: "/enrollments", label: "Enrollments", icon: BookOpen },
-  { href: "/consultant", label: "Consultant", icon: UserCircle },
-  { type: "separator" },
-  { href: "/payment-invoices", label: "Payment & Invoices", icon: CreditCard },
-  { href: "/contact-us", label: "Contact Us", icon: MessageCircle },
+  { href: '/overview', label: 'Overview', icon: LayoutDashboard },
+  { href: '/settings', label: 'Settings', icon: Settings },
+  { type: 'separator' },
+  { href: '/classes', label: 'Classes', icon: GraduationCap },
+  { href: '/enrollments', label: 'Enrollments', icon: BookOpen },
+  { href: '/consultancy', label: 'Consultancy', icon: UserCircle },
+  { type: 'separator' },
+  { href: '/payment-invoices', label: 'Payment & Invoices', icon: CreditCard },
+  { href: '/contact-us', label: 'Contact Us', icon: MessageCircle }
 ];
 
 export default function StudentLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {

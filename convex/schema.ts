@@ -277,5 +277,40 @@ export default defineSchema({
     attachments: v.optional(v.array(v.string())),
     createdAt: v.number(),
     updatedAt: v.number()
-  }).index('by_issueId', ['issueId'])
+  }).index('by_issueId', ['issueId']),
+
+  consultants: defineTable({
+    title: v.string(),
+    subtitle: v.string(),
+    description: v.string(),
+    color: v.string(),
+    includes: v.array(v.string()),
+    technologies: v.array(v.string()),
+    illustration: v.optional(v.string()),
+    status: v.union(v.literal('active'), v.literal('inactive')),
+    order: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number()
+  })
+    .index('by_status', ['status'])
+    .index('by_order', ['order']),
+
+  consultantRequests: defineTable({
+    userId: v.id('users'),
+    consultantId: v.id('consultants'),
+    message: v.string(),
+    phone: v.optional(v.string()),
+    status: v.union(
+      v.literal('pending'),
+      v.literal('in_progress'),
+      v.literal('completed'),
+      v.literal('cancelled')
+    ),
+    adminNotes: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number()
+  })
+    .index('by_userId', ['userId'])
+    .index('by_consultantId', ['consultantId'])
+    .index('by_status', ['status'])
 });

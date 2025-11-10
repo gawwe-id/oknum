@@ -14,6 +14,7 @@ import type * as benefits from "../benefits.js";
 import type * as bookings from "../bookings.js";
 import type * as categories from "../categories.js";
 import type * as classes from "../classes.js";
+import type * as consultants from "../consultants.js";
 import type * as curriculum from "../curriculum.js";
 import type * as dashboard from "../dashboard.js";
 import type * as documentation from "../documentation.js";
@@ -47,6 +48,7 @@ declare const fullApi: ApiFromModules<{
   bookings: typeof bookings;
   categories: typeof categories;
   classes: typeof classes;
+  consultants: typeof consultants;
   curriculum: typeof curriculum;
   dashboard: typeof dashboard;
   documentation: typeof documentation;

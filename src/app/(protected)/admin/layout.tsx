@@ -1,36 +1,36 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { ProtectedNavbar } from "@/components/protected/navbar";
-import { Sidebar, MenuItem } from "@/components/protected/sidebar";
-import { MobileSidebar } from "@/components/protected/mobile-sidebar";
+import { useState } from 'react';
+import { ProtectedNavbar } from '@/components/protected/navbar';
+import { Sidebar, MenuItem } from '@/components/protected/sidebar';
+import { MobileSidebar } from '@/components/protected/mobile-sidebar';
 import {
   LayoutDashboard,
   Settings,
   GraduationCap,
-  DoorOpen,
+  MessageCircle,
   DollarSign,
   UserCog,
   Users,
-  AlertTriangle,
-} from "lucide-react";
+  AlertTriangle
+} from 'lucide-react';
 
 const adminMenuItems: MenuItem[] = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
-  { type: "separator" },
-  { href: "/admin/classes", label: "Classes", icon: GraduationCap },
-  { href: "/admin/room", label: "Room", icon: DoorOpen },
-  { type: "separator" },
-  { href: "/admin/experts", label: "Experts", icon: UserCog },
-  { href: "/admin/students", label: "Students", icon: Users },
-  { href: "/admin/revenue", label: "Revenue", icon: DollarSign },
-  { type: "separator" },
-  { href: "/admin/complains", label: "Complains", icon: AlertTriangle },
+  { href: '/admin', label: 'Overview', icon: LayoutDashboard },
+  { href: '/admin/settings', label: 'Settings', icon: Settings },
+  { type: 'separator' },
+  { href: '/admin/classes', label: 'Classes', icon: GraduationCap },
+  { href: '/admin/consultancy', label: 'Consultancy', icon: MessageCircle },
+  { type: 'separator' },
+  { href: '/admin/experts', label: 'Experts', icon: UserCog },
+  { href: '/admin/students', label: 'Students', icon: Users },
+  { href: '/admin/revenue', label: 'Revenue', icon: DollarSign },
+  { type: 'separator' },
+  { href: '/admin/complains', label: 'Complains', icon: AlertTriangle }
 ];
 
 export default function AdminLayout({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
