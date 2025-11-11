@@ -2,6 +2,63 @@ import { query, mutation } from './_generated/server';
 import { v } from 'convex/values';
 import { getCurrentUserOrThrow } from './auth';
 
+// ==================== PUBLIC QUERIES (for landing page) ====================
+
+// Get published classes for public landing page (no auth required)
+export const getPublishedClassesPublic = query({
+  args: {
+    category: v.optional(v.string()),
+    limit: v.optional(v.number())
+  },
+  handler: async (ctx, args) => {
+    // Get only published classes
+    let classes = await ctx.db
+      .query('classes')
+      .withIndex('by_status', (q) => q.eq('status', 'published'))
+      .collect();
+
+    // Filter by category if provided
+    if (args.category) {
+      classes = classes.filter((c) => c.category === args.category);
+    }
+
+    // Limit results if provided
+    if (args.limit) {
+      classes = classes.slice(0, args.limit);
+    }
+
+    // Enrich with expert data
+    const enriched = await Promise.all(
+      classes.map(async (classItem) => {
+        const expert = await ctx.db.get(classItem.expertId);
+        return {
+          ...classItem,
+          expert
+        };
+      })
+    );
+
+    return enriched;
+  }
+});
+
+// Get unique categories from published classes (for badges)
+export const getPublishedClassCategories = query({
+  args: {},
+  handler: async (ctx) => {
+    const classes = await ctx.db
+      .query('classes')
+      .withIndex('by_status', (q) => q.eq('status', 'published'))
+      .collect();
+
+    // Get unique categories
+    const categories = Array.from(new Set(classes.map((c) => c.category)));
+    return categories.sort();
+  }
+});
+
+// ==================== PROTECTED QUERIES ====================
+
 // Get classes with optional filters (default: published only, can filter by status)
 export const getClasses = query({
   args: {

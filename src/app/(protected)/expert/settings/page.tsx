@@ -15,9 +15,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { Loader2, Upload, User, Trash2, AlertTriangle } from 'lucide-react';
+import { Loader2, Upload, User, Trash2, AlertTriangle, X } from 'lucide-react';
 import { useState, useEffect, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,8 +28,12 @@ import { toast } from 'sonner';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
-  phone: z.string().optional(),
-  email: z.string().email('Please enter a valid email address')
+  email: z.string().email('Please enter a valid email address'),
+  bio: z.string().min(10, 'Bio must be at least 10 characters'),
+  specialization: z
+    .array(z.string())
+    .min(1, 'At least one specialization is required'),
+  experience: z.string().min(10, 'Experience must be at least 10 characters')
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -49,42 +55,50 @@ function SettingsContent() {
   // Validate and normalize tab value
   const activeTab: TabType = tab === 'account' ? 'account' : 'profile';
 
-  const updateUser = useMutation(api.users.updateUser);
   const updateExpert = useMutation(api.experts.updateExpert);
   const generateUploadUrl = useMutation(api.files.generateUploadUrl);
   const getFileUrl = useMutation(api.files.getFileUrl);
 
-  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState<string>('');
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [isUploadingProfileImage, setIsUploadingProfileImage] = useState(false);
+  const [profileImagePreview, setProfileImagePreview] = useState<string>('');
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [specializationInput, setSpecializationInput] = useState('');
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
+    watch,
+    setValue
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: currentUser?.name || '',
-      phone: currentUser?.phone || '',
-      email: currentUser?.email || ''
+      name: expertData?.name || '',
+      email: expertData?.email || '',
+      bio: expertData?.bio || '',
+      specialization: expertData?.specialization || [],
+      experience: expertData?.experience || ''
     }
   });
 
-  // Reset form when user data loads
+  const specialization = watch('specialization');
+
+  // Reset form when expert data loads
   useEffect(() => {
-    if (currentUser) {
+    if (expertData) {
       reset({
-        name: currentUser.name || '',
-        phone: currentUser.phone || '',
-        email: currentUser.email || ''
+        name: expertData.name || '',
+        email: expertData.email || '',
+        bio: expertData.bio || '',
+        specialization: expertData.specialization || [],
+        experience: expertData.experience || ''
       });
     }
-  }, [currentUser, reset]);
+  }, [expertData, reset]);
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file type
@@ -100,19 +114,19 @@ function SettingsContent() {
       }
 
       // Store file for later upload
-      setAvatarFile(file);
+      setProfileImageFile(file);
 
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
-        setAvatarPreview(result);
+        setProfileImagePreview(result);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const uploadAvatar = async (file: File): Promise<string> => {
+  const uploadProfileImage = async (file: File): Promise<string> => {
     try {
       // Generate upload URL
       const uploadUrl = await generateUploadUrl();
@@ -139,59 +153,84 @@ function SettingsContent() {
 
       return fileUrl as string;
     } catch (error) {
-      console.error('Error uploading avatar:', error);
+      console.error('Error uploading profile image:', error);
       throw error;
     }
   };
 
-  const handleUpdateAvatar = async () => {
-    if (!avatarFile) return;
+  const handleUpdateProfileImage = async () => {
+    if (!profileImageFile || !expertData) return;
 
-    setIsUploadingAvatar(true);
+    setIsUploadingProfileImage(true);
     try {
-      const avatarUrl = await uploadAvatar(avatarFile);
+      const profileImageUrl = await uploadProfileImage(profileImageFile);
 
-      await updateUser({
-        avatar: avatarUrl
+      await updateExpert({
+        expertId: expertData._id,
+        profileImage: profileImageUrl
       });
 
-      toast.success('Avatar updated successfully');
-      setAvatarFile(null);
-      setAvatarPreview('');
+      toast.success('Profile image updated successfully');
+      setProfileImageFile(null);
+      setProfileImagePreview('');
     } catch (error) {
-      console.error('Error updating avatar:', error);
+      console.error('Error updating profile image:', error);
       toast.error(
         error instanceof Error
           ? error.message
-          : 'Failed to update avatar. Please try again.'
+          : 'Failed to update profile image. Please try again.'
       );
     } finally {
-      setIsUploadingAvatar(false);
+      setIsUploadingProfileImage(false);
     }
   };
 
-  const handleCancelAvatarUpdate = () => {
-    setAvatarFile(null);
-    setAvatarPreview('');
+  const handleCancelProfileImageUpdate = () => {
+    setProfileImageFile(null);
+    setProfileImagePreview('');
+  };
+
+  const handleAddSpecialization = () => {
+    if (specializationInput.trim()) {
+      const currentSpecialization = watch('specialization') || [];
+      setValue(
+        'specialization',
+        [...currentSpecialization, specializationInput.trim()],
+        {
+          shouldValidate: true
+        }
+      );
+      setSpecializationInput('');
+    }
+  };
+
+  const handleRemoveSpecialization = (index: number) => {
+    const currentSpecialization = watch('specialization') || [];
+    setValue(
+      'specialization',
+      currentSpecialization.filter((_, i) => i !== index),
+      {
+        shouldValidate: true
+      }
+    );
   };
 
   const onSubmit = async (data: ProfileFormData) => {
+    if (!expertData || !expertData._id) {
+      toast.error('Expert profile not found');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      // Update user data
-      await updateUser({
+      await updateExpert({
+        expertId: expertData._id,
         name: data.name,
-        phone: data.phone || undefined
+        email: data.email,
+        bio: data.bio,
+        specialization: data.specialization,
+        experience: data.experience
       });
-
-      // Update expert data if exists
-      if (expertData && expertData._id) {
-        await updateExpert({
-          expertId: expertData._id,
-          name: data.name,
-          email: data.email
-        });
-      }
 
       toast.success('Profile updated successfully');
     } catch (error) {
@@ -215,7 +254,7 @@ function SettingsContent() {
     // You can also implement a custom delete mutation if needed
   };
 
-  if (currentUser === undefined) {
+  if (currentUser === undefined || expertData === undefined) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Loader2 className="size-8 animate-spin text-muted-foreground" />
@@ -223,16 +262,29 @@ function SettingsContent() {
     );
   }
 
-  // Use avatar from users table, or preview if uploading
-  const displayAvatar = avatarPreview || currentUser?.avatar || null;
-  const initials = currentUser?.name
-    ? currentUser.name
+  if (!expertData) {
+    return (
+      <div className="container max-w-4xl mx-auto">
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">
+            Expert profile not found. Please contact support.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Use profileImage from experts table, or preview if uploading
+  const displayProfileImage =
+    profileImagePreview || expertData?.profileImage || null;
+  const initials = expertData?.name
+    ? expertData.name
         .split(' ')
         .map((n) => n[0])
         .join('')
         .toUpperCase()
         .slice(0, 2)
-    : 'U';
+    : 'E';
 
   return (
     <div className="container max-w-4xl mx-auto">
@@ -279,16 +331,16 @@ function SettingsContent() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Avatar Upload Section */}
+              {/* Profile Image Upload Section */}
               <div className="space-y-4">
-                <Label>Avatar</Label>
+                <Label>Profile Image</Label>
                 <div className="flex items-center gap-6">
                   <div className="relative">
                     <div className="w-24 h-32 overflow-hidden rounded-lg border-2 border-dashed border-input bg-muted flex items-center justify-center">
-                      {displayAvatar ? (
+                      {displayProfileImage ? (
                         <img
-                          src={displayAvatar}
-                          alt={currentUser?.name}
+                          src={displayProfileImage}
+                          alt={expertData?.name}
                           className="w-full h-full object-cover"
                         />
                       ) : (
@@ -299,14 +351,14 @@ function SettingsContent() {
                     </div>
                   </div>
                   <div className="flex-1 space-y-2">
-                    {avatarPreview ? (
+                    {profileImagePreview ? (
                       <div className="flex items-center gap-2">
                         <Button
-                          onClick={handleUpdateAvatar}
-                          disabled={isUploadingAvatar}
+                          onClick={handleUpdateProfileImage}
+                          disabled={isUploadingProfileImage}
                           size="sm"
                         >
-                          {isUploadingAvatar ? (
+                          {isUploadingProfileImage ? (
                             <>
                               <Loader2 className="size-4 mr-2 animate-spin" />
                               Uploading...
@@ -314,14 +366,14 @@ function SettingsContent() {
                           ) : (
                             <>
                               <Upload className="size-4 mr-2" />
-                              Update Avatar
+                              Update Profile Image
                             </>
                           )}
                         </Button>
                         <Button
                           variant="outline"
-                          onClick={handleCancelAvatarUpdate}
-                          disabled={isUploadingAvatar}
+                          onClick={handleCancelProfileImageUpdate}
+                          disabled={isUploadingProfileImage}
                           size="sm"
                         >
                           Cancel
@@ -329,22 +381,22 @@ function SettingsContent() {
                       </div>
                     ) : (
                       <label
-                        htmlFor="avatar-upload"
+                        htmlFor="profile-image-upload"
                         className={`inline-flex items-center justify-center px-4 py-2 text-sm border border-input rounded-md cursor-pointer bg-background hover:bg-accent/50 transition-colors ${
-                          isUploadingAvatar
+                          isUploadingProfileImage
                             ? 'cursor-not-allowed opacity-50'
                             : ''
                         }`}
                       >
                         <Upload className="size-4 mr-2" />
-                        Upload Avatar
+                        Upload Profile Image
                         <input
-                          id="avatar-upload"
+                          id="profile-image-upload"
                           type="file"
                           className="hidden"
                           accept="image/*"
-                          onChange={handleAvatarChange}
-                          disabled={isUploadingAvatar}
+                          onChange={handleProfileImageChange}
+                          disabled={isUploadingProfileImage}
                         />
                       </label>
                     )}
@@ -391,16 +443,92 @@ function SettingsContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    {...register('phone')}
-                    placeholder="Enter your phone number"
+                  <Label htmlFor="bio">
+                    Bio <span className="text-destructive">*</span>
+                  </Label>
+                  <Textarea
+                    id="bio"
+                    {...register('bio')}
+                    placeholder="Tell us about yourself and your expertise..."
+                    rows={4}
                   />
-                  {errors.phone && (
+                  {errors.bio && (
                     <p className="text-sm text-destructive">
-                      {errors.phone.message}
+                      {errors.bio.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="specialization">
+                    Specialization <span className="text-destructive">*</span>
+                  </Label>
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <Input
+                        id="specialization"
+                        value={specializationInput}
+                        onChange={(e) => setSpecializationInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddSpecialization();
+                          }
+                        }}
+                        placeholder="Add specialization"
+                        disabled={isSubmitting}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleAddSpecialization}
+                        disabled={isSubmitting || !specializationInput.trim()}
+                      >
+                        Add
+                      </Button>
+                    </div>
+                    {specialization && specialization.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {specialization.map((item, index) => (
+                          <Badge
+                            key={index}
+                            variant="secondary"
+                            className="gap-1"
+                          >
+                            {item}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveSpecialization(index)}
+                              className="ml-1 hover:text-destructive"
+                              disabled={isSubmitting}
+                            >
+                              <X className="size-3" />
+                            </button>
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {errors.specialization && (
+                    <p className="text-sm text-destructive">
+                      {errors.specialization.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="experience">
+                    Experience <span className="text-destructive">*</span>
+                  </Label>
+                  <Textarea
+                    id="experience"
+                    {...register('experience')}
+                    placeholder="Describe your professional experience..."
+                    rows={4}
+                  />
+                  {errors.experience && (
+                    <p className="text-sm text-destructive">
+                      {errors.experience.message}
                     </p>
                   )}
                 </div>
