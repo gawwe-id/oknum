@@ -468,11 +468,6 @@ export default function CheckoutPage() {
                     'Lanjutkan ke Pembayaran'
                   )}
                 </ButtonPrimary>
-                <Link href={`/exclusive-class/${classId}`} className="block">
-                  <Button variant="outline" className="w-full">
-                    Batal
-                  </Button>
-                </Link>
               </div>
             </div>
           </div>
