@@ -2,12 +2,14 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { ButtonPrimary } from '@/components/ui/button-primary';
 import { Layers } from 'lucide-react';
 
 interface ClassDetailHeroProps {
+  classId: string;
   title: string;
   description: string;
   category: string;
@@ -18,6 +20,7 @@ interface ClassDetailHeroProps {
 }
 
 export default function ClassDetailHero({
+  classId,
   title,
   description,
   category,
@@ -26,12 +29,18 @@ export default function ClassDetailHero({
   thumbnail,
   status
 }: ClassDetailHeroProps) {
+  const router = useRouter();
+
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: currency === 'IDR' ? 'IDR' : 'USD',
       minimumFractionDigits: 0
     }).format(price);
+  };
+
+  const handleEnroll = () => {
+    router.push(`/exclusive-class/${classId}/checkout`);
   };
 
   return (
@@ -87,7 +96,11 @@ export default function ClassDetailHero({
             {/* CTA Button */}
             {status === 'published' && (
               <div className="pt-4">
-                <ButtonPrimary size="lg" className="w-full md:w-auto">
+                <ButtonPrimary
+                  size="lg"
+                  className="w-full md:w-auto"
+                  onClick={handleEnroll}
+                >
                   Daftar Sekarang
                 </ButtonPrimary>
               </div>

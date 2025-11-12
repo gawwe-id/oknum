@@ -89,6 +89,7 @@ export default function ClassDetail({ classData }: ClassDetailProps) {
     <div className="space-y-10 pb-10">
       {/* Hero Section */}
       <ClassDetailHero
+        classId={classData._id}
         title={classData.title}
         description={classData.description}
         category={classData.category}
