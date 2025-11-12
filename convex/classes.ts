@@ -42,6 +42,54 @@ export const getPublishedClassesPublic = query({
   }
 });
 
+// Get all classes for public exclusive-class page (supports status filtering)
+export const getAllClassesPublic = query({
+  args: {
+    status: v.optional(
+      v.union(
+        v.literal('draft'),
+        v.literal('published'),
+        v.literal('completed'),
+        v.literal('cancelled')
+      )
+    )
+  },
+  handler: async (ctx, args) => {
+    let classes;
+    
+    // If status is provided, filter by status
+    if (args.status) {
+      classes = await ctx.db
+        .query('classes')
+        .withIndex('by_status', (q) => q.eq('status', args.status!))
+        .collect();
+    } else {
+      // Get all classes (for "All" tab)
+      // We need to query each status separately since we can't query all at once
+      const [published, draft, completed, cancelled] = await Promise.all([
+        ctx.db.query('classes').withIndex('by_status', (q) => q.eq('status', 'published')).collect(),
+        ctx.db.query('classes').withIndex('by_status', (q) => q.eq('status', 'draft')).collect(),
+        ctx.db.query('classes').withIndex('by_status', (q) => q.eq('status', 'completed')).collect(),
+        ctx.db.query('classes').withIndex('by_status', (q) => q.eq('status', 'cancelled')).collect(),
+      ]);
+      classes = [...published, ...draft, ...completed, ...cancelled];
+    }
+
+    // Enrich with expert data
+    const enriched = await Promise.all(
+      classes.map(async (classItem) => {
+        const expert = await ctx.db.get(classItem.expertId);
+        return {
+          ...classItem,
+          expert
+        };
+      })
+    );
+
+    return enriched;
+  }
+});
+
 // Get unique categories from published classes (for badges)
 export const getPublishedClassCategories = query({
   args: {},
@@ -53,6 +101,25 @@ export const getPublishedClassCategories = query({
 
     // Get unique categories
     const categories = Array.from(new Set(classes.map((c) => c.category)));
+    return categories.sort();
+  }
+});
+
+// Get all unique categories from all classes (for exclusive-class page tabs)
+export const getAllClassCategories = query({
+  args: {},
+  handler: async (ctx) => {
+    // Get all classes (all statuses)
+    const [published, draft, completed, cancelled] = await Promise.all([
+      ctx.db.query('classes').withIndex('by_status', (q) => q.eq('status', 'published')).collect(),
+      ctx.db.query('classes').withIndex('by_status', (q) => q.eq('status', 'draft')).collect(),
+      ctx.db.query('classes').withIndex('by_status', (q) => q.eq('status', 'completed')).collect(),
+      ctx.db.query('classes').withIndex('by_status', (q) => q.eq('status', 'cancelled')).collect(),
+    ]);
+    const allClasses = [...published, ...draft, ...completed, ...cancelled];
+
+    // Get unique categories
+    const categories = Array.from(new Set(allClasses.map((c) => c.category)));
     return categories.sort();
   }
 });
@@ -169,6 +236,91 @@ export const getClassById = query({
       schedules: schedules.sort((a, b) =>
         a.sessionNumber.localeCompare(b.sessionNumber)
       )
+    };
+  }
+});
+
+// Get class by ID with all related data for public detail page
+export const getClassByIdPublic = query({
+  args: { classId: v.id('classes') },
+  handler: async (ctx, args) => {
+    const classItem = await ctx.db.get(args.classId);
+    if (!classItem) return null;
+
+    // Get expert data
+    const expert = await ctx.db.get(classItem.expertId);
+    let expertUser = null;
+    if (expert) {
+      expertUser = await ctx.db.get(expert.userId);
+    }
+
+    // Get curriculum
+    const curriculum = await ctx.db
+      .query('curriculum')
+      .withIndex('by_classId', (q) => q.eq('classId', args.classId))
+      .first();
+
+    // Get schedules (sorted by sessionNumber)
+    const schedules = await ctx.db
+      .query('schedules')
+      .withIndex('by_classId', (q) => q.eq('classId', args.classId))
+      .collect();
+
+    // Get benefits (sorted by order)
+    const benefits = await ctx.db
+      .query('benefits')
+      .withIndex('by_classId', (q) => q.eq('classId', args.classId))
+      .collect();
+
+    // Get journey
+    const journey = await ctx.db
+      .query('journey')
+      .withIndex('by_classId', (q) => q.eq('classId', args.classId))
+      .first();
+
+    // Get additional perks
+    const additionalPerks = await ctx.db
+      .query('additionalPerks')
+      .withIndex('by_classId', (q) => q.eq('classId', args.classId))
+      .collect();
+
+    // Sort schedules by sessionNumber
+    const sortedSchedules = schedules.sort((a, b) =>
+      a.sessionNumber.localeCompare(b.sessionNumber)
+    );
+
+    // Sort benefits by order field
+    const sortedBenefits = benefits.sort((a, b) => {
+      if (a.order !== undefined && b.order !== undefined) {
+        return a.order - b.order;
+      }
+      if (a.order !== undefined) return -1;
+      if (b.order !== undefined) return 1;
+      return a.createdAt - b.createdAt;
+    });
+
+    // Sort journey steps by order if journey exists
+    const sortedJourney = journey
+      ? {
+          ...journey,
+          steps: journey.steps.sort((a, b) => a.order - b.order)
+        }
+      : null;
+
+    return {
+      ...classItem,
+      expert: expert
+        ? {
+            ...expert,
+            user: expertUser,
+            userAvatar: expertUser?.avatar
+          }
+        : null,
+      curriculum,
+      schedules: sortedSchedules,
+      benefits: sortedBenefits,
+      journey: sortedJourney,
+      additionalPerks
     };
   }
 });

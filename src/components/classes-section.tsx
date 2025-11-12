@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useQuery } from 'convex-helpers/react/cache';
 import { api } from '@/../convex/_generated/api';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const ClassesSection: React.FC = () => {
@@ -40,10 +41,10 @@ const ClassesSection: React.FC = () => {
   const secondClass = classesList[1] || classesList[0];
 
   return (
-    <section className="py-16 md:py-24 bg-white">
-      <div className="container mx-auto max-w-7xl px-4">
+    <section className="pb-16 pt-8 md:pt-8 md:pb-24 bg-white">
+      <div className="container mx-auto max-w-6xl px-4">
         {/* Header Section */}
-        <div className="text-center mb-12">
+        {/* <div className="text-center mb-12">
           <p className="text-xs text-gray-400 mb-3 uppercase tracking-wide">
             Kelas
           </p>
@@ -55,28 +56,18 @@ const ClassesSection: React.FC = () => {
             untuk membantu kamu mengembangkan skill dan mencapai tujuan
             profesionalmu dengan bimbingan expert berpengalaman.
           </p>
-        </div>
+        </div> */}
 
         {/* Category Badges */}
         {categoriesList.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-3 mb-16">
-            <button
-              onClick={() => setSelectedCategory(undefined)}
-              className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                selectedCategory === undefined
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Semua
-            </button>
+          <div className="flex flex-wrap justify-center gap-2 mb-10">
             {categoriesList.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`px-4 py-2 rounded-full text-xs font-medium transition-all ${
                   selectedCategory === category
-                    ? 'bg-blue-600 text-white shadow-sm'
+                    ? 'bg-teal-600 text-white shadow-sm'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -88,10 +79,10 @@ const ClassesSection: React.FC = () => {
 
         {/* Classes Cards - 5:7 Ratio */}
         {classesList.length > 0 && firstClass ? (
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             {/* Left Card (5 columns) - Title, Description */}
             <motion.div
-              className="md:col-span-5 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+              className="md:col-span-5 bg-gray-50 rounded-3xl border-none overflow-hidden "
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -118,13 +109,13 @@ const ClassesSection: React.FC = () => {
 
             {/* Right Card (7 columns) - Expert Image and Name */}
             <motion.div
-              className="md:col-span-7 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
+              className="md:col-span-7 bg-gray-50 rounded-3xl border-none overflow-hidden"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
             >
-              <div className="relative h-full min-h-[400px] md:min-h-[450px] bg-gray-100">
+              <div className="relative h-full min-h-[400px] md:min-h-[450px]">
                 {secondClass?.expert?.profileImage ? (
                   <>
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -206,6 +197,19 @@ const ClassesSection: React.FC = () => {
             <p className="text-gray-500">Tidak ada kelas yang tersedia.</p>
           </div>
         )}
+
+        {/* Navigation Button */}
+        <div className="flex justify-center mt-10">
+          <Link href="/exclusive-class">
+            <motion.button
+              className="px-8 py-3 cursor-pointer bg-teal-600 text-white rounded-full font-medium hover:bg-teal-700 transition-colors shadow-sm"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Lihat Semua Kelas
+            </motion.button>
+          </Link>
+        </div>
       </div>
     </section>
   );

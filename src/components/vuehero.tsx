@@ -1,18 +1,17 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { motion } from 'framer-motion';
 // import Link from "next/link";
 
 export default function Hero() {
-  const redirectToWhatsApp = () => {
-    // Replace with your actual WhatsApp number (international format without +)
-    const phoneNumber = "6281218227597";
-    const message = encodeURIComponent(
-      "Halo, saya ingin bertanya tentang layanan Oknum."
-    );
-    window.open(`https://wa.me/${phoneNumber}?text=${message}`, "_blank");
-  };
+  // const redirectToWhatsApp = () => {
+  //   // Replace with your actual WhatsApp number (international format without +)
+  //   const phoneNumber = '6281218227597';
+  //   const message = encodeURIComponent(
+  //     'Halo, saya ingin bertanya tentang layanan Oknum.'
+  //   );
+  //   window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+  // };
 
   return (
     <section className="pt-16 pb-8 md:pt-20 md:pb-12]">
@@ -33,13 +32,13 @@ export default function Hero() {
               <span className="relative inline-block">
                 <span className="absolute inset-0 transform -skew-x-6 bg-teal-200 -z-10" />
                 <span className="relative z-0 text-teal-600 px-4">
-                  Tersangka
+                  Investasi
                 </span>
-              </span>{" "}
-              Utama
+              </span>{' '}
+              Eksklusif
             </span>
             <span className="text-gray-700 block relative z-0">
-              Kejayaan Brand Kamu
+              Network & Experience
             </span>
           </motion.h1>
 
@@ -49,18 +48,18 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <span className={`text-teal-600 font-bold`}>Oknum</span> adalah{" "}
+            <span className={`text-teal-600 font-bold`}>Oknum</span>{' '}
+            menghadirkan{' '}
             <span className="relative inline-block">
               <span className="absolute inset-0 transform -skew-x-6 bg-teal-600 -z-10" />
               <span className="relative z-0 text-white px-1">
-                konsultan & development partner
+                kelas eksklusif dan premium
               </span>
-            </span>{" "}
-            untuk UMKM Indonesia. Dari konsultasi strategi hingga implementasi
-            teknologi, kami bantu bisnis Kamu tumbuh dan berkembang.
+            </span>{' '}
+            yang dirancang khusus untuk memberikan experience berkelas.
           </motion.p>
 
-          <motion.div
+          {/* <motion.div
             className="mt-10 flex flex-wrap items-center justify-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -85,7 +84,7 @@ export default function Hero() {
               WhatsApp
             </Button>
 
-            {/* <Link href="/portofolio" passHref>
+            <Link href="/portofolio" passHref>
               <Button
                 variant="outline"
                 className="border-gray-300 text-teal-600 hover:text-teal-500 px-6 flex items-center gap-1"
@@ -108,8 +107,8 @@ export default function Hero() {
                   />
                 </svg>
               </Button>
-            </Link> */}
-          </motion.div>
+            </Link>
+          </motion.div> */}
         </motion.div>
       </div>
     </section>

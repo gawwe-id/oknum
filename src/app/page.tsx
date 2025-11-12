@@ -35,7 +35,7 @@ export default function Home() {
       <JsonLd data={websiteJsonLd} />
       <Navbar />
       <Hero />
-      <Services />
+      {/* <Services /> */}
       <ClassesSection />
       <Portfolio />
       <Clients />

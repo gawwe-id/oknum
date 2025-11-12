@@ -1,0 +1,115 @@
+'use client';
+
+import React from 'react';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { Badge } from '@/components/ui/badge';
+import { ButtonPrimary } from '@/components/ui/button-primary';
+import { Layers } from 'lucide-react';
+
+interface ClassDetailHeroProps {
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  currency: string;
+  thumbnail?: string;
+  status: 'draft' | 'published' | 'completed' | 'cancelled';
+}
+
+export default function ClassDetailHero({
+  title,
+  description,
+  category,
+  price,
+  currency,
+  thumbnail,
+  status
+}: ClassDetailHeroProps) {
+  const formatPrice = (price: number, currency: string) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: currency === 'IDR' ? 'IDR' : 'USD',
+      minimumFractionDigits: 0
+    }).format(price);
+  };
+
+  return (
+    <section className="pt-8 pb-8">
+      <div className="container mx-auto max-w-6xl px-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* Thumbnail */}
+          <motion.div
+            className="relative w-full aspect-video rounded-xl overflow-hidden bg-gray-100"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {thumbnail ? (
+              <Image
+                src={thumbnail}
+                alt={title}
+                fill
+                className="object-cover"
+                priority
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-emerald-100 to-emerald-200">
+                <Layers className="size-16 text-emerald-400" />
+              </div>
+            )}
+          </motion.div>
+
+          {/* Content */}
+          <motion.div
+            className="space-y-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            {/* Title */}
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+              {title}
+            </h1>
+
+            {/* Description */}
+            <p className="text-lg text-gray-600 leading-relaxed">
+              {description}
+            </p>
+
+            {/* Price */}
+            <div className="flex items-baseline gap-2">
+              <span className="text-4xl font-bold text-emerald-600">
+                {formatPrice(price, currency)}
+              </span>
+            </div>
+
+            {/* CTA Button */}
+            {status === 'published' && (
+              <div className="pt-4">
+                <ButtonPrimary size="lg" className="w-full md:w-auto">
+                  Daftar Sekarang
+                </ButtonPrimary>
+              </div>
+            )}
+
+            {status !== 'published' && (
+              <div className="pt-4">
+                <Badge
+                  variant="outline"
+                  className="text-sm bg-gray-100 text-gray-600"
+                >
+                  {status === 'draft'
+                    ? 'Segera Hadir'
+                    : status === 'completed'
+                    ? 'Kelas Selesai'
+                    : 'Kelas Dibatalkan'}
+                </Badge>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
