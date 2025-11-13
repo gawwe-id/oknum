@@ -37,11 +37,22 @@ export default function CheckoutPage() {
     }
   }, [authLoaded, isSignedIn, router, classId]);
 
-  // Fetch data
+  // Fetch public data (doesn't require auth) - hooks must be called at top level
   const classData = useCachedQuery(api.classes.getClassByIdPublic, { classId });
   const schedules = useQuery(api.schedules.getSchedulesByClass, { classId });
-  const userBookings = useQuery(api.bookings.getBookingsByUser, {});
+
+  // Only fetch auth-required queries if authenticated to prevent UNAUTHENTICATED error
+  // Since hooks must be called at top level, we always call them but conditionally pass args
+  // getCurrentUserQuery is safe (returns null if not authenticated)
   const currentUser = useQuery(api.users.getCurrentUserQuery, {});
+
+  // getBookingsByUser requires authentication and will throw UNAUTHENTICATED error if not authenticated
+  // We skip calling it by passing undefined when not authenticated
+  // Convex useQuery will return undefined if args are undefined
+  const userBookings = useQuery(
+    api.bookings.getBookingsByUser,
+    authLoaded && isSignedIn ? {} : undefined
+  ) as any;
   const createBooking = useMutation(api.bookings.createBooking);
 
   const [isEnrolling, setIsEnrolling] = React.useState(false);
@@ -55,7 +66,7 @@ export default function CheckoutPage() {
   const hasEnrolled = React.useMemo(() => {
     if (!userBookings || !classId) return false;
     return userBookings.some(
-      (booking) =>
+      (booking: any) =>
         booking.classId === classId &&
         (booking.status === 'pending' ||
           booking.status === 'confirmed' ||

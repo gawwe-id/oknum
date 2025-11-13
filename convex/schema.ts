@@ -70,7 +70,8 @@ export default defineSchema({
     .index('by_expertId', ['expertId'])
     .index('by_category', ['category'])
     .index('by_status', ['status'])
-    .index('by_type', ['type']),
+    .index('by_type', ['type'])
+    .index('by_status_category', ['status', 'category']),
 
   curriculum: defineTable({
     classId: v.id('classes'),

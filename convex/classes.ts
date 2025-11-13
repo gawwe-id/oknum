@@ -94,14 +94,21 @@ export const getAllClassesPublic = query({
 export const getPublishedClassCategories = query({
   args: {},
   handler: async (ctx) => {
+    // Use composite index for better performance
+    // Query by status='published' and collect all categories
     const classes = await ctx.db
       .query('classes')
-      .withIndex('by_status', (q) => q.eq('status', 'published'))
+      .withIndex('by_status_category', (q) => q.eq('status', 'published'))
       .collect();
 
-    // Get unique categories
-    const categories = Array.from(new Set(classes.map((c) => c.category)));
-    return categories.sort();
+    // Get unique categories - use Set for O(n) deduplication
+    const categorySet = new Set<string>();
+    for (const classItem of classes) {
+      categorySet.add(classItem.category);
+    }
+    
+    // Convert to array and sort
+    return Array.from(categorySet).sort();
   }
 });
 

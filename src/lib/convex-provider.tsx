@@ -7,8 +7,9 @@ import { ClerkProvider, useAuth } from "@clerk/nextjs";
 import { ConvexQueryCacheProvider } from "convex-helpers/react/cache";
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!, {
-  // Optionally pause queries until the user is authenticated
-  expectAuth: true,
+  // Allow public queries to run without authentication
+  // Set to false so public queries (like getPublishedClassCategories) can work for unauthenticated users
+  expectAuth: false,
 });
 
 export function ConvexClientProvider({ children }: { children: ReactNode }) {
