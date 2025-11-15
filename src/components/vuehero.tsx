@@ -3,7 +3,21 @@
 import { motion } from 'framer-motion';
 // import Link from "next/link";
 
-export default function Hero() {
+interface HeroProps {
+  titlePart1?: string;
+  titleHighlight?: string;
+  titlePart2?: string;
+  description?: string;
+  highlightText?: string;
+}
+
+export default function Hero({
+  titlePart1 = 'Premium',
+  titleHighlight = 'Event',
+  titlePart2 = 'Next Level',
+  description = 'Oknum menghadirkan kelas eksklusif dan premium yang dirancang khusus untuk memberikan experience berkelas.',
+  highlightText = 'kelas eksklusif dan premium'
+}: HeroProps) {
   // const redirectToWhatsApp = () => {
   //   // Replace with your actual WhatsApp number (international format without +)
   //   const phoneNumber = '6281218227597';
@@ -23,23 +37,27 @@ export default function Hero() {
           transition={{ duration: 0.5 }}
         >
           <motion.h1
-            className="font-rubik text-5xl md:text-6xl lg:text-7xl font-black tracking-tight"
+            className="font-rubik text-6xl md:text-7xl lg:text-8xl font-black tracking-tight"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
             <span className="text-gray-700 block relative z-0">
-              <span className="relative inline-block">
-                <span className="absolute inset-0 transform -skew-x-6 bg-teal-200 -z-10" />
-                <span className="relative z-0 text-teal-600 px-4">
-                  Investasi
+              {titlePart1}
+              {titleHighlight && (
+                <span className="relative inline-block">
+                  <span className="absolute inset-0 transform -skew-x-6 bg-teal-200 -z-10" />
+                  <span className="relative z-0 text-teal-600 px-4">
+                    {titleHighlight}
+                  </span>
                 </span>
-              </span>{' '}
-              Eksklusif
+              )}{' '}
             </span>
-            <span className="text-gray-700 block relative z-0">
-              Network & Experience
-            </span>
+            {titlePart2 && (
+              <span className="text-gray-700 block relative z-0">
+                {titlePart2}
+              </span>
+            )}
           </motion.h1>
 
           <motion.p
@@ -48,15 +66,22 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <span className={`text-teal-600 font-bold`}>Oknum</span>{' '}
-            menghadirkan{' '}
-            <span className="relative inline-block">
-              <span className="absolute inset-0 transform -skew-x-6 bg-teal-600 -z-10" />
-              <span className="relative z-0 text-white px-1">
-                kelas eksklusif dan premium
-              </span>
-            </span>{' '}
-            yang dirancang khusus untuk memberikan experience berkelas.
+            {highlightText && description.includes(highlightText) ? (
+              <>
+                {description.substring(0, description.indexOf(highlightText))}
+                <span className="relative inline-block">
+                  <span className="absolute inset-0 transform -skew-x-6 bg-teal-600 -z-10" />
+                  <span className="relative z-0 text-white px-1">
+                    {highlightText}
+                  </span>
+                </span>
+                {description.substring(
+                  description.indexOf(highlightText) + highlightText.length
+                )}
+              </>
+            ) : (
+              description
+            )}
           </motion.p>
 
           {/* <motion.div

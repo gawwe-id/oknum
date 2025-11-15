@@ -1,33 +1,24 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { useUser, UserButton } from "@clerk/nextjs";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import { useUser, UserButton } from '@clerk/nextjs';
 import {
   NavigationMenu,
-  NavigationMenuContent,
   NavigationMenuItem,
   NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-import {
-  Globe,
-  Bot,
-  Megaphone,
-  TrendingUp,
-  LogIn,
-  LayoutDashboard,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+  NavigationMenuList
+} from '@/components/ui/navigation-menu';
+import { LogIn, LayoutDashboard } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 const Navbar = () => {
   const pathname = usePathname();
   const { isSignedIn } = useUser();
-  const isLoginPage = pathname?.startsWith("/login");
+  const isLoginPage = pathname?.startsWith('/login');
   const [mounted, setMounted] = useState(false);
 
   // Ensure component is mounted before using auth state
@@ -56,7 +47,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        <NavigationMenu className="hidden md:flex">
+        {/* <NavigationMenu className="hidden md:flex">
           <NavigationMenuList>
             <NavigationMenuItem>
               <NavigationMenuTrigger>Services</NavigationMenuTrigger>
@@ -65,7 +56,7 @@ const Navbar = () => {
                   <li className="row-span-3">
                     <NavigationMenuLink asChild>
                       <Link
-                        className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                        className="flex h-full w-full select-none flex-col justify-end rounded-md bg-linear-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
                         href="/"
                       >
                         <div className="mb-2 mt-4 text-lg font-medium">
@@ -160,7 +151,7 @@ const Navbar = () => {
               <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                  {/* Disabled for now */}
+    
                   <li>
                     <span className="block select-none space-y-1 rounded-md p-3 leading-none outline-none text-gray-400 cursor-not-allowed">
                       <div className="text-sm font-medium leading-none">
@@ -171,7 +162,6 @@ const Navbar = () => {
                       </p>
                     </span>
                   </li>
-                  {/* Disabled for now */}
                   <li>
                     <span className="block select-none space-y-1 rounded-md p-3 leading-none outline-none text-gray-400 cursor-not-allowed">
                       <div className="text-sm font-medium leading-none">
@@ -214,6 +204,26 @@ const Navbar = () => {
                   </li>
                 </ul>
               </NavigationMenuContent>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu> */}
+
+        {/* Class Exclusive & Consulting */}
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link href="/exclusive-class" className="font-medium">
+                  Kelas Eksklusif
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link href="/consulting" className="font-medium">
+                  Business Consulting
+                </Link>
+              </NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>

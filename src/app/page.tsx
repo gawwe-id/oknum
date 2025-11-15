@@ -1,28 +1,31 @@
-// app/page.tsx
 import { Metadata } from 'next';
 
 import Hero from '@/components/vuehero';
 import Navbar from '@/components/navbar';
-// import Services from '@/components/services';
-import Portfolio from '@/components/portfolio';
-import Clients from '@/components/clients';
-import Features from '@/components/features';
-import Pricing from '@/components/pricing';
 import ClassesSection from '@/components/classes-section';
+import WhyChooseClasses from '@/components/why-choose-classes';
+import ClassFeatureLeft from '@/components/class-feature-left';
+import ClassFeatureRight from '@/components/class-feature-right';
+import ClassCTA from '@/components/class-cta';
 import Footer from '@/components/footer';
 
 import { constructMetadata } from '@/lib/seo';
 import JsonLd, { organizationJsonLd, websiteJsonLd } from '@/components/JsonLd';
 
 export const metadata: Metadata = constructMetadata({
-  title: 'Oknum Studio | Tersangka Utama Kejayaan Brand Kamu',
+  title:
+    'Oknum Studio | Kelas Eksklusif & Event Premium untuk Perkembangan Karir',
   description:
-    'Kami adalah creator produk digital berkualitas dengan design yang intuitive dan performa optimal. Solusi digital terbaik untuk kebutuhan bisnis Anda.',
+    'Investasi eksklusif network & experience melalui kelas premium dan event offline. Belajar langsung dari expert berpengalaman, bangun relasi berharga, dan dapatkan pengalaman belajar yang tak terlupakan.',
   keywords: [
-    'web development',
-    'mobile app',
-    'UI/UX design',
-    'digital agency Indonesia',
+    'kelas eksklusif',
+    'event premium',
+    'workshop offline',
+    'kelas profesional',
+    'networking event',
+    'expert mentoring',
+    'komunitas eksklusif',
+    'pelatihan karir',
     'Tangerang Selatan'
   ],
   pathname: '/'
@@ -35,12 +38,26 @@ export default function Home() {
       <JsonLd data={websiteJsonLd} />
       <Navbar />
       <Hero />
-      {/* <Services /> */}
       <ClassesSection />
-      <Portfolio />
-      <Clients />
-      <Features />
-      <Pricing />
+      <WhyChooseClasses />
+      <ClassFeatureLeft
+        badge="Pengalaman Belajar"
+        title="Belajar dengan Metode Interaktif"
+        description="Setiap sesi dirancang untuk memaksimalkan interaksi dan engagement. Diskusi langsung dengan expert, praktik real-world case, dan kolaborasi dengan peserta lain membuat pembelajaran lebih efektif dan berkesan."
+        illustrationPath="/illustrations/mentoring.svg"
+      />
+      <ClassFeatureRight
+        badge="Network & Komunitas"
+        title="Bangun Relasi yang Berharga"
+        description="Bergabung dengan komunitas eksklusif profesional yang sama-sama berkomitmen untuk berkembang. Networking session, sharing experience, dan kolaborasi jangka panjang yang bisa membuka peluang baru untuk karir kamu."
+        illustrationPath="/illustrations/networking.svg"
+      />
+      <ClassCTA
+        title="Siap Memulai Perjalanan Belajarmu?"
+        description="Bergabunglah dengan kelas eksklusif kami dan dapatkan pengalaman belajar yang tak terlupakan bersama expert berpengalaman. Investasi terbaik untuk perkembangan karir kamu."
+        primaryButtonText="Lihat Semua Kelas"
+        primaryButtonLink="/exclusive-class"
+      />
       <Footer />
     </main>
   );
