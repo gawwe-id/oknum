@@ -591,3 +591,90 @@ export const adminCreateClass = mutation({
     });
   }
 });
+
+// Delete class (requires authentication - can only delete own classes unless admin)
+export const deleteClass = mutation({
+  args: {
+    classId: v.id('classes')
+  },
+  handler: async (ctx, args) => {
+    // Get authenticated user
+    const currentUser = await getCurrentUserOrThrow(ctx);
+
+    const existing = await ctx.db.get(args.classId);
+    if (!existing) {
+      throw new Error('Class not found');
+    }
+
+    // Get the expert who owns this class
+    const expert = await ctx.db.get(existing.expertId);
+    if (!expert) {
+      throw new Error('Expert not found for this class');
+    }
+
+    // Check if user owns the expert profile that owns this class, or is an admin
+    if (expert.userId !== currentUser._id && currentUser.role !== 'admin') {
+      throw new Error('Unauthorized: You can only delete your own classes');
+    }
+
+    // Delete related data first
+    // Delete curriculum
+    const curriculum = await ctx.db
+      .query('curriculum')
+      .withIndex('by_classId', (q) => q.eq('classId', args.classId))
+      .first();
+    if (curriculum) {
+      await ctx.db.delete(curriculum._id);
+    }
+
+    // Delete journey
+    const journey = await ctx.db
+      .query('journey')
+      .withIndex('by_classId', (q) => q.eq('classId', args.classId))
+      .first();
+    if (journey) {
+      await ctx.db.delete(journey._id);
+    }
+
+    // Delete benefits
+    const benefits = await ctx.db
+      .query('benefits')
+      .withIndex('by_classId', (q) => q.eq('classId', args.classId))
+      .collect();
+    for (const benefit of benefits) {
+      await ctx.db.delete(benefit._id);
+    }
+
+    // Delete additional perks
+    const additionalPerks = await ctx.db
+      .query('additionalPerks')
+      .withIndex('by_classId', (q) => q.eq('classId', args.classId))
+      .collect();
+    for (const perk of additionalPerks) {
+      await ctx.db.delete(perk._id);
+    }
+
+    // Delete schedules
+    const schedules = await ctx.db
+      .query('schedules')
+      .withIndex('by_classId', (q) => q.eq('classId', args.classId))
+      .collect();
+    for (const schedule of schedules) {
+      await ctx.db.delete(schedule._id);
+    }
+
+    // Delete documentation
+    const documentation = await ctx.db
+      .query('documentation')
+      .withIndex('by_classId', (q) => q.eq('classId', args.classId))
+      .collect();
+    for (const doc of documentation) {
+      await ctx.db.delete(doc._id);
+    }
+
+    // Finally, delete the class
+    await ctx.db.delete(args.classId);
+
+    return { success: true };
+  }
+});
