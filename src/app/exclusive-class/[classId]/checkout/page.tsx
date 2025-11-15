@@ -33,18 +33,13 @@ export default function CheckoutPage() {
       const returnUrl = encodeURIComponent(
         `/exclusive-class/${classId}/checkout`
       );
-      router.push(`/login?returnUrl=${returnUrl}`);
+      router.push(`/login?redirect_url=${returnUrl}`);
     }
   }, [authLoaded, isSignedIn, router, classId]);
 
   // Fetch public data (doesn't require auth) - hooks must be called at top level
   const classData = useCachedQuery(api.classes.getClassByIdPublic, { classId });
   const schedules = useQuery(api.schedules.getSchedulesByClass, { classId });
-
-  // Only fetch auth-required queries if authenticated to prevent UNAUTHENTICATED error
-  // Since hooks must be called at top level, we always call them but conditionally pass args
-  // getCurrentUserQuery is safe (returns null if not authenticated)
-  const currentUser = useQuery(api.users.getCurrentUserQuery, {});
 
   // getBookingsByUser requires authentication and will throw UNAUTHENTICATED error if not authenticated
   // We skip calling it by passing undefined when not authenticated
@@ -62,17 +57,49 @@ export default function CheckoutPage() {
     Id<'schedules'>[]
   >([]);
 
-  // Check if user has already enrolled in this class
+  // Check if user has already enrolled in this class (confirmed or completed AND payment is paid)
   const hasEnrolled = React.useMemo(() => {
     if (!userBookings || !classId) return false;
     return userBookings.some(
       (booking: any) =>
         booking.classId === classId &&
-        (booking.status === 'pending' ||
-          booking.status === 'confirmed' ||
-          booking.status === 'completed')
+        (booking.status === 'confirmed' || booking.status === 'completed') &&
+        booking.paymentStatus === 'paid'
     );
   }, [userBookings, classId]);
+
+  // Check if payment is successful (paid)
+  const isPaymentSuccess = React.useMemo(() => {
+    if (!userBookings || !classId) return false;
+    return userBookings.some(
+      (booking: any) =>
+        booking.classId === classId && booking.paymentStatus === 'paid'
+    );
+  }, [userBookings, classId]);
+
+  // Check if user has pending booking (needs payment)
+  const pendingBooking = React.useMemo(() => {
+    if (!userBookings || !classId) return null;
+    return (
+      userBookings.find(
+        (booking: any) =>
+          booking.classId === classId &&
+          booking.status === 'pending' &&
+          booking.paymentStatus === 'pending'
+      ) || null
+    );
+  }, [userBookings, classId]);
+
+  // Set bookingId from pending booking if exists
+  React.useEffect(() => {
+    if (pendingBooking && !bookingId) {
+      setBookingId(pendingBooking._id);
+      // Auto-select schedules from pending booking
+      if (pendingBooking.scheduleIds && pendingBooking.scheduleIds.length > 0) {
+        setSelectedScheduleIds(pendingBooking.scheduleIds);
+      }
+    }
+  }, [pendingBooking, bookingId]);
 
   // Get available schedules (upcoming only)
   const availableSchedules = React.useMemo(() => {
@@ -84,12 +111,16 @@ export default function CheckoutPage() {
     );
   }, [schedules]);
 
-  // Auto-select all available schedules if none selected
+  // Auto-select all available schedules if none selected and no pending booking
   React.useEffect(() => {
-    if (availableSchedules.length > 0 && selectedScheduleIds.length === 0) {
+    if (
+      availableSchedules.length > 0 &&
+      selectedScheduleIds.length === 0 &&
+      !pendingBooking
+    ) {
       setSelectedScheduleIds(availableSchedules.map((s) => s._id));
     }
-  }, [availableSchedules, selectedScheduleIds.length]);
+  }, [availableSchedules, selectedScheduleIds.length, pendingBooking]);
 
   const handleScheduleToggle = (scheduleId: Id<'schedules'>) => {
     setSelectedScheduleIds((prev) => {
@@ -112,24 +143,24 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (!currentUser) {
-      toast.error(
-        'Informasi pengguna tidak tersedia. Silakan refresh halaman.'
-      );
-      return;
-    }
-
     setIsEnrolling(true);
     try {
-      // Step 1: Create booking first
-      const newBookingId = await createBooking({
-        classId: classData._id,
-        scheduleIds: selectedScheduleIds
-      });
+      // If there's a pending booking, use it for payment
+      if (pendingBooking) {
+        // Continue payment with existing booking
+        setBookingId(pendingBooking._id);
+        setPaymentDialogOpen(true);
+      } else {
+        // Create new booking first
+        const newBookingId = await createBooking({
+          classId: classData._id,
+          scheduleIds: selectedScheduleIds
+        });
 
-      // Step 2: Open payment dialog
-      setBookingId(newBookingId);
-      setPaymentDialogOpen(true);
+        // Open payment dialog
+        setBookingId(newBookingId);
+        setPaymentDialogOpen(true);
+      }
     } catch (error) {
       console.error('Error enrolling:', error);
       toast.error(
@@ -181,11 +212,7 @@ export default function CheckoutPage() {
   }
 
   // Loading state
-  if (
-    classData === undefined ||
-    schedules === undefined ||
-    currentUser === undefined
-  ) {
+  if (classData === undefined || schedules === undefined) {
     return (
       <div className="min-h-screen bg-white">
         <Navbar />
@@ -274,16 +301,23 @@ export default function CheckoutPage() {
         {hasEnrolled && (
           <Card className="mb-6 border-emerald-200 bg-emerald-50">
             <CardContent className="pt-6">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="size-5 text-emerald-600" />
-                <div>
-                  <p className="font-semibold text-emerald-900">
-                    Anda sudah terdaftar di kelas ini
-                  </p>
-                  <p className="text-sm text-emerald-700 mt-1">
-                    Silakan cek halaman enrollments untuk detail lebih lanjut.
-                  </p>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <CheckCircle2 className="size-5 text-emerald-600" />
+                  <div>
+                    <p className="font-semibold text-emerald-900">
+                      Anda sudah terdaftar di kelas ini
+                    </p>
+                    <p className="text-sm text-emerald-700 mt-1">
+                      Silakan cek halaman enrollments untuk detail lebih lanjut.
+                    </p>
+                  </div>
                 </div>
+                <Link href="/enrollments">
+                  <Button variant="outline" size="sm">
+                    Lihat Enrollments
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
@@ -457,35 +491,38 @@ export default function CheckoutPage() {
               </Card>
 
               {/* CTA Button */}
-              <div className="space-y-3">
-                <ButtonPrimary
-                  onClick={handleEnroll}
-                  disabled={
-                    isEnrolling ||
-                    classData.status !== 'published' ||
-                    availableSchedules.length === 0 ||
-                    selectedScheduleIds.length === 0 ||
-                    hasEnrolled
-                  }
-                  className="w-full"
-                  size="lg"
-                >
-                  {isEnrolling ? (
-                    <>
-                      <Loader2 className="size-4 mr-2 animate-spin" />
-                      Memproses...
-                    </>
-                  ) : (
-                    'Lanjutkan ke Pembayaran'
-                  )}
-                </ButtonPrimary>
-              </div>
+              {!isPaymentSuccess && (
+                <div className="space-y-3">
+                  <ButtonPrimary
+                    onClick={handleEnroll}
+                    disabled={
+                      isEnrolling ||
+                      classData.status !== 'published' ||
+                      availableSchedules.length === 0 ||
+                      selectedScheduleIds.length === 0
+                    }
+                    className="w-full"
+                    size="lg"
+                  >
+                    {isEnrolling ? (
+                      <>
+                        <Loader2 className="size-4 mr-2 animate-spin" />
+                        Memproses...
+                      </>
+                    ) : hasEnrolled ? (
+                      'Continue Payment'
+                    ) : (
+                      'Book & Payment'
+                    )}
+                  </ButtonPrimary>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Payment Dialog */}
-        {bookingId && classData && currentUser && (
+        {bookingId && classData && (
           <DialogPayment
             open={paymentDialogOpen}
             onOpenChange={setPaymentDialogOpen}
@@ -494,11 +531,6 @@ export default function CheckoutPage() {
               title: classData.title,
               price: classData.price,
               currency: classData.currency || 'IDR'
-            }}
-            customerInfo={{
-              name: currentUser.name,
-              email: currentUser.email,
-              phone: currentUser.phone
             }}
             onSuccess={handlePaymentSuccess}
           />

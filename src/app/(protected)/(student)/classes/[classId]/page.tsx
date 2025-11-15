@@ -27,7 +27,6 @@ export default function StudentClassDetailPage() {
     classId,
   });
   const userBookings = useQuery(api.bookings.getBookingsByUser, {});
-  const currentUser = useQuery(api.users.getCurrentUserQuery, {});
   const createBooking = useMutation(api.bookings.createBooking);
 
   const [isEnrolling, setIsEnrolling] = React.useState(false);
@@ -64,11 +63,6 @@ export default function StudentClassDetailPage() {
 
     if (hasEnrolled) {
       toast.info("You have already enrolled in this class");
-      return;
-    }
-
-    if (!currentUser) {
-      toast.error("User information not available. Please refresh the page.");
       return;
     }
 
@@ -567,7 +561,7 @@ export default function StudentClassDetailPage() {
         </div>
 
         {/* Payment Dialog */}
-        {bookingId && classData && currentUser && (
+        {bookingId && classData && (
           <DialogPayment
             open={paymentDialogOpen}
             onOpenChange={setPaymentDialogOpen}
@@ -576,11 +570,6 @@ export default function StudentClassDetailPage() {
               title: classData.title,
               price: classData.price,
               currency: classData.currency || "IDR",
-            }}
-            customerInfo={{
-              name: currentUser.name,
-              email: currentUser.email,
-              phone: currentUser.phone,
             }}
             onSuccess={handlePaymentSuccess}
           />

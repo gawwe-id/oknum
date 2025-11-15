@@ -46,7 +46,21 @@ export default clerkMiddleware(async (auth, req) => {
   else if (isRoleStudent) userRole = "student";
 
   // If user is authenticated and trying to access login/signup, redirect based on role
+  // But respect redirect_url if present (e.g., after sign-in from checkout page)
   if (userId && isAuthRoute(req)) {
+    const url = new URL(req.url);
+    const redirectUrl = url.searchParams.get("redirect_url");
+    
+    // If redirect_url is present, use it (decode if needed)
+    if (redirectUrl) {
+      const decodedUrl = decodeURIComponent(redirectUrl);
+      // Ensure it's a valid path (starts with /)
+      if (decodedUrl.startsWith("/")) {
+        return NextResponse.redirect(new URL(decodedUrl, req.url));
+      }
+    }
+    
+    // Otherwise, redirect to default route based on role
     const defaultRoute = getDefaultRouteForRole(userRole);
     return NextResponse.redirect(new URL(defaultRoute, req.url));
   }

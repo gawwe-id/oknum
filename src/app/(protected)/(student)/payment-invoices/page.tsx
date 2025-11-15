@@ -16,7 +16,6 @@ import {
 
 export default function PaymentInvoicesPage() {
   const bookings = useQuery(api.bookings.getBookingsByUser, {});
-  const currentUser = useQuery(api.users.getCurrentUserQuery, {});
 
   const [paymentDialogOpen, setPaymentDialogOpen] = React.useState(false);
   const [selectedBooking, setSelectedBooking] = React.useState<{
@@ -29,11 +28,6 @@ export default function PaymentInvoicesPage() {
   } | null>(null);
 
   const handleOpenPayment = (booking: BookingWithDetails) => {
-    if (!currentUser) {
-      toast.error("User information not available. Please refresh the page.");
-      return;
-    }
-
     if (!booking.classItem) {
       toast.error("Class information not available.");
       return;
@@ -57,7 +51,7 @@ export default function PaymentInvoicesPage() {
     toast.success("Payment initiated successfully!");
   };
 
-  if (bookings === undefined || currentUser === undefined) {
+  if (bookings === undefined) {
     return (
       <Protect>
         <div className="flex items-center justify-center min-h-[400px]">
@@ -97,17 +91,12 @@ export default function PaymentInvoicesPage() {
         )}
 
         {/* Payment Dialog */}
-        {selectedBooking && currentUser && (
+        {selectedBooking && (
           <DialogPayment
             open={paymentDialogOpen}
             onOpenChange={setPaymentDialogOpen}
             bookingId={selectedBooking.bookingId}
             classData={selectedBooking.classData}
-            customerInfo={{
-              name: currentUser.name,
-              email: currentUser.email,
-              phone: currentUser.phone,
-            }}
             onSuccess={handlePaymentSuccess}
           />
         )}

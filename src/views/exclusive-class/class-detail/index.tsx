@@ -120,12 +120,16 @@ export default function ClassDetail({ classData }: ClassDetailProps) {
           {/* Journey Section */}
           <JourneySection journey={classData.journey} />
 
-          <LearningObjectivesSection
-            learningObjectives={classData.curriculum!.learningObjectives}
-          />
-          <PrerequisitesSection
-            prerequisites={classData.curriculum!.prerequisites!}
-          />
+          {classData.curriculum?.learningObjectives && (
+            <LearningObjectivesSection
+              learningObjectives={classData.curriculum.learningObjectives}
+            />
+          )}
+          {classData.curriculum?.prerequisites && (
+            <PrerequisitesSection
+              prerequisites={classData.curriculum.prerequisites}
+            />
+          )}
 
           {/* Additional Perks Section */}
           <AdditionalPerksSection additionalPerks={classData.additionalPerks} />
