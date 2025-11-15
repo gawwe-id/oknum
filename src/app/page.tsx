@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 
 import Hero from '@/components/vuehero';
 import Navbar from '@/components/navbar';
-import Services from '@/components/services';
+// import Services from '@/components/services';
 import Portfolio from '@/components/portfolio';
 import Clients from '@/components/clients';
 import Features from '@/components/features';

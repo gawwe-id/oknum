@@ -9,7 +9,7 @@ import Footer from '@/components/footer';
 
 export default function ExclusiveClassPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<SortOption>('recency');
+  const [sortBy] = useState<SortOption>('recency');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -22,7 +22,6 @@ export default function ExclusiveClassPage() {
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}
           sortBy={sortBy}
-          onSortChange={setSortBy}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           showFilters={showFilters}

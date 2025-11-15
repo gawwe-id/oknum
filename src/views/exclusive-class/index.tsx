@@ -1,11 +1,9 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from 'convex-helpers/react/cache';
 import { api } from '@/../convex/_generated/api';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Search, Filter, Grid3x3, Plus } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import ClassItem from './class-item';
 import type { ClassItem as ClassItemType } from './class-item';
@@ -16,7 +14,6 @@ interface ExclusiveClassIndexProps {
   selectedCategory: string | null;
   onCategoryChange: (category: string | null) => void;
   sortBy: SortOption;
-  onSortChange: (sort: SortOption) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   showFilters: boolean;
@@ -27,30 +24,23 @@ export default function ExclusiveClassIndex({
   selectedCategory,
   onCategoryChange,
   sortBy,
-  onSortChange,
   searchQuery,
   onSearchChange,
   showFilters,
   onToggleFilters
 }: ExclusiveClassIndexProps) {
-  // Get all classes (fetch all for filtering on client side)
   const allClasses = useQuery(api.classes.getAllClassesPublic, {});
   const classesList = (allClasses ?? []) as ClassItemType[];
-
-  // Get all categories for tabs
   const categories = useQuery(api.classes.getAllClassCategories, {});
   const categoriesList = categories ?? [];
 
-  // Filter classes by category, search, and sort
   const filteredClasses = useMemo(() => {
     let filtered = classesList;
 
-    // Filter by category
     if (selectedCategory) {
       filtered = filtered.filter((c) => c.category === selectedCategory);
     }
 
-    // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -61,7 +51,6 @@ export default function ExclusiveClassIndex({
       );
     }
 
-    // Sort classes
     if (sortBy === 'recency') {
       filtered = [...filtered].sort((a, b) => b.createdAt - a.createdAt);
     } else if (sortBy === 'alphabetical') {
@@ -71,7 +60,6 @@ export default function ExclusiveClassIndex({
     return filtered;
   }, [classesList, selectedCategory, searchQuery, sortBy]);
 
-  // Format duration (assuming duration is in minutes)
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -83,10 +71,7 @@ export default function ExclusiveClassIndex({
     return `${mins} min`;
   };
 
-  // Calculate lessons count (using duration as placeholder, ideally should come from curriculum)
   const getLessonsCount = (classItem: ClassItemType) => {
-    // For now, estimate lessons based on duration (assuming ~30 min per lesson)
-    // In production, this should come from curriculum.modules.length
     return Math.max(1, Math.ceil(classItem.duration / 30));
   };
 

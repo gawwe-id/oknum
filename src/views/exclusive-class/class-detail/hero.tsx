@@ -23,7 +23,6 @@ export default function ClassDetailHero({
   classId,
   title,
   description,
-  category,
   price,
   currency,
   thumbnail,

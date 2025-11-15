@@ -22,14 +22,6 @@ export default function ClassInfo({
   minStudents,
   maxStudents
 }: ClassInfoProps) {
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: currency === 'IDR' ? 'IDR' : 'USD',
-      minimumFractionDigits: 0
-    }).format(price);
-  };
-
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;

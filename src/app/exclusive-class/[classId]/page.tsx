@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useQuery } from 'convex-helpers/react/cache';
 import { api } from '../../../../convex/_generated/api';
 import { Id } from '../../../../convex/_generated/dataModel';
@@ -10,12 +10,11 @@ import Footer from '@/components/footer';
 import ClassDetail from '@/views/exclusive-class/class-detail';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ClassDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const classId = params.classId as Id<'classes'>;
 
   const classData = useQuery(api.classes.getClassByIdPublic, { classId });
