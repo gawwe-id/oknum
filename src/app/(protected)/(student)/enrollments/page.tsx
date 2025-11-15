@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Protect } from "@clerk/nextjs";
-import * as React from "react";
-import { useQuery } from "convex-helpers/react/cache";
-import { api } from "../../../../../convex/_generated/api";
-import { Card, CardContent } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Protect } from '@clerk/nextjs';
+import * as React from 'react';
+import { useQuery } from 'convex-helpers/react/cache';
+import { api } from '../../../../../convex/_generated/api';
+import { Card, CardContent } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
 import {
   CardEnrollment,
-  type BookingWithDetails,
-} from "@/components/admin/enrollments/card-enrollment";
+  type BookingWithDetails
+} from '@/components/admin/enrollments/card-enrollment';
 
 export default function EnrollmentsPage() {
   const bookings = useQuery(api.bookings.getBookingsByUser, {});
@@ -30,9 +30,7 @@ export default function EnrollmentsPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold mb-2">Enrollments</h1>
-          <p className="text-muted-foreground">
-            Manage your class enrollments and payments
-          </p>
+          <p className="text-muted-foreground">Manage your enrolled classes</p>
         </div>
 
         {bookings.length === 0 ? (
