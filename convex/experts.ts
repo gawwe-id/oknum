@@ -2,6 +2,39 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getCurrentUserOrThrow } from "./auth";
 
+// Helper to slugify a string
+function slugify(name: string): string {
+  const base = name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return base || "expert";
+}
+
+// Ensure slug uniqueness by appending a numeric suffix if needed
+async function generateUniqueSlug(ctx: any, name: string): Promise<string> {
+  const base = slugify(name);
+  let candidate = base;
+  let suffix = 2;
+  // Try find collisions
+  // Loop limited just in case (though unlikely to reach high numbers)
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const existing = await ctx.db
+      .query("experts")
+      .withIndex("by_slug", (q: any) => q.eq("slug", candidate))
+      .first();
+    if (!existing) {
+      return candidate;
+    }
+    candidate = `${base}-${suffix}`;
+    suffix += 1;
+  }
+}
+
 // Get expert by ID
 export const getExpertById = query({
   args: { expertId: v.id("experts") },
@@ -69,10 +102,12 @@ export const createExpert = mutation({
     }
 
     const now = Date.now();
+    const slug = await generateUniqueSlug(ctx, args.name);
     const expertId = await ctx.db.insert("experts", {
       userId: user._id,
       name: args.name,
       email: args.email,
+      slug,
       bio: args.bio,
       profileImage: args.profileImage,
       specialization: args.specialization,
@@ -130,10 +165,12 @@ export const adminCreateExpert = mutation({
     }
 
     const now = Date.now();
+    const slug = await generateUniqueSlug(ctx, args.name);
     const expertId = await ctx.db.insert("experts", {
       userId: args.userId,
       name: args.name,
       email: args.email,
+      slug,
       bio: args.bio,
       profileImage: args.profileImage,
       specialization: args.specialization,
@@ -205,5 +242,47 @@ export const updateExpert = mutation({
 
     await ctx.db.patch(expertId, updateData);
     return await ctx.db.get(expertId);
+  },
+});
+
+// Admin-only: Backfill missing expert slugs based on name
+export const adminBackfillExpertSlugs = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const currentUser = await getCurrentUserOrThrow(ctx);
+    if (currentUser.role !== "admin") {
+      throw new Error("Only admins can run this backfill");
+    }
+
+    // Scan all experts, patch those without slug
+    const experts = await ctx.db.query("experts").collect();
+    let updated = 0;
+    for (const expert of experts) {
+      if (!("slug" in expert) || !expert.slug) {
+        const slug = await generateUniqueSlug(ctx, expert.name);
+        await ctx.db.patch(expert._id, { slug, updatedAt: Date.now() });
+        updated += 1;
+      }
+    }
+    return { updated };
+  },
+});
+
+// Public: Get expert by slug (includes classes)
+export const getExpertBySlug = query({
+  args: { slug: v.string() },
+  handler: async (ctx, args) => {
+    const expert = await ctx.db
+      .query("experts")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .first();
+    if (!expert) return null;
+
+    const classes = await ctx.db
+      .query("classes")
+      .withIndex("by_expertId", (q) => q.eq("expertId", expert._id))
+      .collect();
+
+    return { ...expert, classes };
   },
 });
