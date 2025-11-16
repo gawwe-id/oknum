@@ -79,7 +79,40 @@ export default function ClassItem({
           <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-emerald-600 transition-colors">
             {classItem.title}
           </h3>
-          <div className="flex items-center gap-4 text-sm text-gray-600 mt-4">
+          <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+            {classItem.description}
+          </p>
+          
+          {/* Price */}
+          <div className="mb-3">
+            <span className="text-2xl font-bold text-emerald-600">
+              {classItem.currency === 'IDR' ? 'Rp' : classItem.currency} {classItem.price.toLocaleString('id-ID')}
+            </span>
+          </div>
+
+          {/* Expert Info */}
+          {classItem.expert && (
+            <div className="flex items-center gap-2 mb-3">
+              {classItem.expert.profileImage ? (
+                <Image
+                  src={classItem.expert.profileImage}
+                  alt={classItem.expert.name}
+                  width={20}
+                  height={20}
+                  className="rounded-full"
+                />
+              ) : (
+                <div className="w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center">
+                  <span className="text-xs text-emerald-600 font-semibold">
+                    {classItem.expert.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+              <span className="text-sm text-gray-700 font-medium">{classItem.expert.name}</span>
+            </div>
+          )}
+
+          <div className="flex items-center gap-4 text-sm text-gray-600">
             <div className="flex items-center gap-1">
               <Layers className="size-4" />
               <span>{getLessonsCount(classItem)} Lessons</span>
