@@ -220,6 +220,13 @@ const Navbar = () => {
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuLink asChild>
+                <Link href="/our-experts" className="font-medium">
+                  Our Experts
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
                 <Link href="/consulting" className="font-medium">
                   Business Consulting
                 </Link>
