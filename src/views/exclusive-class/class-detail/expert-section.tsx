@@ -1,7 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React from "react";
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 interface ExpertSectionProps {
   expert: {
@@ -10,6 +13,7 @@ interface ExpertSectionProps {
     bio?: string;
     profileImage?: string;
     userAvatar?: string;
+    slug?: string;
   } | null;
 }
 
@@ -18,12 +22,12 @@ export default function ExpertSection({ expert }: ExpertSectionProps) {
 
   const initials = expert.name
     ? expert.name
-        .split(' ')
+        .split(" ")
         .map((n) => n[0])
-        .join('')
+        .join("")
         .toUpperCase()
         .slice(0, 2)
-    : 'E';
+    : "E";
 
   const avatarUrl = expert.userAvatar || expert.profileImage;
 
@@ -49,9 +53,23 @@ export default function ExpertSection({ expert }: ExpertSectionProps) {
             <h3 className="text-xl font-bold text-gray-900">{expert.name}</h3>
             {expert.email && <p className="text-gray-600">{expert.email}</p>}
             {expert.bio && (
-              <p className="text-gray-600 leading-relaxed mt-4 whitespace-pre-line">
+              <p className="text-gray-600 leading-relaxed mt-4 line-clamp-3">
                 {expert.bio}
               </p>
+            )}
+            {expert.slug && (
+              <div className="mt-4">
+                <Link href={`/our-experts/${expert.slug}`}>
+                  <Button
+                    variant="ghost"
+                    size="xs"
+                    className="w-full md:w-auto"
+                  >
+                    Lihat Profil Expert
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
             )}
           </div>
         </div>

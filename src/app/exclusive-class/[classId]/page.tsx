@@ -1,56 +1,35 @@
-'use client';
+import React from "react";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "../../../../convex/_generated/api";
+import { Id } from "../../../../convex/_generated/dataModel";
+import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
+import ClassDetail from "@/views/exclusive-class/class-detail";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { generateClassMetadata } from "@/lib/class-metadata";
+import type { Metadata } from "next";
 
-import React from 'react';
-import { useParams } from 'next/navigation';
-import { useQuery } from 'convex-helpers/react/cache';
-import { api } from '../../../../convex/_generated/api';
-import { Id } from '../../../../convex/_generated/dataModel';
-import Navbar from '@/components/navbar';
-import Footer from '@/components/footer';
-import ClassDetail from '@/views/exclusive-class/class-detail';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+// Generate metadata dynamically based on class data
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ classId: string }>;
+}): Promise<Metadata> {
+  const { classId } = await params;
+  return generateClassMetadata(classId as Id<"classes">);
+}
 
-export default function ClassDetailPage() {
-  const params = useParams();
-  const classId = params.classId as Id<'classes'>;
-
-  const classData = useQuery(api.classes.getClassByIdPublic, { classId });
-
-  // Loading state
-  if (classData === undefined) {
-    return (
-      <div className="min-h-screen bg-white">
-        <Navbar />
-        <div className="container mx-auto max-w-6xl px-4 py-8">
-          <div className="space-y-8">
-            {/* Back button skeleton */}
-            <Skeleton className="h-10 w-24" />
-
-            {/* Hero skeleton */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Skeleton className="w-full aspect-video rounded-xl" />
-              <div className="space-y-4">
-                <Skeleton className="h-6 w-24" />
-                <Skeleton className="h-12 w-full" />
-                <Skeleton className="h-6 w-full" />
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-10 w-32" />
-              </div>
-            </div>
-
-            {/* Content skeleton */}
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-64 w-full rounded-lg" />
-            ))}
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+export default async function ClassDetailPage({
+  params,
+}: {
+  params: Promise<{ classId: string }>;
+}) {
+  const { classId } = await params;
+  const classData = await fetchQuery(api.classes.getClassByIdPublic, {
+    classId: classId as Id<"classes">,
+  });
 
   // Not found state
   if (!classData) {
@@ -100,7 +79,7 @@ export default function ClassDetailPage() {
         {/* Class Detail Content */}
         <ClassDetail
           classData={
-            classData as Parameters<typeof ClassDetail>[0]['classData']
+            classData as Parameters<typeof ClassDetail>[0]["classData"]
           }
         />
       </div>

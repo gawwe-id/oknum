@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import React from 'react';
-import ClassDetailHero from './hero';
-import ClassInfo from './class-info';
-import ExpertSection from './expert-section';
-import CurriculumSection from './curriculum-section';
-import SchedulesSection from './schedules-section';
-import BenefitsSection from './benefits-section';
-import JourneySection from './journey-section';
-import AdditionalPerksSection from './additional-perks-section';
-import LearningObjectivesSection from './learning-objectives-section';
-import PrerequisitesSection from './prerequisites-section';
+import React from "react";
+import ClassDetailHero from "./hero";
+import ClassInfo from "./class-info";
+import ExpertSection from "./expert-section";
+import CurriculumSection from "./curriculum-section";
+import SchedulesSection from "./schedules-section";
+import BenefitsSection from "./benefits-section";
+import JourneySection from "./journey-section";
+import AdditionalPerksSection from "./additional-perks-section";
+import LearningObjectivesSection from "./learning-objectives-section";
+import PrerequisitesSection from "./prerequisites-section";
 
 interface ClassDetailData {
   _id: string;
@@ -19,11 +19,11 @@ interface ClassDetailData {
   category: string;
   price: number;
   currency: string;
-  type: 'offline' | 'online' | 'hybrid';
+  type: "offline" | "online" | "hybrid";
   duration: number;
   thumbnail?: string;
   images?: string[];
-  status: 'draft' | 'published' | 'completed' | 'cancelled';
+  status: "draft" | "published" | "completed" | "cancelled";
   minStudents?: number;
   maxStudents?: number;
   expert: {
@@ -32,6 +32,7 @@ interface ClassDetailData {
     bio?: string;
     profileImage?: string;
     userAvatar?: string;
+    slug?: string;
   } | null;
   curriculum: {
     modules: Array<{
@@ -56,7 +57,7 @@ interface ClassDetailData {
     timezone: string;
     capacity: number;
     bookedSeats: number;
-    status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
+    status: "upcoming" | "ongoing" | "completed" | "cancelled";
   }>;
   benefits: Array<{
     _id: string;
