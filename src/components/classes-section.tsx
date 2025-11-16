@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useQuery } from 'convex-helpers/react/cache';
-import { api } from '@/../convex/_generated/api';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Skeleton } from '@/components/ui/skeleton';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { useQuery } from "convex-helpers/react/cache";
+import { api } from "@/../convex/_generated/api";
+import Image from "next/image";
+import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ClassesSection: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
@@ -28,10 +28,10 @@ const ClassesSection: React.FC = () => {
 
   // Format price with currency
   const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: currency === 'IDR' ? 'IDR' : 'USD',
-      minimumFractionDigits: 0
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: currency === "IDR" ? "IDR" : "USD",
+      minimumFractionDigits: 0,
     }).format(price);
   };
 
@@ -67,8 +67,8 @@ const ClassesSection: React.FC = () => {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-full text-xs font-medium transition-all ${
                   selectedCategory === category
-                    ? 'bg-teal-600 text-white shadow-sm'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? "bg-teal-600 text-white shadow-sm"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
                 {category}
@@ -88,18 +88,20 @@ const ClassesSection: React.FC = () => {
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
             >
-              <div className="p-8 h-full flex flex-col">
-                <p className="text-xs text-gray-400 mb-4 uppercase tracking-wide">
-                  Untuk {firstClass.category}
-                </p>
-                <h3 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 leading-12">
-                  {firstClass.title}
-                </h3>
-                <p className="text-base text-gray-600 leading-relaxed grow">
-                  {firstClass.description}
-                </p>
-                {/* Price - optional, bisa ditampilkan di bawah jika diperlukan */}
-                <div className="mt-6 pt-6 border-t border-gray-100">
+              <div className="p-8 h-full flex flex-col justify-between">
+                <div>
+                  <p className="text-xs text-gray-400 mb-4 uppercase tracking-wide">
+                    Untuk {firstClass.category}
+                  </p>
+                  <h3 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 leading-12">
+                    {firstClass.title}
+                  </h3>
+                  <p className="text-base text-gray-600 leading-relaxed line-clamp-2">
+                    {firstClass.description}
+                  </p>
+                </div>
+                {/* Price - keep pinned at bottom */}
+                <div className="pt-6 border-t border-gray-100">
                   <div className="text-xl font-semibold text-gray-900">
                     {formatPrice(firstClass.price, firstClass.currency)}
                   </div>
@@ -121,7 +123,7 @@ const ClassesSection: React.FC = () => {
                     <div className="absolute inset-0 flex items-center justify-center">
                       <Image
                         src={secondClass.expert.profileImage}
-                        alt={secondClass.expert.name || 'Expert'}
+                        alt={secondClass.expert.name || "Expert"}
                         width={600}
                         height={600}
                         className="object-contain max-w-full max-h-full"
@@ -132,7 +134,7 @@ const ClassesSection: React.FC = () => {
                     <div className="absolute top-12 right-12 z-0">
                       <p className="text-7xl md:text-8xl font-bold text-gray-200/40 select-none pointer-events-none">
                         {formatPrice(secondClass.price, secondClass.currency)
-                          .replace(/[^0-9]/g, '')
+                          .replace(/[^0-9]/g, "")
                           .slice(0, 2)}
                         +
                       </p>
@@ -154,9 +156,9 @@ const ClassesSection: React.FC = () => {
                       <p className="text-7xl md:text-8xl font-bold text-white/20 select-none pointer-events-none">
                         {formatPrice(
                           secondClass?.price || 0,
-                          secondClass?.currency || 'IDR'
+                          secondClass?.currency || "IDR"
                         )
-                          .replace(/[^0-9]/g, '')
+                          .replace(/[^0-9]/g, "")
                           .slice(0, 2)}
                         +
                       </p>
@@ -164,7 +166,7 @@ const ClassesSection: React.FC = () => {
                     <div className="text-center text-white z-10">
                       <p className="text-sm mb-2 font-medium">Dengan Expert</p>
                       <p className="text-2xl md:text-3xl font-bold">
-                        {secondClass?.expert?.name || 'Expert'}
+                        {secondClass?.expert?.name || "Expert"}
                       </p>
                     </div>
                   </div>

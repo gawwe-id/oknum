@@ -49,7 +49,9 @@ export default function ExpertSection({ expert }: ExpertSectionProps) {
             <h3 className="text-xl font-bold text-gray-900">{expert.name}</h3>
             {expert.email && <p className="text-gray-600">{expert.email}</p>}
             {expert.bio && (
-              <p className="text-gray-600 leading-relaxed mt-4">{expert.bio}</p>
+              <p className="text-gray-600 leading-relaxed mt-4 whitespace-pre-line">
+                {expert.bio}
+              </p>
             )}
           </div>
         </div>

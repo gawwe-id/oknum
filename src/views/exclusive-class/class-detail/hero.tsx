@@ -81,7 +81,7 @@ export default function ClassDetailHero({
             </h1>
 
             {/* Description */}
-            <p className="text-lg text-gray-600 leading-relaxed">
+            <p className="text-lg text-gray-600 leading-relaxed whitespace-pre-line">
               {description}
             </p>
 

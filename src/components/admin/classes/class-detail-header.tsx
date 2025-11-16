@@ -29,7 +29,7 @@ export function ClassDetailHeader({
       </Button>
       <div className="flex-1">
         <h1 className="text-3xl font-bold">{title}</h1>
-        <p className="text-muted-foreground mt-1">{description}</p>
+        <p className="text-muted-foreground mt-1 line-clamp-1">{description}</p>
       </div>
     </div>
   );
