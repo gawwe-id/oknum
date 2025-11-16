@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useMutation } from 'convex/react';
-import { api } from '../../../../convex/_generated/api';
-import type { Id } from '../../../../convex/_generated/dataModel';
+import { useState } from "react";
+import { useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import type { Id } from "../../../../convex/_generated/dataModel";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog';
-import { Field, FieldLabel, FieldContent } from '@/components/ui/field';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { ButtonPrimary } from '@/components/ui/button-primary';
-import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Field, FieldLabel, FieldContent } from "@/components/ui/field";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ButtonPrimary } from "@/components/ui/button-primary";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 type Consultant = {
-  _id: Id<'consultants'>;
+  _id: Id<"consultants">;
   title: string;
   subtitle: string;
   description: string;
@@ -27,7 +27,7 @@ type Consultant = {
   includes: string[];
   technologies: string[];
   illustration?: string;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   order: number;
   createdAt: number;
   updatedAt: number;
@@ -44,11 +44,11 @@ export function ConsultantRequestForm({
   consultant,
   open,
   onOpenChange,
-  onSuccess
+  onSuccess,
 }: ConsultantRequestFormProps) {
   const createRequest = useMutation(api.consultants.createConsultantRequest);
-  const [message, setMessage] = useState('');
-  const [phone, setPhone] = useState('');
+  const [message, setMessage] = useState("");
+  const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,7 +56,7 @@ export function ConsultantRequestForm({
 
     if (!message.trim()) {
       toast.error(
-        'Please provide a message describing your consultation needs'
+        "Please provide a message describing your consultation needs"
       );
       return;
     }
@@ -67,17 +67,17 @@ export function ConsultantRequestForm({
       await createRequest({
         consultantId: consultant._id,
         message: message.trim(),
-        phone: phone.trim() || undefined
+        phone: phone.trim() || undefined,
       });
-      setMessage('');
-      setPhone('');
-      toast.success('Consultation request submitted successfully!');
+      setMessage("");
+      setPhone("");
+      toast.success("Consultation request submitted successfully!");
       onSuccess();
     } catch (error) {
       toast.error(
         error instanceof Error
           ? error.message
-          : 'Failed to submit consultation request'
+          : "Failed to submit consultation request"
       );
     } finally {
       setIsSubmitting(false);
@@ -108,7 +108,7 @@ export function ConsultantRequestForm({
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="e.g., +62 812-3456-7890"
+                placeholder="e.g., +62 812-822-7597"
                 disabled={isSubmitting}
               />
               <p className="text-xs text-muted-foreground mt-1">
@@ -159,7 +159,7 @@ export function ConsultantRequestForm({
                   Submitting...
                 </>
               ) : (
-                'Submit Request'
+                "Submit Request"
               )}
             </ButtonPrimary>
           </div>

@@ -82,7 +82,7 @@ const ContactForms = () => {
               <h3 className="text-sm font-semibold text-gray-800 mb-1">
                 Telepon
               </h3>
-              <p className="text-gray-600">+62 812 3456 7890</p>
+              <p className="text-gray-600">+62 812 822 7597</p>
             </div>
           </div>
 
@@ -94,7 +94,7 @@ const ContactForms = () => {
               <h3 className="text-sm font-semibold text-gray-800 mb-1">
                 Email
               </h3>
-              <p className="text-gray-600">info@oknum.studio</p>
+              <p className="text-gray-600">oknum.studio.team@gmail.com</p>
             </div>
           </div>
 
@@ -107,9 +107,9 @@ const ContactForms = () => {
                 Alamat
               </h3>
               <p className="text-gray-600">
-                Jl. Teknologi Digital No. 123
+                Jl. Lamtoro, Pamulang Barat
                 <br />
-                Tangerang Selatan, Banten 15413
+                Tangerang Selatan, Banten 15418
                 <br />
                 Indonesia
               </p>

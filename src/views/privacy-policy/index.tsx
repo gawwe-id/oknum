@@ -269,11 +269,11 @@ const PrivacyPolicyView = () => {
             <p>
               <strong>Oknum</strong>
             </p>
-            <p>Jl. Teknologi Digital No. 123</p>
-            <p>Tangerang Selatan, Banten 15413</p>
+            <p>Jl. Lamtoro, Pamulang Barat</p>
+            <p>Tangerang Selatan, Banten 15418</p>
             <p>Indonesia</p>
             <p>Email: privacy@oknum.studio</p>
-            <p>Telepon: +62 812 3456 7890</p>
+            <p>Telepon: +62 812 822 7597</p>
           </div>
         </div>
       </div>

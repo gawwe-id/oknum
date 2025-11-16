@@ -90,11 +90,11 @@ const Footer: React.FC = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <Phone className="w-5 h-5 text-emerald-600" />
-                  <p className="text-gray-400">+62 123 4567 890</p>
+                  <p className="text-gray-400">+62 812 822 7597</p>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Mail className="w-5 h-5 text-emerald-600" />
-                  <p className="text-gray-400">info@oknum.studio</p>
+                  <p className="text-gray-400">oknum.studio.team@gmail.com</p>
                 </div>
               </div>
             </motion.div>

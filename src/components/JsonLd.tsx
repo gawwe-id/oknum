@@ -31,17 +31,17 @@ export const organizationJsonLd = {
   ],
   contactPoint: {
     "@type": "ContactPoint",
-    telephone: "+62-812-3456-7890",
+    telephone: "+62-812-1822-7597",
     contactType: "customer service",
     areaServed: "ID",
     availableLanguage: ["Indonesian", "English"],
   },
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Jl. Teknologi Digital No. 123",
+    streetAddress: "Jl. Lamtoro, Pamulang Barat",
     addressLocality: "Tangerang Selatan",
     addressRegion: "Banten",
-    postalCode: "15413",
+    postalCode: "15418",
     addressCountry: "ID",
   },
 };
