@@ -1,7 +1,7 @@
-import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
-import { getCurrentUserOrThrow } from "./auth";
-import { Id } from "./_generated/dataModel";
+import { query, mutation } from './_generated/server';
+import { v } from 'convex/values';
+import { getCurrentUserOrThrow } from './auth';
+import { Id } from './_generated/dataModel';
 
 // Get bookings by current authenticated user
 export const getBookingsByUser = query({
@@ -11,8 +11,8 @@ export const getBookingsByUser = query({
     const currentUser = await getCurrentUserOrThrow(ctx);
 
     const bookings = await ctx.db
-      .query("bookings")
-      .withIndex("by_userId", (q) => q.eq("userId", currentUser._id))
+      .query('bookings')
+      .withIndex('by_userId', (q) => q.eq('userId', currentUser._id))
       .collect();
 
     // Enrich with class and schedule data
@@ -26,18 +26,18 @@ export const getBookingsByUser = query({
         return {
           ...booking,
           classItem,
-          schedules: schedules.filter((s) => s !== null),
+          schedules: schedules.filter((s) => s !== null)
         };
       })
     );
 
     return enriched.sort((a, b) => b.createdAt - a.createdAt);
-  },
+  }
 });
 
 // Get booking by ID
 export const getBookingById = query({
-  args: { bookingId: v.id("bookings") },
+  args: { bookingId: v.id('bookings') },
   handler: async (ctx, args) => {
     const booking = await ctx.db.get(args.bookingId);
     if (!booking) return null;
@@ -46,23 +46,25 @@ export const getBookingById = query({
     const schedules = await Promise.all(
       booking.scheduleIds.map((id) => ctx.db.get(id))
     );
-    const payment = booking.paymentId ? await ctx.db.get(booking.paymentId) : null;
+    const payment = booking.paymentId
+      ? await ctx.db.get(booking.paymentId)
+      : null;
 
     return {
       ...booking,
       classItem,
       schedules: schedules.filter((s) => s !== null),
-      payment,
+      payment
     };
-  },
+  }
 });
 
 // Create booking (requires authentication, can book multiple sessions)
 export const createBooking = mutation({
   args: {
-    classId: v.id("classes"),
-    scheduleIds: v.array(v.id("schedules")),
-    notes: v.optional(v.string()),
+    classId: v.id('classes'),
+    scheduleIds: v.array(v.id('schedules')),
+    notes: v.optional(v.string())
   },
   handler: async (ctx, args) => {
     // Get authenticated user
@@ -71,11 +73,11 @@ export const createBooking = mutation({
     // Verify class exists
     const classItem = await ctx.db.get(args.classId);
     if (!classItem) {
-      throw new Error("Class not found");
+      throw new Error('Class not found');
     }
 
-    if (classItem.status !== "published") {
-      throw new Error("Class is not available for booking");
+    if (classItem.status !== 'published') {
+      throw new Error('Class is not available for booking');
     }
 
     // Verify all schedules exist and belong to the class
@@ -88,7 +90,7 @@ export const createBooking = mutation({
         if (schedule.classId !== args.classId) {
           throw new Error(`Schedule ${id} does not belong to this class`);
         }
-        if (schedule.status !== "upcoming") {
+        if (schedule.status !== 'upcoming') {
           throw new Error(`Schedule ${id} is not available for booking`);
         }
         // Check capacity
@@ -104,18 +106,18 @@ export const createBooking = mutation({
     const sessionNumbers = schedules.map((s) => s.sessionNumber);
 
     // Create booking
-    const bookingId = await ctx.db.insert("bookings", {
+    const bookingId = await ctx.db.insert('bookings', {
       userId: user._id,
       classId: args.classId,
       scheduleIds: args.scheduleIds,
       sessionNumbers,
-      status: "pending",
-      paymentStatus: "pending",
+      status: 'pending',
+      paymentStatus: 'pending',
       totalAmount,
       currency: classItem.currency,
       bookingDate: Date.now(),
       notes: args.notes,
-      createdAt: Date.now(),
+      createdAt: Date.now()
     });
 
     // Reserve seats for each schedule (will be confirmed when payment is successful)
@@ -123,25 +125,30 @@ export const createBooking = mutation({
     // This prevents double-booking if payment fails
 
     return bookingId;
-  },
+  }
 });
 
 // Update booking status (requires authentication - can only update own bookings unless admin)
 export const updateBookingStatus = mutation({
   args: {
-    bookingId: v.id("bookings"),
+    bookingId: v.id('bookings'),
     status: v.optional(
       v.union(
-        v.literal("pending"),
-        v.literal("confirmed"),
-        v.literal("cancelled"),
-        v.literal("completed")
+        v.literal('pending'),
+        v.literal('confirmed'),
+        v.literal('cancelled'),
+        v.literal('completed')
       )
     ),
     paymentStatus: v.optional(
-      v.union(v.literal("pending"), v.literal("paid"), v.literal("failed"), v.literal("refunded"))
+      v.union(
+        v.literal('pending'),
+        v.literal('paid'),
+        v.literal('failed'),
+        v.literal('refunded')
+      )
     ),
-    paymentId: v.optional(v.id("payments")),
+    paymentId: v.optional(v.id('payments'))
   },
   handler: async (ctx, args) => {
     // Get authenticated user
@@ -150,12 +157,12 @@ export const updateBookingStatus = mutation({
     const { bookingId, ...updates } = args;
     const existing = await ctx.db.get(bookingId);
     if (!existing) {
-      throw new Error("Booking not found");
+      throw new Error('Booking not found');
     }
 
     // Check if user owns the booking or is an admin
-    if (existing.userId !== currentUser._id && currentUser.role !== "admin") {
-      throw new Error("Unauthorized: You can only update your own bookings");
+    if (existing.userId !== currentUser._id && currentUser.role !== 'admin') {
+      throw new Error('Unauthorized: You can only update your own bookings');
     }
 
     const updateData: any = {};
@@ -163,7 +170,7 @@ export const updateBookingStatus = mutation({
     if (updates.status !== undefined) {
       updateData.status = updates.status;
       // If booking is confirmed and payment is paid, increment booked seats
-      if (updates.status === "confirmed" && existing.paymentStatus === "paid") {
+      if (updates.status === 'confirmed' && existing.paymentStatus === 'paid') {
         const schedules = await Promise.all(
           existing.scheduleIds.map((id) => ctx.db.get(id))
         );
@@ -172,7 +179,7 @@ export const updateBookingStatus = mutation({
             const newBookedSeats = schedule.bookedSeats + 1;
             if (newBookedSeats <= schedule.capacity) {
               await ctx.db.patch(schedule._id, {
-                bookedSeats: newBookedSeats,
+                bookedSeats: newBookedSeats
               });
             }
           }
@@ -183,8 +190,8 @@ export const updateBookingStatus = mutation({
     if (updates.paymentStatus !== undefined) {
       updateData.paymentStatus = updates.paymentStatus;
       // If payment is confirmed, also confirm booking
-      if (updates.paymentStatus === "paid" && existing.status === "pending") {
-        updateData.status = "confirmed";
+      if (updates.paymentStatus === 'paid' && existing.status === 'pending') {
+        updateData.status = 'confirmed';
         // Increment booked seats
         const schedules = await Promise.all(
           existing.scheduleIds.map((id) => ctx.db.get(id))
@@ -194,7 +201,7 @@ export const updateBookingStatus = mutation({
             const newBookedSeats = schedule.bookedSeats + 1;
             if (newBookedSeats <= schedule.capacity) {
               await ctx.db.patch(schedule._id, {
-                bookedSeats: newBookedSeats,
+                bookedSeats: newBookedSeats
               });
             }
           }
@@ -208,12 +215,12 @@ export const updateBookingStatus = mutation({
 
     await ctx.db.patch(bookingId, updateData);
     return await ctx.db.get(bookingId);
-  },
+  }
 });
 
 // Internal query for getting booking by ID (used in actions)
 export const getBookingByIdInternal = query({
-  args: { bookingId: v.id("bookings") },
+  args: { bookingId: v.id('bookings') },
   handler: async (ctx, args) => {
     const booking = await ctx.db.get(args.bookingId);
     if (!booking) return null;
@@ -226,9 +233,84 @@ export const getBookingByIdInternal = query({
     return {
       ...booking,
       classItem,
-      schedules: schedules.filter((s) => s !== null),
+      schedules: schedules.filter((s) => s !== null)
     };
-  },
+  }
+});
+
+// Verify ticket by booking ID (for ticket verification page)
+// This is a public query that can be used to verify ticket validity
+export const verifyTicket = query({
+  args: { bookingId: v.id('bookings') },
+  handler: async (ctx, args) => {
+    const booking = await ctx.db.get(args.bookingId);
+    if (!booking) {
+      return {
+        valid: false,
+        error: 'Ticket not found'
+      };
+    }
+
+    // Get related data
+    const classItem = await ctx.db.get(booking.classId);
+    const schedules = await Promise.all(
+      booking.scheduleIds.map((id) => ctx.db.get(id))
+    );
+    const payment = booking.paymentId
+      ? await ctx.db.get(booking.paymentId)
+      : null;
+    const user = await ctx.db.get(booking.userId);
+
+    // Check if ticket is valid
+    // Ticket is valid if:
+    // 1. Booking exists
+    // 2. Payment status is "paid"
+    // 3. Booking status is "confirmed"
+    const isValid =
+      booking.paymentStatus === 'paid' && booking.status === 'confirmed';
+
+    return {
+      valid: isValid,
+      booking: {
+        _id: booking._id,
+        status: booking.status,
+        paymentStatus: booking.paymentStatus,
+        bookingDate: booking.bookingDate,
+        createdAt: booking.createdAt
+      },
+      classItem: classItem
+        ? {
+            _id: classItem._id,
+            title: classItem.title,
+            category: classItem.category,
+            type: classItem.type
+          }
+        : null,
+      schedules: schedules
+        .filter((s) => s !== null)
+        .map((s) => ({
+          _id: s!._id,
+          sessionNumber: s!.sessionNumber,
+          sessionTitle: s!.sessionTitle,
+          startDate: s!.startDate,
+          startTime: s!.startTime,
+          endTime: s!.endTime
+        })),
+      payment: payment
+        ? {
+            status: payment.status,
+            paidAt: payment.paidAt
+          }
+        : null,
+      user: user
+        ? {
+            name: user.name,
+            email: user.email
+          }
+        : null,
+      ticketNumber: `TKT-${args.bookingId.slice(-8).toUpperCase()}`
+    };
+  }
 });
 
 // Get students enrolled in expert's classes
@@ -239,8 +321,8 @@ export const getStudentsByExpert = query({
     const currentUser = await getCurrentUserOrThrow(ctx);
 
     // Verify user is an expert
-    if (currentUser.role !== "expert") {
-      throw new Error("Unauthorized: Only experts can access this query");
+    if (currentUser.role !== 'expert') {
+      throw new Error('Unauthorized: Only experts can access this query');
     }
 
     // Get expert record
@@ -255,8 +337,8 @@ export const getStudentsByExpert = query({
 
     // Get all classes by this expert
     const classes = await ctx.db
-      .query("classes")
-      .withIndex("by_expertId", (q) => q.eq("expertId", expert._id))
+      .query('classes')
+      .withIndex('by_expertId', (q) => q.eq('expertId', expert._id))
       .collect();
 
     if (classes.length === 0) {
@@ -269,8 +351,8 @@ export const getStudentsByExpert = query({
     const allBookings = await Promise.all(
       classIds.map(async (classId) => {
         return await ctx.db
-          .query("bookings")
-          .withIndex("by_classId", (q) => q.eq("classId", classId))
+          .query('bookings')
+          .withIndex('by_classId', (q) => q.eq('classId', classId))
           .collect();
       })
     );
@@ -281,7 +363,7 @@ export const getStudentsByExpert = query({
     const studentIds = new Set<string>();
     const studentBookingsMap = new Map<
       string,
-      Array<typeof bookings[number]>
+      Array<(typeof bookings)[number]>
     >();
 
     for (const booking of bookings) {
@@ -296,11 +378,11 @@ export const getStudentsByExpert = query({
     // Get student details and enrich with enrollment info
     const studentsWithEnrollments = await Promise.all(
       Array.from(studentIds).map(async (userId) => {
-        const user = await ctx.db.get(userId as Id<"users">);
+        const user = await ctx.db.get(userId as Id<'users'>);
         if (!user) return null;
 
         const bookings = studentBookingsMap.get(userId) || [];
-        
+
         // Get class details for each booking
         const enrollments = await Promise.all(
           bookings.map(async (booking) => {
@@ -308,11 +390,11 @@ export const getStudentsByExpert = query({
             return {
               bookingId: booking._id,
               classId: booking.classId,
-              className: classItem?.title || "Unknown Class",
+              className: classItem?.title || 'Unknown Class',
               status: booking.status,
               paymentStatus: booking.paymentStatus,
               bookingDate: booking.bookingDate,
-              createdAt: booking.createdAt,
+              createdAt: booking.createdAt
             };
           })
         );
@@ -326,7 +408,7 @@ export const getStudentsByExpert = query({
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
           enrollments,
-          totalEnrollments: enrollments.length,
+          totalEnrollments: enrollments.length
         };
       })
     );
@@ -335,6 +417,5 @@ export const getStudentsByExpert = query({
     return studentsWithEnrollments
       .filter((s) => s !== null)
       .sort((a, b) => a!.name.localeCompare(b!.name));
-  },
+  }
 });
-

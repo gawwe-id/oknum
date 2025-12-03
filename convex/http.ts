@@ -1,6 +1,6 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
-import { internal } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import { Id } from "./_generated/dataModel";
 import md5 from "md5";
 
@@ -107,6 +107,17 @@ http.route({
           }
         } else {
           console.warn("CLERK_SECRET_KEY not set, skipping metadata update");
+        }
+
+        // Send welcome email (non-blocking - don't fail webhook if email fails)
+        try {
+          await ctx.runAction(api.emails.sendWelcomeEmail, {
+            email,
+            name,
+          });
+        } catch (emailError) {
+          console.error("Error sending welcome email:", emailError);
+          // Don't fail the webhook if email fails
         }
 
         return new Response(JSON.stringify({ success: true }), {
@@ -304,6 +315,34 @@ http.route({
           callbackData,
         },
       });
+
+      // If payment is successful, send enrollment email with PDFs (non-blocking)
+      if (paymentStatus === "success") {
+        try {
+          // Get booking and user details
+          const booking = await ctx.runQuery(api.bookings.getBookingByIdInternal, {
+            bookingId: payment.bookingId,
+          });
+
+          if (booking) {
+            const user = await ctx.runQuery(api.users.getUserProfile, {
+              userId: booking.userId,
+            });
+
+            if (user) {
+              // Send enrollment email with PDF attachments
+              await ctx.runAction(api.emails.sendEnrollmentEmail, {
+                bookingId: payment.bookingId,
+                userEmail: user.email,
+                userName: user.name,
+              });
+            }
+          }
+        } catch (emailError) {
+          console.error("Error sending enrollment email:", emailError);
+          // Don't fail the callback if email fails
+        }
+      }
 
       // Return success response to Duitku
       // Duitku expects "SUCCESS" response

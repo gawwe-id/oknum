@@ -18,6 +18,7 @@ import type * as consultants from "../consultants.js";
 import type * as curriculum from "../curriculum.js";
 import type * as dashboard from "../dashboard.js";
 import type * as documentation from "../documentation.js";
+import type * as emails from "../emails.js";
 import type * as experts from "../experts.js";
 import type * as files from "../files.js";
 import type * as http from "../http.js";
@@ -44,6 +45,7 @@ declare const fullApi: ApiFromModules<{
   curriculum: typeof curriculum;
   dashboard: typeof dashboard;
   documentation: typeof documentation;
+  emails: typeof emails;
   experts: typeof experts;
   files: typeof files;
   http: typeof http;
